@@ -5,7 +5,7 @@ export const useSaveStageState = () => {
   const stageDataList = useSelector(stageDataListSelector.selectAll);
 
   const saveStageToLocalStorage = () => {
-    console.log("Here!", stageDataList);
+    console.log("Stage", stageDataList);
     localStorage.setItem("StageDataList", JSON.stringify(stageDataList));
   };
 

@@ -64,6 +64,8 @@ const useTool = (
         return hotkeyFunc.zoom(stage, -1);
       case "reset-zoom":
         return hotkeyFunc.resetZoom(stage);
+      case "brush":
+        return hotkeyFunc.setBrush();
       case "remove-background":
         return removeBackground(selectedItems);
       case "hotkey":

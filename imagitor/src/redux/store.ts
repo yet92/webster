@@ -1,15 +1,21 @@
-import { configureStore, EntityState, getDefaultMiddleware } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  EntityState,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit";
 import { combineEpics, createEpicMiddleware } from "redux-observable";
 import fileMetaReducer, { FileMeta } from "./fileMeta";
 import stageDataReducer, { StageData, stageDataEpic } from "./currentStageData";
 import stageDataListReducer, { StageDataListItem } from "./StageDataList";
 import imageAssetListReducer, { ImageAssetListItem } from "./imageAssetList";
+import toolSelectionReducer, { ToolSelectionState } from "./selectTool";
 
 export type StoreState = {
   fileMeta: FileMeta;
   currentStageData: EntityState<StageData["attrs"]>;
   stageDataList: EntityState<StageDataListItem>;
   imageAssetList: EntityState<ImageAssetListItem>;
+  toolSelection: ToolSelectionState;
 };
 
 const epicMiddleware = createEpicMiddleware();
@@ -23,8 +29,11 @@ const configureKonvaEditorStore = (preloadedState?: StoreState) => {
       currentStageData: stageDataReducer,
       stageDataList: stageDataListReducer,
       imageAssetList: imageAssetListReducer,
+      toolSelection: toolSelectionReducer,
     },
-    middleware: getDefaultMiddleware({ serializableCheck: false }).concat(epicMiddleware),
+    middleware: getDefaultMiddleware({ serializableCheck: false }).concat(
+      epicMiddleware
+    ),
     preloadedState,
   });
   epicMiddleware.run(rootEpic);
