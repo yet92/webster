@@ -59,6 +59,7 @@ const ExportThumbnail: React.FC<{
       = targetFrame ?? data.selectedItems.find((item) => item.attrs["data-item-type"] === "frame");
     if (frame) {
       const stage = frame.getStage()!;
+      console.log(stage);
       data.clearSelection();
       const uri = stage.toDataURL({
         x: frame.getClientRect().x,

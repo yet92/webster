@@ -44,7 +44,7 @@ const View: React.FC<ViewProps> = ({
     if (!stage) {
       return;
     }
-    const zoomDirection = e.evt.deltaY > 0 ? 1 : -1;
+    const zoomDirection = e.evt.deltaY > 0 ? -1 : 1;
     const scaleBy = 1.1;
     const oldScale = stage.scaleX();
 

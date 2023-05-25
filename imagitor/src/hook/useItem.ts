@@ -36,12 +36,12 @@ export type ITEMS_CONTEXT = {
 const useItem = () => {
   const dispatch = useDispatch();
   const stageData = useSelector(stageDataSelector.selectAll);
-
   const createItem = (newItem: StageData) => {
     dispatch(stageDataAction.addItem(newItem));
   };
 
   const updateItem = (id: string, attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"]) => {
+
     const targetItem = stageData.find((data) => data.id === id || data.attrs.id === id);
 
     const updatedObject = {

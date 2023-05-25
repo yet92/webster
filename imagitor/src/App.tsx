@@ -15,7 +15,7 @@ import View from "./view";
 import Frame, { FrameProps } from "./view/frame";
 import { StageData } from "./redux/currentStageData";
 import useItem from "./hook/useItem";
-import { StageDataListItem } from "./redux/StageDataList";
+import { StageDataListItem, stageDataListSelector } from "./redux/StageDataList";
 import useStageDataList from "./hook/useStageDataList";
 import ImageItem, { ImageItemProps } from "./view/object/image";
 import useSelection from "./hook/useSelection";
@@ -32,6 +32,8 @@ import hotkeyList from "./config/hotkey.json";
 import useHotkeyFunc from "./hook/useHotkeyFunc";
 import useWorkHistory from "./hook/useWorkHistory";
 import useI18n from "./hook/usei18n";
+import { useSaveStageState } from "./hook/useSaveStageState";
+import { useSelector } from "react-redux";
 import { initialStageDataList } from "./redux/initilaStageDataList";
 
 export type FileKind = {
@@ -43,17 +45,12 @@ export type FileKind = {
 export type FileData = Record<string, FileKind>;
 
 function App() {
+  const [initialRender, setInitialRender] = useState(false);
   const [past, setPast] = useState<StageData[][]>([]);
   const [future, setFuture] = useState<StageData[][]>([]);
-  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(
-    past,
-    future,
-    setPast,
-    setFuture,
-  );
+  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(past, future, setPast, setFuture);
   const transformer = useTransformer();
-  const { selectedItems, onSelectItem, setSelectedItems, clearSelection }
-    = useSelection(transformer);
+  const { selectedItems, onSelectItem, setSelectedItems, clearSelection } = useSelection(transformer);
   const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(transformer, clearHistory);
   const { stageData } = useItem();
   const { initializeFileDataList, updateFileData } = useStageDataList();
@@ -91,9 +88,10 @@ function App() {
     setSelectedItems,
     transformer,
     createStageDataObject,
-    onSelectItem,
+    onSelectItem
   );
-
+  const { getStageFromLocalStorage, saveStageToLocalStorage } = useSaveStageState();
+  const stageDataList = useSelector(stageDataListSelector.selectAll);
   const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
 
   const sortedStageData = useMemo(
@@ -107,29 +105,19 @@ function App() {
         }
         return a.attrs.zIndex - b.attrs.zIndex;
       }),
-    [stageData],
+    [stageData]
   );
 
   const header = (
     <Header>
-      <TabGroup
-        onClickTab={onClickTab}
-        tabList={tabList}
-        onCreateTab={onCreateTab}
-        onDeleteTab={onDeleteTab}
-      />
+      <TabGroup onClickTab={onClickTab} tabList={tabList} onCreateTab={onCreateTab} onDeleteTab={onDeleteTab} />
     </Header>
   );
 
   const navBar = (
     <NavBar>
       {workModeList.map((data) => (
-        <NavBarButton
-          key={`navbar-${data.id}`}
-          data={data}
-          stage={stage}
-          onClick={getClickCallback(data.id)}
-        />
+        <NavBarButton key={`navbar-${data.id}`} data={data} stage={stage} onClick={getClickCallback(data.id)} />
       ))}
     </NavBar>
   );
@@ -160,31 +148,15 @@ function App() {
   );
 
   const settingBar = (
-    <SettingBar
-      selectedItems={selectedItems}
-      clearSelection={clearSelection}
-      stageRef={stage.stageRef}
-    />
+    <SettingBar selectedItems={selectedItems} clearSelection={clearSelection} stageRef={stage.stageRef} />
   );
 
   const renderObject = (item: StageData) => {
     switch (item.attrs["data-item-type"]) {
       case "frame":
-        return (
-          <Frame
-            key={`frame-${item.id}`}
-            data={item as FrameProps["data"]}
-            onSelect={onSelectItem}
-          />
-        );
+        return <Frame key={`frame-${item.id}`} data={item as FrameProps["data"]} onSelect={onSelectItem} />;
       case "image":
-        return (
-          <ImageItem
-            key={`image-${item.id}`}
-            data={item as ImageItemProps["data"]}
-            onSelect={onSelectItem}
-          />
-        );
+        return <ImageItem key={`image-${item.id}`} data={item as ImageItemProps["data"]} onSelect={onSelectItem} />;
       case "text":
         return (
           <TextItem
@@ -233,7 +205,7 @@ function App() {
       layerUp(selectedItems);
     },
     {},
-    [selectedItems],
+    [selectedItems]
   );
 
   useHotkeys(
@@ -243,7 +215,7 @@ function App() {
       layerDown(selectedItems);
     },
     {},
-    [selectedItems],
+    [selectedItems]
   );
 
   useHotkeys(
@@ -253,7 +225,7 @@ function App() {
       duplicateItems(selectedItems, createStageDataObject);
     },
     {},
-    [selectedItems, stageData],
+    [selectedItems, stageData]
   );
 
   useHotkeys(
@@ -263,7 +235,7 @@ function App() {
       copyItems(selectedItems, setClipboard, createStageDataObject);
     },
     {},
-    [selectedItems, stageData, clipboard],
+    [selectedItems, stageData, clipboard]
   );
 
   useHotkeys(
@@ -273,7 +245,7 @@ function App() {
       selectAll(stage, onSelectItem);
     },
     {},
-    [selectedItems],
+    [selectedItems]
   );
 
   useHotkeys(
@@ -283,7 +255,7 @@ function App() {
       pasteItems(clipboard);
     },
     {},
-    [clipboard],
+    [clipboard]
   );
 
   useHotkeys(
@@ -293,7 +265,7 @@ function App() {
       goToPast();
     },
     {},
-    [goToPast],
+    [goToPast]
   );
 
   useHotkeys(
@@ -303,7 +275,7 @@ function App() {
       goToFuture();
     },
     {},
-    [goToFuture],
+    [goToFuture]
   );
 
   useHotkeys(
@@ -313,7 +285,7 @@ function App() {
       flipHorizontally(selectedItems);
     },
     {},
-    [selectedItems],
+    [selectedItems]
   );
 
   useHotkeys(
@@ -323,7 +295,7 @@ function App() {
       flipVertically(selectedItems);
     },
     {},
-    [selectedItems],
+    [selectedItems]
   );
 
   useHotkeys(
@@ -333,16 +305,26 @@ function App() {
       deleteItems(selectedItems, setSelectedItems, transformer.transformerRef);
     },
     { enabled: Boolean(selectedItems.length) },
-    [selectedItems, transformer.transformerRef.current],
+    [selectedItems, transformer.transformerRef.current]
   );
 
   useEffect(() => {
-    window.addEventListener("beforeunload", (e) => {
-      e.preventDefault();
-      e.returnValue = "";
-    });
-    onCreateTab(undefined, initialStageDataList[0] as StageDataListItem);
-    initializeFileDataList(initialStageDataList);
+    const storedStageDataList = JSON.parse(localStorage.getItem("StageDataList") || "[]");
+    if (initialRender && JSON.stringify(storedStageDataList) !== JSON.stringify(stageDataList)) {
+      saveStageToLocalStorage();
+    } else {
+      setInitialRender(true);
+    }
+  }, [stageDataList, initialRender]);
+
+  useEffect(() => {
+    if (getStageFromLocalStorage().length) {
+      getStageFromLocalStorage().forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
+      initializeFileDataList(getStageFromLocalStorage());
+    } else {
+      onCreateTab(undefined, initialStageDataList[0] as StageDataListItem);
+      initializeFileDataList(initialStageDataList);
+    }
     stage.stageRef.current.setPosition({
       x: Math.max(Math.ceil(stage.stageRef.current.width() - 1280) / 2, 0),
       y: Math.max(Math.ceil(stage.stageRef.current.height() - 760) / 2, 0),
