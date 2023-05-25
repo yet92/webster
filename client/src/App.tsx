@@ -1,7 +1,14 @@
+import useRoutes from "./routes";
+import { BrowserRouter } from 'react-router-dom';
+
 function App() {
+  const routes = useRoutes();
+
   return (
     <>
-      <h1>Webster</h1>
+      <BrowserRouter>
+        {routes}
+      </BrowserRouter>
     </>
   );
 }
