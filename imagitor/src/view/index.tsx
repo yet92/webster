@@ -12,8 +12,8 @@ import { ITEMS_CONTEXT } from "../hook/useItem";
 import useDragAndDrop from "../hook/useDragAndDrop";
 import useStage, { STAGE_POSITION, STAGE_SCALE } from "../hook/useStage";
 import useLocalStorage from "../hook/useLocalStorage";
-import useCurrentTool from "../hook/useCurrentTool";
 import { StoreState } from "../redux/store";
+import useBrush from "../hook/useBrush";
 
 type ViewProps = {
   onSelect: ITEMS_CONTEXT["onSelect"];
@@ -167,7 +167,6 @@ const View: React.FC<ViewProps> = ({
     [onSelectEmptyBackground]
   );
 
-  useCurrentTool(stageRef);
   const onMouseMoveOnStage = (e: KonvaEventObject<MouseEvent>) => {
     if (e.evt.which === 1) {
       const stage = e.target.getStage();
@@ -273,6 +272,12 @@ const View: React.FC<ViewProps> = ({
       setContainer(stageRef.current!.container());
     }
   }, []);
+
+  useBrush(stageRef, {
+    brushColor: "red",
+    brushOpacity: 1,
+    brushSize: 5,
+  });
 
   return (
     <ReactReduxContext.Consumer>

@@ -78,6 +78,8 @@ function App() {
     pasteItems,
     duplicateItems,
     layerDown,
+    setBrush,
+    setPointer,
     layerUp,
     flipHorizontally,
     flipVertically,
@@ -260,6 +262,24 @@ function App() {
     (e) => {
       e.preventDefault();
       layerUp(selectedItems);
+    },
+    {},
+    [selectedItems]
+  );
+  useHotkeys(
+    "p",
+    (e) => {
+      e.preventDefault();
+      setPointer();
+    },
+    {},
+    [selectedItems]
+  );
+  useHotkeys(
+    "b",
+    (e) => {
+      e.preventDefault();
+      setBrush();
     },
     {},
     [selectedItems]

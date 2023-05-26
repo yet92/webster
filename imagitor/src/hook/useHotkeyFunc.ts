@@ -244,6 +244,7 @@ const useHotkeyFunc = () => {
     undo,
     redo,
     setBrush,
+    setPointer,
   };
 };
 
