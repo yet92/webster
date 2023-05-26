@@ -15,7 +15,7 @@ const useTool = (
   setSelectedItems: ReturnType<typeof useSelection>["setSelectedItems"],
   transformer: ReturnType<typeof useTransformer>,
   createStageDataObject: (item: Node<NodeConfig>) => StageData,
-  onSelectItem: ReturnType<typeof useSelection>["onSelectItem"],
+  onSelectItem: ReturnType<typeof useSelection>["onSelectItem"]
 ) => {
   const { updateItem } = useItem();
   const hotkeyFunc = useHotkeyFunc();
@@ -24,8 +24,13 @@ const useTool = (
     modal.openModal();
   };
 
-  const removeBackground = (selectedItems: ReturnType<typeof useSelection>["selectedItems"]) => {
-    if (selectedItems.length === 1 && selectedItems[0].attrs["data-item-type"] === "image") {
+  const removeBackground = (
+    selectedItems: ReturnType<typeof useSelection>["selectedItems"]
+  ) => {
+    if (
+      selectedItems.length === 1
+      && selectedItems[0].attrs["data-item-type"] === "image"
+    ) {
       console.log("in");
       const originalImage = new Image();
       originalImage.onload = () => {
@@ -70,6 +75,10 @@ const useTool = (
         return removeBackground(selectedItems);
       case "hotkey":
         return onClickHotkeyButton();
+      case "pointer":
+        return hotkeyFunc.setPointer();
+      case "eraser":
+        return hotkeyFunc.setEraser();
       default:
         return null;
     }

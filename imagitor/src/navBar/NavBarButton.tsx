@@ -11,6 +11,7 @@ export type NavBarItemKind = {
   desc: string;
   icon?: string;
   "sub-button"?: NavBarItemKind[];
+  "sub-input"?: NavBarItemKind[];
 };
 
 type NavBarButtonProps = {

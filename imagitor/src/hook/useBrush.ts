@@ -25,7 +25,7 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
   );
   console.log(stageRef.current?.getLayers());
   useEffect(() => {
-    if (currentTool === "brush") {
+    if (currentTool === "brush" || currentTool == "eraser") {
       const stage = stageRef.current!;
       const layer = new Layer();
       stage.add(layer);
@@ -38,7 +38,8 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         const newLine = new Konva.Line({
           stroke: brushColor,
           strokeWidth: brushSize,
-          globalCompositeOperation: "source-over",
+          globalCompositeOperation:
+            currentTool == "eraser" ? "destination-out" : "source-over",
           points: [
             decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
             decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
@@ -48,7 +49,7 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         });
 
         // change to current layer
-        stage.getLayers()[1].add(newLine);
+        layer.add(newLine);
 
         linesRef.current.push(newLine);
       };
@@ -58,9 +59,17 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         const lastLine = linesRef.current[linesRef.current.length - 1];
         createItem({
           id: nanoid(),
-          attrs: { ...lastLine.attrs, "data-item-type": "line" },
+          attrs: {
+            ...lastLine.attrs,
+            updatedAt: Date.now(),
+            zIndex: 0,
+            "data-item-type": "line",
+            name: "label-target",
+          },
           className: "brush-line",
+          children: [],
         });
+        layer.destroyChildren();
       };
 
       const handleMouseMove = () => {

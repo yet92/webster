@@ -7,6 +7,8 @@ import { OverrideItemProps } from "../../../hook/useItem";
 import useStage from "../../../hook/useStage";
 import { StageData } from "../../../redux/currentStageData";
 import { decimalUpToSeven } from "../../../util/decimalUpToSeven";
+import { useSelector } from "react-redux";
+import { StoreState } from "../../../redux/store";
 
 export type ImageItemKind = {
   "data-item-type": string;
@@ -34,7 +36,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
   const stage = useStage();
   const { onDragMoveFrame, onDragEndFrame, checkIsInFrame } = useDragAndDrop(
     stage.stageRef,
-    stage.dragBackgroundOrigin,
+    stage.dragBackgroundOrigin
   );
   // const changeImageSrc = (base64: string) => {
   //   const newImage = new Image();
@@ -55,7 +57,9 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
     if (!data.attrs._filters) {
       return [Konva.Filters.Brighten];
     }
-    return data.attrs._filters.map((filterName: string) => filterMap[filterName]);
+    return data.attrs._filters.map(
+      (filterName: string) => filterMap[filterName]
+    );
   }, [data.attrs]);
 
   useEffect(() => {
@@ -76,10 +80,14 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
         let height;
         if (imageNode.width() > imageNode.height()) {
           width = decimalUpToSeven(512);
-          height = decimalUpToSeven(width * (imageNode.height() / imageNode.width()));
+          height = decimalUpToSeven(
+            width * (imageNode.height() / imageNode.width())
+          );
         } else {
           height = decimalUpToSeven(512);
-          width = decimalUpToSeven(height * (imageNode.width() / imageNode.height()));
+          width = decimalUpToSeven(
+            height * (imageNode.width() / imageNode.height())
+          );
         }
         imageNode.width(width);
         imageNode.height(height);
@@ -110,6 +118,10 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
     imageRef.current!.cache();
   }, []);
 
+  const { currentTool } = useSelector(
+    (state: StoreState) => state.toolSelection
+  );
+
   return (
     <KonvaImage
       ref={imageRef}
@@ -129,7 +141,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
       opacity={attrs.opacity ?? 1}
       rotation={attrs.rotation ?? 0}
       filters={filters ?? [Konva.Filters.Brighten]}
-      draggable
+      draggable={currentTool === "pointer"}
       onDragMove={onDragMoveFrame}
       onDragEnd={onDragEndFrame}
     />

@@ -4,7 +4,15 @@ import { Layer } from "konva/lib/Layer";
 import { Node, NodeConfig } from "konva/lib/Node";
 import { useHotkeys } from "react-hotkeys-hook";
 import { nanoid } from "nanoid";
-import { Button, Col, Modal, Row } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import Header from "./header";
 import Layout from "./layout";
 import SettingBar from "./settingBar";
@@ -32,6 +40,7 @@ import ShapeItem, { ShapeItemProps } from "./view/object/shape";
 import IconItem, { IconItemProps } from "./view/object/icon";
 import LineItem, { LineItemProps } from "./view/object/line";
 import { Line } from "konva/lib/shapes/Line";
+import { Line as KonvaLine } from "react-konva";
 import useModal from "./hook/useModal";
 import hotkeyList from "./config/hotkey.json";
 import useHotkeyFunc from "./hook/useHotkeyFunc";
@@ -41,6 +50,7 @@ import { useSaveStageState } from "./hook/useSaveStageState";
 import { useSelector } from "react-redux";
 import { initialStageDataList } from "./redux/initilaStageDataList";
 import Konva from "konva";
+import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
 
 export type FileKind = {
   "file-id": string;
@@ -79,6 +89,7 @@ function App() {
     duplicateItems,
     layerDown,
     setBrush,
+    setEraser,
     setPointer,
     layerUp,
     flipHorizontally,
@@ -143,14 +154,26 @@ function App() {
 
   const navBar = (
     <NavBar>
-      {workModeList.map((data) => (
-        <NavBarButton
-          key={`navbar-${data.id}`}
-          data={data}
-          stage={stage}
-          onClick={getClickCallback(data.id)}
-        />
-      ))}
+      {workModeList.map((data) => {
+        if (data.id === "brush") {
+          return (
+            <NavBarDropdownButton
+              key={`navbar-${data.id}`}
+              onClick={getClickCallback(data.id)}
+              data={data}
+              stage={stage}
+            />
+          );
+        }
+        return (
+          <NavBarButton
+            key={`navbar-${data.id}`}
+            data={data}
+            stage={stage}
+            onClick={getClickCallback(data.id)}
+          />
+        );
+      })}
     </NavBar>
   );
 
@@ -186,8 +209,6 @@ function App() {
       stageRef={stage.stageRef}
     />
   );
-
-  const linesRef = useRef<Line[]>([]);
 
   const renderObject = (item: StageData) => {
     switch (item.attrs["data-item-type"]) {
@@ -235,22 +256,15 @@ function App() {
           />
         );
       case "line":
-        {
-          const stg = stage.stageRef.current!;
-          // TODO: change to needed layer
-          const layer = stg.getLayers()[0];
-          const newLine = new Konva.Line(item.attrs);
-          layer.add(newLine);
-          linesRef.current.push(newLine);
-          layer.batchDraw();
-          stage.setStageRef(stg);
-        }
-        // <LineItem
-        //   key={`line-${item.id}`}
-        //   data={item as LineItemProps["data"]}
-        //   transformer={transformer}
-        //   onSelect={onSelectItem}
-        // />;
+        // return <KonvaLine key={item.id} {...item.attrs} />;
+        return (
+          <LineItem
+            key={`line-${item.id}`}
+            data={item as LineItemProps["data"]}
+            transformer={transformer}
+            onSelect={onSelectItem}
+          />
+        );
         break;
       default:
         return null;
@@ -280,6 +294,16 @@ function App() {
     (e) => {
       e.preventDefault();
       setBrush();
+    },
+    {},
+    [selectedItems]
+  );
+
+  useHotkeys(
+    "e",
+    (e) => {
+      e.preventDefault();
+      setEraser();
     },
     {},
     [selectedItems]

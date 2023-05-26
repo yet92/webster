@@ -69,7 +69,7 @@ const useDragAndDrop = (
           width,
           height,
           src: data.src,
-          zIndex: 0,
+          zIndex: 10,
           brightness: 0,
           _filters: ["Brighten"],
           updatedAt: Date.now(),
