@@ -9,21 +9,16 @@ import { decimalUpToSeven } from "../util/decimalUpToSeven";
 import { useSelector } from "react-redux";
 import { StoreState } from "../redux/store";
 
-interface BrushOptions {
-  brushColor: string;
-  brushSize: number;
-  brushOpacity: number;
-}
+const useBrush = (stageRef: React.RefObject<Stage>) => {
+  const { currentTool, brushOptions, toolColor } = useSelector(
+    (state: StoreState) => state.toolSelection
+  );
+  const { brushSize, brushOpacity } = brushOptions;
 
-const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
-  const { brushColor, brushSize, brushOpacity } = options;
   const { createItem } = useItem();
   const isDrawingRef = useRef(false);
   const linesRef = useRef<Line[]>([]);
-  const { currentTool } = useSelector(
-    (state: StoreState) => state.toolSelection
-  );
-  console.log(stageRef.current?.getLayers());
+
   useEffect(() => {
     if (currentTool === "brush" || currentTool == "eraser") {
       const stage = stageRef.current!;
@@ -36,11 +31,15 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         const stageOrigin = stage.getAbsolutePosition();
 
         const newLine = new Konva.Line({
-          stroke: brushColor,
+          stroke: toolColor,
           strokeWidth: brushSize,
+          lineCap: "round",
+          lineJoin: "miter",
           globalCompositeOperation:
             currentTool == "eraser" ? "destination-out" : "source-over",
           points: [
+            decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
+            decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
             decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
             decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
           ],
@@ -62,7 +61,6 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
           attrs: {
             ...lastLine.attrs,
             updatedAt: Date.now(),
-            zIndex: 0,
             "data-item-type": "line",
             name: "label-target",
           },
@@ -71,7 +69,6 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         });
         layer.destroyChildren();
       };
-
       const handleMouseMove = () => {
         if (!isDrawingRef.current) {
           return;
@@ -87,7 +84,6 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
             decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
           ]);
         lastLine.points(newPoints);
-
         layer.batchDraw();
       };
 
@@ -102,7 +98,7 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         layer.destroy();
       };
     }
-  }, [stageRef, brushColor, brushSize, brushOpacity, currentTool]);
+  }, [stageRef, toolColor, brushSize, brushOpacity, currentTool]);
 
   return {};
 };

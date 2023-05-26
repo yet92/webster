@@ -10,20 +10,12 @@
 		"name": "Brush",
 		"desc": "Brush",
 		"icon": "brush-fill",
-		"sub-button": [
-			{
-				"id": "brushDrop",
-				"name": "Type",
-				"desc": "Brush",
-				"icon": "arrow-right"
-			}
-		],
 		"sub-input": [
 			{
 				"id": "brushDrop",
 				"name": "Type",
 				"desc": "Brush",
-				"icon": "arrow-right"
+				"icon": ""
 			}
 		]
 	},
