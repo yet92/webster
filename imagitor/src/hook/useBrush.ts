@@ -40,6 +40,8 @@ const useBrush = (stageRef: React.RefObject<Stage>) => {
           points: [
             decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
             decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
+            decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
+            decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
           ],
           draggable: false,
           opacity: brushOpacity,
