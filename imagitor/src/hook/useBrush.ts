@@ -5,20 +5,12 @@ import { Stage } from "konva/lib/Stage";
 import { Line, LineConfig } from "konva/lib/shapes/Line";
 import useItem from "./useItem";
 import { nanoid } from "nanoid";
+import { decimalUpToSeven } from "../util/decimalUpToSeven";
 
 interface BrushOptions {
   brushColor: string;
   brushSize: number;
   brushOpacity: number;
-}
-
-interface KonvaLineState {
-  stroke: string;
-  strokeWidth: number;
-  globalCompositeOperation: string;
-  points: number[];
-  draggable: boolean;
-  opacity: number;
 }
 
 const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
@@ -35,15 +27,22 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
     const handleMouseDown = () => {
       isDrawingRef.current = true;
       const pos = stage.getPointerPosition();
+      const stageOrigin = stage.getAbsolutePosition();
+
       const newLine = new Konva.Line({
         stroke: brushColor,
         strokeWidth: brushSize,
         globalCompositeOperation: "source-over",
-        points: [pos!.x, pos!.y],
+        points: [
+          decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
+          decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
+        ],
         draggable: false,
         opacity: brushOpacity,
       });
-      stageRef.current?.getLayers()[1].add(newLine);
+
+      // change to current layer
+      stage.getLayers()[1].add(newLine);
 
       linesRef.current.push(newLine);
     };
@@ -63,12 +62,16 @@ const useBrush = (stageRef: React.RefObject<Stage>, options: BrushOptions) => {
         return;
       }
       const pos = stage.getPointerPosition();
-      const lastLine = linesRef.current[linesRef.current.length - 1];
-      const newPoints = lastLine.points().concat([pos!.x, pos!.y]);
-      lastLine.points(newPoints);
+      const stageOrigin = stage.getAbsolutePosition();
 
-      // Create a new line object with the updated points
-      const updatedLine = new Konva.Line(lastLine.attrs);
+      const lastLine = linesRef.current[linesRef.current.length - 1];
+      const newPoints = lastLine
+        .points()
+        .concat([
+          decimalUpToSeven((pos!.x - stageOrigin.x) / stage.scaleX()),
+          decimalUpToSeven((pos!.y - stageOrigin.y) / stage.scaleY()),
+        ]);
+      lastLine.points(newPoints);
 
       layer.batchDraw();
     };

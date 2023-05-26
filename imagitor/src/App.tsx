@@ -233,47 +233,26 @@ function App() {
           />
         );
       case "line":
+        {
+          const stg = stage.stageRef.current!;
+          // TODO: change to needed layer
+          const layer = stg.getLayers()[0];
+          const newLine = new Konva.Line(item.attrs);
+          layer.add(newLine);
+          linesRef.current.push(newLine);
+          layer.batchDraw();
+          stage.setStageRef(stg);
+        }
+        // <LineItem
+        //   key={`line-${item.id}`}
+        //   data={item as LineItemProps["data"]}
+        //   transformer={transformer}
+        //   onSelect={onSelectItem}
+        // />;
         break;
       default:
         return null;
     }
-  };
-
-  useEffect(() => {
-    const ls
-      = JSON.parse(localStorage.getItem("StageDataList") || "[]")[0]?.data || [];
-    console.log(ls);
-    renderInitialLines(
-      ls.filter((item: any) => item.attrs["data-item-type"] === "line")
-    );
-  }, []);
-
-  const renderInitialLines = (initialLines: any) => {
-    const stg = stage.stageRef.current!;
-    const layer = new Layer();
-    stg.add(layer);
-    initialLines.forEach((lineData: any) => {
-      const {
-        stroke,
-        strokeWidth,
-        globalCompositeOperation,
-        points,
-        draggable,
-        opacity,
-      } = lineData.attrs;
-  
-      const newLine = new Konva.Line({
-        stroke,
-        strokeWidth,
-        globalCompositeOperation,
-        points,
-        draggable,
-        opacity,
-      });
-      layer.add(newLine);
-      linesRef.current.push(newLine);
-    });
-    layer.batchDraw();
   };
 
   useHotkeys(
