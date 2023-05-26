@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   Button,
   ButtonGroup,
@@ -16,19 +16,21 @@ import positionStyles from "../style/position.module.css";
 import sizeStyles from "../style/size.module.css";
 import alignStyles from "../style/align.module.css";
 import useStage from "../hook/useStage";
+import { useDispatch } from "react-redux";
+import { ReactI18NextChild } from "react-i18next";
 
 type NavBarDropdownButtonProps = {
   data: NavBarItemKind;
+  dropdownData: ReactI18NextChild;
   onClick: () => void;
   stage: ReturnType<typeof useStage>;
 };
 
 const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
   data,
+  dropdownData,
   onClick,
 }) => {
-  if (!data["sub-button"]) return <></>;
-
   return (
     <ButtonGroup vertical>
       <Dropdown
@@ -44,22 +46,8 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
         <Dropdown.Menu
           className={[sizeStyles.width100, alignStyles.fromTopCenter].join(" ")}
         >
-          {data["sub-button"].map((subData) => (
-            <Dropdown.Item
-              key={`navbar-${subData.id}`}
-              data-navbar-id={subData.id}
-              eventKey={data.id}
-              className={[colorStyles.whiteTheme, "d-inline"].join(" ")}
-            >
-              {subData.icon ? (
-                <i className={`bi-${subData.icon}`} />
-              ) : (
-                subData.name
-              )}
-            </Dropdown.Item>
-          ))}
-          {data["sub-input"]
-            && data["sub-input"].map((subData) => (
+          {data["sub-button"]
+            && data["sub-button"].map((subData) => (
               <Dropdown.Item
                 key={`navbar-${subData.id}`}
                 data-navbar-id={subData.id}
@@ -71,14 +59,29 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
                 ) : (
                   subData.name
                 )}
-                <InputGroup className="mb-3">
-                  <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-                  <Form.Control
-                    placeholder="Username"
-                    aria-label="Username"
-                    aria-describedby="basic-addon1"
-                  />
-                </InputGroup>
+              </Dropdown.Item>
+            ))}
+          {data["sub-input"]
+            && data["sub-input"].map((subData) => (
+              <Dropdown.Item
+                key={`navbar-${subData.id}`}
+                data-navbar-id={subData.id}
+                eventKey={data.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                className={[colorStyles.whiteTheme, "d-inline"].join(" ")}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                    padding: "5px",
+                  }}
+                >
+                  {dropdownData}
+                </div>
               </Dropdown.Item>
             ))}
         </Dropdown.Menu>

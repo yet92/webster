@@ -273,11 +273,7 @@ const View: React.FC<ViewProps> = ({
     }
   }, []);
 
-  useBrush(stageRef, {
-    brushColor: "red",
-    brushOpacity: 1,
-    brushSize: 5,
-  });
+  useBrush(stageRef);
 
   return (
     <ReactReduxContext.Consumer>

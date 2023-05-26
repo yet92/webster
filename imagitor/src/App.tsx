@@ -51,6 +51,7 @@ import { useSelector } from "react-redux";
 import { initialStageDataList } from "./redux/initilaStageDataList";
 import Konva from "konva";
 import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
+import BrushDropdown from "./navBar/BrushDropdown";
 
 export type FileKind = {
   "file-id": string;
@@ -160,6 +161,7 @@ function App() {
             <NavBarDropdownButton
               key={`navbar-${data.id}`}
               onClick={getClickCallback(data.id)}
+              dropdownData={<BrushDropdown />}
               data={data}
               stage={stage}
             />
