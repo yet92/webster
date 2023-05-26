@@ -281,6 +281,16 @@
       "desc": "Type a keyword to find icon"
     }
   },
+
+  "layer": {
+    "id": "layer",
+    "name": "Layer",
+    "search": {
+      "title": "Search Layer",
+      "placeholder": "Enter keyword",
+      "desc": "Type a keyword to find layer"
+    }
+  },
   "export": {
     "id": "export",
     "name": "Export",

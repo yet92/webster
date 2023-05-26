@@ -207,6 +207,7 @@ function App() {
       selectedItems={selectedItems}
       clearSelection={clearSelection}
       stageRef={stage.stageRef}
+      transformer={transformer}
     />
   );
 
