@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body,
+html {
+  background-color: #111010;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }

@@ -7,7 +7,7 @@ import {
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
 
-type User = {
+export type User = {
   id: number;
   login: string;
   email: string;
@@ -68,6 +68,7 @@ const authSlice = createSlice({
     },
 
     login: (state, action: PayloadAction<User>) => {
+      console.log(action.payload);
       state.me = action.payload;
       state.isAuthenticated = true;
       if (state.me.accessToken) {
