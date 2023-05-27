@@ -11,10 +11,11 @@ import {
   AiOutlineClose,
 } from 'react-icons/ai';
 import { Errors, GoogleButton } from '../../pages/auth/components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addError, clearErrors } from '../../store/errorsSlice';
 import { FormData, RequestType, authFetch } from '../../pages/auth/utils/auth';
 import { User, login } from '../../store/authSlice';
+import { RootState } from '../../store';
 
 export default function SignInModal({
   show,
@@ -23,11 +24,18 @@ export default function SignInModal({
   show: boolean;
   onClose: () => void;
 }) {
+  const { isAuthenticated } = useSelector(
+    (selector: RootState) => selector.auth
+  );
   const [isLogin, setIsLogin] = useState(true);
 
   const onAuthTypeChange = () => {
     setIsLogin(!isLogin);
   };
+
+  useEffect(() => {
+    if (isAuthenticated && show) onClose();
+  }, [isAuthenticated]);
 
   return (
     <Modal
@@ -94,7 +102,7 @@ const EmailForm = ({ isLogin }: { isLogin: boolean }) => {
 
   const onFormData = async (formData: FormData) => {
     dispatch(clearErrors());
-      console.log(formData);
+    console.log(formData);
     const { response, json } = await authFetch(
       isLogin ? RequestType.Login : RequestType.Register,
       formData
@@ -105,7 +113,7 @@ const EmailForm = ({ isLogin }: { isLogin: boolean }) => {
       dispatch(addError({ message: json.message }));
     } else {
       if (isLogin) {
-        const user = { ... json.data.user, accessToken: json.data.token };
+        const user = { ...json.data.user, accessToken: json.data.token };
         dispatch(login(user as any));
       }
     }

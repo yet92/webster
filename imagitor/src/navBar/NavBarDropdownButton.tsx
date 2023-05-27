@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import {
   Button,
   ButtonGroup,
@@ -16,8 +16,9 @@ import positionStyles from "../style/position.module.css";
 import sizeStyles from "../style/size.module.css";
 import alignStyles from "../style/align.module.css";
 import useStage from "../hook/useStage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ReactI18NextChild } from "react-i18next";
+import { StoreState } from "../redux/store";
 
 type NavBarDropdownButtonProps = {
   data: NavBarItemKind;
@@ -31,7 +32,18 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
   dropdownData,
   onClick,
 }) => {
+  const { currentTool } = useSelector(
+    (selector: StoreState) => selector.toolSelection
+  );
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (currentTool === "brush" || currentTool === "eraser") {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [currentTool]);
   return (
     <ButtonGroup vertical>
       <Dropdown
