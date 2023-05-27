@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Button,
   ButtonGroup,
@@ -31,12 +31,17 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
   dropdownData,
   onClick,
 }) => {
+  const [show, setShow] = useState(false);
   return (
     <ButtonGroup vertical>
       <Dropdown
         as={ButtonGroup}
-        onClick={onClick}
+        onClick={(e) => {
+          setShow(!show);
+          onClick();
+        }}
         drop="end"
+        show={show}
         data-navbar-id={data.id}
         variant={[" ", colorStyles.whiteTheme, borderStyles.colorGrey].join(
           " "
