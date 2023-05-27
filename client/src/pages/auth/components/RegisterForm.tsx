@@ -2,10 +2,15 @@ import { Button, Label, TextInput } from "flowbite-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import GoogleButton from "./GoogleButton";
 import Errors from "./Errors";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { SERVER_URL } from "../../../utils/constants";
+import { onGoogleAuthSuccess } from "../utils/onGoogleAuthSuccess";
 
 export type FormData = {
     email: string,
+    username: string,
     password: string,
+    repeatPassword: string
 }
 
 export type Props = {
@@ -14,7 +19,7 @@ export type Props = {
 
 export default function RegisterForm({ onFormData }: Props) {
 
-    const [formState, setFormState] = useState<FormData>({ email: "", password: "" });
+    const [formState, setFormState] = useState<FormData>({ email: "", username: "", password: "", repeatPassword: "" });
 
     const onFormInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
         setFormState({ ...formState, [e.target.id]: e.target.value });
@@ -49,6 +54,22 @@ export default function RegisterForm({ onFormData }: Props) {
             <div>
                 <div className="mb-2 block">
                     <Label
+                        htmlFor="email"
+                        value="Username"
+                    />
+                </div>
+                <TextInput
+                    value={formState.username}
+                    onChange={onFormInputChange}
+                    id="username"
+                    type="text"
+                    placeholder=""
+                    required={true}
+                />
+            </div>
+            <div>
+                <div className="mb-2 block">
+                    <Label
                         htmlFor="password1"
                         value="Your password"
                     />
@@ -61,14 +82,29 @@ export default function RegisterForm({ onFormData }: Props) {
                     required={true}
                 />
             </div>
+            <div>
+                <div className="mb-2 block">
+                    <Label
+                        htmlFor="repeatPassword"
+                        value="Repeat your password"
+                    />
+                </div>
+                <TextInput
+                    value={formState.repeatPassword}
+                    onChange={onFormInputChange}
+                    id="repeatPassword"
+                    type="password"
+                    required={true}
+                />
+            </div>
             <Errors></Errors>
-
+            {/* <GoogleButton text="Sign up with google"></GoogleButton> */}
             <div className="flex flex-col items-center gap-5">
 
                 <Button type="submit" className="w-[100%]">
-                    Sign In
+                    Sign up
                 </Button>
-                <GoogleButton />
+                <GoogleButton/>
             </div>
 
 

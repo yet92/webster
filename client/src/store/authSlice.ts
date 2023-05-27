@@ -8,10 +8,10 @@ import axios from 'axios';
 import { API_URL } from '../utils/constants';
 
 type User = {
-  id: string;
+  id: number;
   login: string;
   email: string;
-  avatar: string;
+  avatar?: string;
   accessToken?: string;
 };
 
@@ -40,41 +40,72 @@ export const checkAuth = createAsyncThunk<
 
 const initialState: userState = {
   me: {
-    id: '',
+    id: -1,
     login: '',
     email: '',
     avatar: '',
   },
   isAuthenticated: false,
-  loading: false,
+  loading: true,
   error: null,
 };
 
-const todoSlice = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(checkAuth.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(checkAuth.fulfilled, (state, action) => {
-        state.me = { ...action.payload, accessToken: undefined };
-        state.isAuthenticated = true;
-        state.loading = false;
-      })
-      .addMatcher(isError, (state, action: PayloadAction<string>) => {
-        state.error = action.payload;
-        state.loading = false;
-      });
+  reducers: {
+    loadUser: (state) => {
+      state.loading = true;
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        if (user) {
+          state.me = user;
+          state.isAuthenticated = true;
+        }
+      }
+      state.loading = false;
+    },
+
+    login: (state, action: PayloadAction<User>) => {
+      state.me = action.payload;
+      state.isAuthenticated = true;
+      if (state.me.accessToken) {
+        localStorage.setItem('user', JSON.stringify(state.me));
+      }
+    },
+
+    logout: (state) => {
+      state.loading = true;
+      state.me = { email: '', id: -1, login: '' };
+      state.isAuthenticated = false;
+      
+      localStorage.removeItem('user');
+      state.loading = false;
+    },
   },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(checkAuth.pending, (state) => {
+  //       state.loading = true;
+  //       state.error = null;
+  //     })
+  //     .addCase(checkAuth.fulfilled, (state, action) => {
+  //       state.me = { ...action.payload, accessToken: undefined };
+  //       state.isAuthenticated = true;
+  //       state.loading = false;
+  //     })
+  //     .addMatcher(isError, (state, action: PayloadAction<string>) => {
+  //       state.error = action.payload;
+  //       state.loading = false;
+  //     });
+  // },
 });
 
-// export const { addTodo, toggleComplete, removeTodo } = todoSlice.actions;
+// export const { addTodo, toggleComplete, removeTodo } = authSlice.actions;
+export const { login, loadUser, logout } = authSlice.actions;
 
-export default todoSlice.reducer;
+export default authSlice.reducer;
 
 function isError(action: AnyAction) {
   return action.type.endsWith('rejected');
