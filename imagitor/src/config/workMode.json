@@ -10,7 +10,7 @@
 		"name": "Brush",
 		"desc": "Brush",
 		"icon": "brush-fill",
-		"sub-input": [
+		"sub-button": [
 			{
 				"id": "brushDrop",
 				"name": "Type",

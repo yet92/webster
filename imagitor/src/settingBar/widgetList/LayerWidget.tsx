@@ -73,8 +73,11 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
     if (selectedItems.length) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      const selectedLayers: Node<NodeConfig>[] = selectedItems.map((selectedItem) =>
-        data.stageRef.current!.getLayers()[0].children?.find((item) => item.attrs.id === selectedItem.id)
+      const selectedLayers: Node<NodeConfig>[] = selectedItems.map(
+        (selectedItem) =>
+          data.stageRef
+            .current!.getLayers()[0]
+            .children?.find((item) => item.attrs.id === selectedItem.id)
       );
       // const selectedLayers = selectedItems
       //   .map((slectedItem) =>
@@ -91,7 +94,9 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
 
     if (isCtrlPressed) {
       if (selectedItems.includes(item)) {
-        updatedSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== item);
+        updatedSelectedItems = selectedItems.filter(
+          (selectedItem) => selectedItem !== item
+        );
       } else {
         updatedSelectedItems = [...selectedItems, item];
       }
@@ -142,33 +147,60 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
   };
 
   return (
-    <Container style={{ height: "30vh", overflowY: "auto", width: "100%", padding: "0" }}>
-      <ListGroup className="auto">
-        {stageData.map((item, index) => (
-          <ListGroup.Item
-            key={index}
-            active={selectedItems.includes(item)}
-            onClick={(e) => handleClick(item, e.ctrlKey)}
-            onDoubleClick={() => handleDoubleClick(item)}
-            style={{ width: "100%" }}
-          >
-            <img src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/Layers.svg`} alt={item.className} />
-            {editingItem && isEditing ? (
-              <input
-                type="text"
-                value={editingItem.className}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                autoFocus
-                onFocus={(e) => e.target.select()}
-              />
-            ) : (
-              <span>{item.className}</span>
-            )}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-    </Container>
+    <div className="tw-flex tw-flex-col tw-w-full tw-gap-4 tw-overflow-x-auto tw-h-[20vh] ">
+      {stageData.map((item, index) => (
+        <div
+          key={index}
+          className={`${selectedItems.includes(item) && "tw-bg-blue-600"} tw-p-2 tw-w-full tw-flex tw-flex-row tw-gap-2 tw-rounded-md`}
+          onClick={(e) => handleClick(item, e.ctrlKey)}
+          onDoubleClick={() => handleDoubleClick(item)}
+        >
+          <img
+            src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/Layers.svg`}
+            alt={item.className}
+          />
+          {editingItem && isEditing ? (
+            <input
+              type="text"
+              value={editingItem.className}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              autoFocus
+              onFocus={(e) => e.target.select()}
+            />
+          ) : (
+            <span>{item.className}</span>
+          )}
+        </div>
+      ))}
+    </div>
+    // <Container style={{ height: "30vh", overflowY: "auto", width: "100%", padding: "0" }}>
+    //   {/* <ListGroup className="auto">
+    //     {stageData.map((item, index) => (
+    //       <ListGroup.Item
+    //         key={index}
+    //         active={selectedItems.includes(item)}
+    //         onClick={(e) => handleClick(item, e.ctrlKey)}
+    //         onDoubleClick={() => handleDoubleClick(item)}
+    //         style={{ width: "100%" }}
+    //       >
+    //         <img src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/Layers.svg`} alt={item.className} />
+    //         {editingItem && isEditing ? (
+    //           <input
+    //             type="text"
+    //             value={editingItem.className}
+    //             onChange={handleInputChange}
+    //             onBlur={handleInputBlur}
+    //             autoFocus
+    //             onFocus={(e) => e.target.select()}
+    //           />
+    //         ) : (
+    //           <span>{item.className}</span>
+    //         )}
+    //       </ListGroup.Item>
+    //     ))}
+    //   </ListGroup> */}
+    // </Container>
   );
 };
 
@@ -187,7 +219,9 @@ const LayerThumbnail: React.FC<{
 
   return (
     <div className="list-group-item">
-      <Figure className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}>
+      <Figure
+        className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}
+      >
         <Drag
           dragType="copyMove"
           dragSrc={{
@@ -198,13 +232,18 @@ const LayerThumbnail: React.FC<{
             "data-item-type": type,
           }}
         >
-          <Figure.Image alt={icon} src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/${icon}`} />
+          <Figure.Image
+            alt={icon}
+            src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/${icon}`}
+          />
         </Drag>
         <Figure.Caption
           contentEditable
           suppressContentEditableWarning
           onBlur={handleCaptionBlur}
-          onInput={(e: React.ChangeEvent<HTMLDivElement>) => setCaption(e.currentTarget.textContent || "")}
+          onInput={(e: React.ChangeEvent<HTMLDivElement>) =>
+            setCaption(e.currentTarget.textContent || "")
+          }
         >
           {caption}
         </Figure.Caption>

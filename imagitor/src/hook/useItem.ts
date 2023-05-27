@@ -1,7 +1,11 @@
 import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { useDispatch, useSelector } from "react-redux";
-import { StageData, stageDataAction, stageDataSelector } from "../redux/currentStageData";
+import {
+  StageData,
+  stageDataAction,
+  stageDataSelector,
+} from "../redux/currentStageData";
 
 export type ItemData = {
   "data-item-type": string;
@@ -20,7 +24,9 @@ export type ItemProps = {
   e?: Event;
 } & Record<string, any>;
 
-export type OverrideItemProps<T> = Omit<ItemProps, keyof T> & T & Pick<ITEMS_CONTEXT, "onSelect">;
+export type OverrideItemProps<T> = Omit<ItemProps, keyof T> &
+  T &
+  Pick<ITEMS_CONTEXT, "onSelect">;
 
 export type OverrideItemData<T> = Omit<ItemData, keyof T> & T;
 
@@ -40,9 +46,13 @@ const useItem = () => {
     dispatch(stageDataAction.addItem(newItem));
   };
 
-  const updateItem = (id: string, attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"]) => {
-
-    const targetItem = stageData.find((data) => data.id === id || data.attrs.id === id);
+  const updateItem = (
+    id: string,
+    attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"]
+  ) => {
+    const targetItem = stageData.find(
+      (data) => data.id === id || data.attrs.id === id
+    );
 
     const updatedObject = {
       ...(targetItem ?? {}),
