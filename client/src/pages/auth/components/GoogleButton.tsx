@@ -1,11 +1,12 @@
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SERVER_URL } from '../../../utils/constants';
 import { login } from '../../../store/authSlice';
+import { RootState } from '../../../store/index';
 
 export default function GoogleButton() {
   const dispatch = useDispatch();
-
+  const {isAuthenticated} = useSelector((selector: RootState) => selector.auth);
   const onGoogleAuthSuccess = async (
     credentialResponse: CredentialResponse
   ) => {
@@ -17,6 +18,7 @@ export default function GoogleButton() {
       },
       body: JSON.stringify({ credential: credentialResponse.credential }),
     });
+
     const json = await res.json();
     console.table(json);
 
@@ -35,8 +37,8 @@ export default function GoogleButton() {
       size='large'
       locale='en'
       width={"350"}
-      useOneTap={true}
-      auto_select={false}
+      auto_select={!isAuthenticated}
+      useOneTap={!isAuthenticated}
       theme='filled_blue'
       text='continue_with'
     />
