@@ -27,11 +27,7 @@ const useHotkeyFunc = () => {
       .flat();
     const items = stage.stageRef.current
       .getChildren()[0]
-      .getChildren(
-        (_item) =>
-          _item.attrs.name === "label-target"
-          && _item.attrs["data-item-type"] !== "frame"
-      );
+      .getChildren((_item) => _item.attrs.name === "label-target" && _item.attrs["data-item-type"] !== "frame");
     const newSelections = [...frameGroups, ...items];
     onSelectItem(undefined, newSelections);
   };
@@ -112,9 +108,16 @@ const useHotkeyFunc = () => {
     removeItem(selectedItems.map((item) => item.id()));
   };
 
-  const layerUp = (selectedItems: Node<NodeConfig>[]) => {
+  const layerUp = (selectedItems: Node<NodeConfig>[], count?: number) => {
     selectedItems.forEach((item) => {
-      item.moveUp();
+      if (count) {
+        for (let i = 0; i < count; i++) {
+          console.log("TUT");
+          item.moveUp();
+        }
+      } else {
+        item.moveUp();
+      }
       updateItem(item.id(), (prevData) => ({
         ...item.attrs,
         zIndex: 1,
@@ -136,11 +139,15 @@ const useHotkeyFunc = () => {
     dispatch(setTool("eraser"));
   };
 
-  
-
-  const layerDown = (selectedItems: Node<NodeConfig>[]) => {
+  const layerDown = (selectedItems: Node<NodeConfig>[], count?: number) => {
     selectedItems.forEach((item) => {
-      item.moveDown();
+      if (count) {
+        for (let i = 0; i < count; i++) {
+          item.moveDown();
+        }
+      } else {
+        item.moveDown();
+      }
 
       updateItem(item.id(), (prevData) => ({
         ...item.attrs,
@@ -207,8 +214,7 @@ const useHotkeyFunc = () => {
       y: (pointer.y - stageRef.y()) / oldScale,
     };
 
-    const newScale
-      = zoomDirection > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const newScale = zoomDirection > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
     stageRef.scale({ x: newScale, y: newScale });
     setValue(STAGE_SCALE, { x: newScale, y: newScale });

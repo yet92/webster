@@ -25,6 +25,7 @@ const useSelection = (transformer: ReturnType<typeof useTransformer>) => {
       // console.log("item list", newNodeList);
       transformer.transformerRef.current.nodes(itemList);
       transformer.setTransformerConfig(transformer.transformerRef.current);
+      console.log("In GLoBAL Selection", itemList);
       setSelectedItems(itemList);
       return;
     }

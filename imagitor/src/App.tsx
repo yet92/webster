@@ -4,15 +4,7 @@ import { Layer } from "konva/lib/Layer";
 import { Node, NodeConfig } from "konva/lib/Node";
 import { useHotkeys } from "react-hotkeys-hook";
 import { nanoid } from "nanoid";
-import {
-  Button,
-  ButtonGroup,
-  Col,
-  Dropdown,
-  DropdownButton,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import { Button, ButtonGroup, Col, Dropdown, DropdownButton, Modal, Row } from "react-bootstrap";
 import Header from "./header";
 import Layout from "./layout";
 import SettingBar from "./settingBar";
@@ -24,10 +16,7 @@ import View from "./view";
 import Frame, { FrameProps } from "./view/frame";
 import { StageData } from "./redux/currentStageData";
 import useItem from "./hook/useItem";
-import {
-  StageDataListItem,
-  stageDataListSelector,
-} from "./redux/StageDataList";
+import { StageDataListItem, stageDataListSelector } from "./redux/StageDataList";
 import useStageDataList from "./hook/useStageDataList";
 import ImageItem, { ImageItemProps } from "./view/object/image";
 import useSelection from "./hook/useSelection";
@@ -65,19 +54,10 @@ function App() {
   const [initialRender, setInitialRender] = useState(false);
   const [past, setPast] = useState<StageData[][]>([]);
   const [future, setFuture] = useState<StageData[][]>([]);
-  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(
-    past,
-    future,
-    setPast,
-    setFuture
-  );
+  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(past, future, setPast, setFuture);
   const transformer = useTransformer();
-  const { selectedItems, onSelectItem, setSelectedItems, clearSelection }
-    = useSelection(transformer);
-  const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(
-    transformer,
-    clearHistory
-  );
+  const { selectedItems, onSelectItem, setSelectedItems, clearSelection } = useSelection(transformer);
+  const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(transformer, clearHistory);
   const { stageData } = useItem();
   const { initializeFileDataList, updateFileData } = useStageDataList();
   const stage = useStage();
@@ -100,8 +80,7 @@ function App() {
   const [clipboard, setClipboard] = useState<StageData[]>([]);
   const createStageDataObject = (item: Node<NodeConfig>): StageData => {
     const { id } = item.attrs;
-    const target
-      = item.attrs["data-item-type"] === "frame" ? item.getParent() : item;
+    const target = item.attrs["data-item-type"] === "frame" ? item.getParent() : item;
     return {
       id: nanoid(),
       attrs: {
@@ -120,36 +99,29 @@ function App() {
     createStageDataObject,
     onSelectItem
   );
-  const { getStageFromLocalStorage, saveStageToLocalStorage }
-    = useSaveStageState();
+  const { getStageFromLocalStorage, saveStageToLocalStorage } = useSaveStageState();
   const stageDataList = useSelector(stageDataListSelector.selectAll);
-  const currentTabId = useMemo(
-    () => tabList.find((tab) => tab.active)?.id ?? null,
-    [tabList]
-  );
+  const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
 
   const sortedStageData = useMemo(
     () =>
       stageData.sort((a, b) => {
-        if (a.attrs.zIndex === b.attrs.zIndex) {
-          if (a.attrs.zIndex < 0) {
-            return b.attrs.updatedAt - a.attrs.updatedAt;
-          }
-          return a.attrs.updatedAt - b.attrs.updatedAt;
-        }
-        return a.attrs.zIndex - b.attrs.zIndex;
+        console.log("IN SORT");
+        return 0;
+        // if (a.attrs.zIndex === b.attrs.zIndex) {
+        // if (a.attrs.zIndex < 0) {
+        //   return b.attrs.updatedAt - a.attrs.updatedAt;
+        // }
+        // return a.attrs.updatedAt - b.attrs.updatedAt;
+        // }
+        // return a.attrs.zIndex - b.attrs.zIndex;
       }),
     [stageData]
   );
 
   const header = (
     <Header>
-      <TabGroup
-        onClickTab={onClickTab}
-        tabList={tabList}
-        onCreateTab={onCreateTab}
-        onDeleteTab={onDeleteTab}
-      />
+      <TabGroup onClickTab={onClickTab} tabList={tabList} onCreateTab={onCreateTab} onDeleteTab={onDeleteTab} />
     </Header>
   );
 
@@ -167,14 +139,7 @@ function App() {
             />
           );
         }
-        return (
-          <NavBarButton
-            key={`navbar-${data.id}`}
-            data={data}
-            stage={stage}
-            onClick={getClickCallback(data.id)}
-          />
-        );
+        return <NavBarButton key={`navbar-${data.id}`} data={data} stage={stage} onClick={getClickCallback(data.id)} />;
       })}
     </NavBar>
   );
@@ -216,21 +181,9 @@ function App() {
   const renderObject = (item: StageData) => {
     switch (item.attrs["data-item-type"]) {
       case "frame":
-        return (
-          <Frame
-            key={`frame-${item.id}`}
-            data={item as FrameProps["data"]}
-            onSelect={onSelectItem}
-          />
-        );
+        return <Frame key={`frame-${item.id}`} data={item as FrameProps["data"]} onSelect={onSelectItem} />;
       case "image":
-        return (
-          <ImageItem
-            key={`image-${item.id}`}
-            data={item as ImageItemProps["data"]}
-            onSelect={onSelectItem}
-          />
-        );
+        return <ImageItem key={`image-${item.id}`} data={item as ImageItemProps["data"]} onSelect={onSelectItem} />;
       case "text":
         return (
           <TextItem
@@ -406,6 +359,7 @@ function App() {
     "backspace",
     (e) => {
       e.preventDefault();
+      console.log("In Backspace");
       deleteItems(selectedItems, setSelectedItems, transformer.transformerRef);
     },
     { enabled: Boolean(selectedItems.length) },
@@ -413,13 +367,8 @@ function App() {
   );
 
   useEffect(() => {
-    const storedStageDataList = JSON.parse(
-      localStorage.getItem("StageDataList") || "[]"
-    );
-    if (
-      initialRender
-      && JSON.stringify(storedStageDataList) !== JSON.stringify(stageDataList)
-    ) {
+    const storedStageDataList = JSON.parse(localStorage.getItem("StageDataList") || "[]");
+    if (initialRender && JSON.stringify(storedStageDataList) !== JSON.stringify(stageDataList)) {
       saveStageToLocalStorage();
     } else {
       setInitialRender(true);
@@ -428,9 +377,7 @@ function App() {
 
   useEffect(() => {
     if (getStageFromLocalStorage().length) {
-      getStageFromLocalStorage().forEach((stage) =>
-        onCreateTab(undefined, stage as StageDataListItem)
-      );
+      getStageFromLocalStorage().forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
       initializeFileDataList(getStageFromLocalStorage());
     } else {
       onCreateTab(undefined, initialStageDataList[0] as StageDataListItem);
@@ -457,9 +404,7 @@ function App() {
     <Layout header={header} navBar={navBar} settingBar={settingBar}>
       {hotkeyModal}
       <View onSelect={onSelectItem} stage={stage}>
-        {stageData.length
-          ? sortedStageData.map((item) => renderObject(item))
-          : null}
+        {stageData.length ? sortedStageData.map((item) => renderObject(item)) : null}
         <Transformer
           ref={transformer.transformerRef}
           keepRatio
