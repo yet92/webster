@@ -31,4 +31,6 @@ router.get(
     controller.googleLogin.bind(controller)
 );
 
+router.post("/google/login", controller.googleLogin.bind(controller));
+
 export default router;

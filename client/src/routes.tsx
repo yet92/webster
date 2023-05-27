@@ -1,16 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import { LoginPage } from "./pages/auth";
+import { LoginPage, RegisterPage } from "./pages/auth";
 
 export type PageDesc = {
     path: string,
     page?: React.FC | null,
     pages?: PageDesc[]
-}
-
-function RegisterPage() {
-    return (
-        <h1>Register</h1>
-    )
 }
 
 export default function useRoutes(authenticated = false) {

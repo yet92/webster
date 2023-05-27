@@ -1,1 +1,1 @@
-export * as auth from "./auth";
+export { RegisterPage, LoginPage } from "./auth";
