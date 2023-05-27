@@ -13,12 +13,15 @@ import useSelection from "../hook/useSelection";
 import useStage from "../hook/useStage";
 import ShapeWidget from "./widgetList/ShapeWidget";
 import IconWidget from "./widgetList/IconWidget";
+import LayerWidget from "./widgetList/LayerWidget";
 import LineWidget from "./widgetList/LineWidget";
+import useTransformer from "../hook/useTransformer";
 
 export type SettingBarProps = {
   selectedItems: Node<NodeConfig>[];
   clearSelection: ReturnType<typeof useSelection>["clearSelection"];
   stageRef: ReturnType<typeof useStage>["stageRef"];
+  transformer?: ReturnType<typeof useTransformer>;
 };
 
 const Widgets = {
@@ -30,6 +33,7 @@ const Widgets = {
   text: (data: WidgetKind & SettingBarProps) => <TextWidget />,
   line: (data: WidgetKind & SettingBarProps) => <LineWidget />,
   icon: (data: WidgetKind & SettingBarProps) => <IconWidget />,
+  layer: (data: WidgetKind & SettingBarProps) => <LayerWidget data={data}/>,
   export: (data: WidgetKind & SettingBarProps) => <ExportWidget data={data} />,
 };
 

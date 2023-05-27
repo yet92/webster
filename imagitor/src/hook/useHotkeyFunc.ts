@@ -8,10 +8,13 @@ import useLocalStorage from "./useLocalStorage";
 import useSelection from "./useSelection";
 import useStage, { STAGE_POSITION, STAGE_SCALE } from "./useStage";
 import useTransformer from "./useTransformer";
+import { useDispatch } from "react-redux";
+import { setTool } from "../redux/selectTool";
 
 const useHotkeyFunc = () => {
   const { removeItem, createItem, updateItem } = useItem();
   const { setValue } = useLocalStorage();
+  const dispatch = useDispatch();
 
   const selectAll = (
     stage: ReturnType<typeof useStage>,
@@ -24,7 +27,11 @@ const useHotkeyFunc = () => {
       .flat();
     const items = stage.stageRef.current
       .getChildren()[0]
-      .getChildren((_item) => _item.attrs.name === "label-target" && _item.attrs["data-item-type"] !== "frame");
+      .getChildren(
+        (_item) =>
+          _item.attrs.name === "label-target"
+          && _item.attrs["data-item-type"] !== "frame"
+      );
     const newSelections = [...frameGroups, ...items];
     onSelectItem(undefined, newSelections);
   };
@@ -116,6 +123,21 @@ const useHotkeyFunc = () => {
     });
   };
 
+  const setBrush = () => {
+    dispatch(setTool("brush"));
+  };
+  const setPointer = () => {
+    dispatch(setTool("pointer"));
+  };
+  const setBucket = () => {
+    dispatch(setTool("bucket"));
+  };
+  const setEraser = () => {
+    dispatch(setTool("eraser"));
+  };
+
+  
+
   const layerDown = (selectedItems: Node<NodeConfig>[]) => {
     selectedItems.forEach((item) => {
       item.moveDown();
@@ -185,7 +207,8 @@ const useHotkeyFunc = () => {
       y: (pointer.y - stageRef.y()) / oldScale,
     };
 
-    const newScale = zoomDirection > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const newScale
+      = zoomDirection > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
     stageRef.scale({ x: newScale, y: newScale });
     setValue(STAGE_SCALE, { x: newScale, y: newScale });
@@ -220,6 +243,9 @@ const useHotkeyFunc = () => {
     resetZoom,
     undo,
     redo,
+    setBrush,
+    setEraser,
+    setPointer,
   };
 };
 

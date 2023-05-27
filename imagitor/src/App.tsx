@@ -1,9 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Transformer } from "react-konva";
+import { Layer } from "konva/lib/Layer";
 import { Node, NodeConfig } from "konva/lib/Node";
 import { useHotkeys } from "react-hotkeys-hook";
 import { nanoid } from "nanoid";
-import { Button, Col, Modal, Row } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import Header from "./header";
 import Layout from "./layout";
 import SettingBar from "./settingBar";
@@ -15,7 +24,10 @@ import View from "./view";
 import Frame, { FrameProps } from "./view/frame";
 import { StageData } from "./redux/currentStageData";
 import useItem from "./hook/useItem";
-import { StageDataListItem, stageDataListSelector } from "./redux/StageDataList";
+import {
+  StageDataListItem,
+  stageDataListSelector,
+} from "./redux/StageDataList";
 import useStageDataList from "./hook/useStageDataList";
 import ImageItem, { ImageItemProps } from "./view/object/image";
 import useSelection from "./hook/useSelection";
@@ -27,6 +39,8 @@ import TextItem, { TextItemProps } from "./view/object/text";
 import ShapeItem, { ShapeItemProps } from "./view/object/shape";
 import IconItem, { IconItemProps } from "./view/object/icon";
 import LineItem, { LineItemProps } from "./view/object/line";
+import { Line } from "konva/lib/shapes/Line";
+import { Line as KonvaLine } from "react-konva";
 import useModal from "./hook/useModal";
 import hotkeyList from "./config/hotkey.json";
 import useHotkeyFunc from "./hook/useHotkeyFunc";
@@ -35,6 +49,9 @@ import useI18n from "./hook/usei18n";
 import { useSaveStageState } from "./hook/useSaveStageState";
 import { useSelector } from "react-redux";
 import { initialStageDataList } from "./redux/initilaStageDataList";
+import Konva from "konva";
+import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
+import BrushDropdown from "./navBar/BrushDropdown";
 
 export type FileKind = {
   "file-id": string;
@@ -48,10 +65,19 @@ function App() {
   const [initialRender, setInitialRender] = useState(false);
   const [past, setPast] = useState<StageData[][]>([]);
   const [future, setFuture] = useState<StageData[][]>([]);
-  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(past, future, setPast, setFuture);
+  const { goToFuture, goToPast, recordPast, clearHistory } = useWorkHistory(
+    past,
+    future,
+    setPast,
+    setFuture
+  );
   const transformer = useTransformer();
-  const { selectedItems, onSelectItem, setSelectedItems, clearSelection } = useSelection(transformer);
-  const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(transformer, clearHistory);
+  const { selectedItems, onSelectItem, setSelectedItems, clearSelection }
+    = useSelection(transformer);
+  const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(
+    transformer,
+    clearHistory
+  );
   const { stageData } = useItem();
   const { initializeFileDataList, updateFileData } = useStageDataList();
   const stage = useStage();
@@ -63,6 +89,9 @@ function App() {
     pasteItems,
     duplicateItems,
     layerDown,
+    setBrush,
+    setEraser,
+    setPointer,
     layerUp,
     flipHorizontally,
     flipVertically,
@@ -71,7 +100,8 @@ function App() {
   const [clipboard, setClipboard] = useState<StageData[]>([]);
   const createStageDataObject = (item: Node<NodeConfig>): StageData => {
     const { id } = item.attrs;
-    const target = item.attrs["data-item-type"] === "frame" ? item.getParent() : item;
+    const target
+      = item.attrs["data-item-type"] === "frame" ? item.getParent() : item;
     return {
       id: nanoid(),
       attrs: {
@@ -90,9 +120,13 @@ function App() {
     createStageDataObject,
     onSelectItem
   );
-  const { getStageFromLocalStorage, saveStageToLocalStorage } = useSaveStageState();
+  const { getStageFromLocalStorage, saveStageToLocalStorage }
+    = useSaveStageState();
   const stageDataList = useSelector(stageDataListSelector.selectAll);
-  const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
+  const currentTabId = useMemo(
+    () => tabList.find((tab) => tab.active)?.id ?? null,
+    [tabList]
+  );
 
   const sortedStageData = useMemo(
     () =>
@@ -110,15 +144,38 @@ function App() {
 
   const header = (
     <Header>
-      <TabGroup onClickTab={onClickTab} tabList={tabList} onCreateTab={onCreateTab} onDeleteTab={onDeleteTab} />
+      <TabGroup
+        onClickTab={onClickTab}
+        tabList={tabList}
+        onCreateTab={onCreateTab}
+        onDeleteTab={onDeleteTab}
+      />
     </Header>
   );
 
   const navBar = (
     <NavBar>
-      {workModeList.map((data) => (
-        <NavBarButton key={`navbar-${data.id}`} data={data} stage={stage} onClick={getClickCallback(data.id)} />
-      ))}
+      {workModeList.map((data) => {
+        if (data.id === "brush") {
+          return (
+            <NavBarDropdownButton
+              key={`navbar-${data.id}`}
+              onClick={getClickCallback(data.id)}
+              dropdownData={<BrushDropdown />}
+              data={data}
+              stage={stage}
+            />
+          );
+        }
+        return (
+          <NavBarButton
+            key={`navbar-${data.id}`}
+            data={data}
+            stage={stage}
+            onClick={getClickCallback(data.id)}
+          />
+        );
+      })}
     </NavBar>
   );
 
@@ -148,15 +205,32 @@ function App() {
   );
 
   const settingBar = (
-    <SettingBar selectedItems={selectedItems} clearSelection={clearSelection} stageRef={stage.stageRef} />
+    <SettingBar
+      selectedItems={selectedItems}
+      clearSelection={clearSelection}
+      stageRef={stage.stageRef}
+      transformer={transformer}
+    />
   );
 
   const renderObject = (item: StageData) => {
     switch (item.attrs["data-item-type"]) {
       case "frame":
-        return <Frame key={`frame-${item.id}`} data={item as FrameProps["data"]} onSelect={onSelectItem} />;
+        return (
+          <Frame
+            key={`frame-${item.id}`}
+            data={item as FrameProps["data"]}
+            onSelect={onSelectItem}
+          />
+        );
       case "image":
-        return <ImageItem key={`image-${item.id}`} data={item as ImageItemProps["data"]} onSelect={onSelectItem} />;
+        return (
+          <ImageItem
+            key={`image-${item.id}`}
+            data={item as ImageItemProps["data"]}
+            onSelect={onSelectItem}
+          />
+        );
       case "text":
         return (
           <TextItem
@@ -185,6 +259,7 @@ function App() {
           />
         );
       case "line":
+        // return <KonvaLine key={item.id} {...item.attrs} />;
         return (
           <LineItem
             key={`line-${item.id}`}
@@ -193,6 +268,7 @@ function App() {
             onSelect={onSelectItem}
           />
         );
+        break;
       default:
         return null;
     }
@@ -203,6 +279,34 @@ function App() {
     (e) => {
       e.preventDefault();
       layerUp(selectedItems);
+    },
+    {},
+    [selectedItems]
+  );
+  useHotkeys(
+    "p",
+    (e) => {
+      e.preventDefault();
+      setPointer();
+    },
+    {},
+    [selectedItems]
+  );
+  useHotkeys(
+    "b",
+    (e) => {
+      e.preventDefault();
+      setBrush();
+    },
+    {},
+    [selectedItems]
+  );
+
+  useHotkeys(
+    "e",
+    (e) => {
+      e.preventDefault();
+      setEraser();
     },
     {},
     [selectedItems]
@@ -309,8 +413,13 @@ function App() {
   );
 
   useEffect(() => {
-    const storedStageDataList = JSON.parse(localStorage.getItem("StageDataList") || "[]");
-    if (initialRender && JSON.stringify(storedStageDataList) !== JSON.stringify(stageDataList)) {
+    const storedStageDataList = JSON.parse(
+      localStorage.getItem("StageDataList") || "[]"
+    );
+    if (
+      initialRender
+      && JSON.stringify(storedStageDataList) !== JSON.stringify(stageDataList)
+    ) {
       saveStageToLocalStorage();
     } else {
       setInitialRender(true);
@@ -319,7 +428,9 @@ function App() {
 
   useEffect(() => {
     if (getStageFromLocalStorage().length) {
-      getStageFromLocalStorage().forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
+      getStageFromLocalStorage().forEach((stage) =>
+        onCreateTab(undefined, stage as StageDataListItem)
+      );
       initializeFileDataList(getStageFromLocalStorage());
     } else {
       onCreateTab(undefined, initialStageDataList[0] as StageDataListItem);
@@ -346,7 +457,9 @@ function App() {
     <Layout header={header} navBar={navBar} settingBar={settingBar}>
       {hotkeyModal}
       <View onSelect={onSelectItem} stage={stage}>
-        {stageData.length ? sortedStageData.map((item) => renderObject(item)) : null}
+        {stageData.length
+          ? sortedStageData.map((item) => renderObject(item))
+          : null}
         <Transformer
           ref={transformer.transformerRef}
           keepRatio
