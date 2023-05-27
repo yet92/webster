@@ -29,6 +29,7 @@
     "react-bootstrap-range-slider": "^3.0.8",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-draggable-list": "^4.1.0",
     "react-ga4": "^1.4.1",
     "react-hotkeys-hook": "^3.4.6",
     "react-i18next": "^11.17.3",
@@ -92,6 +93,7 @@
     "normalizr": "^3.6.2",
     "npm": "^8.13.1",
     "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.3.0",
     "reselect": "^4.1.6",
     "tailwindcss": "^3.3.2"
   }
