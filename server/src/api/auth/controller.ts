@@ -183,6 +183,7 @@ export default class AuthController {
             id: user.id,
             email: user.email,
             username: user.username,
+            avatar: user.avatar,
         };
         const token = jwt.sign({ user: body }, this.JWT_SECRET as string);
         return response.send({
@@ -255,7 +256,8 @@ export default class AuthController {
                 const { user } = await this.service.googleAuth(
                     email,
                     firstName,
-                    lastName
+                    lastName,
+                    imageURL,
                 );
 
                 if (user) {

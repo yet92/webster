@@ -21,8 +21,8 @@ function App() {
   }, [])
 
   return (
-    <GoogleOAuthProvider clientId="1059652328927-dq16tfcjpte6ruu8al8fvg2qhqsgim7m.apps.googleusercontent.com">
-      <div className=" dark bg-[#111827] min-h-screen">
+    <GoogleOAuthProvider clientId="392148149376-tccsgqt60qq21ns26t8j071qqammja4d.apps.googleusercontent.com">
+      <div className="dark min-h-screen">
         {
           auth.loading ?
             (
@@ -34,8 +34,8 @@ function App() {
             :
             (
               <>
-                <NavBar></NavBar>
                 <BrowserRouter>
+                <NavBar/>
                   {routes}
                 </BrowserRouter>
               </>
