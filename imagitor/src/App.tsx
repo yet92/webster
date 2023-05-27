@@ -103,22 +103,6 @@ function App() {
   const stageDataList = useSelector(stageDataListSelector.selectAll);
   const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
 
-  const sortedStageData = useMemo(
-    () =>
-      stageData.sort((a, b) => {
-        console.log("IN SORT");
-        return 0;
-        // if (a.attrs.zIndex === b.attrs.zIndex) {
-        // if (a.attrs.zIndex < 0) {
-        //   return b.attrs.updatedAt - a.attrs.updatedAt;
-        // }
-        // return a.attrs.updatedAt - b.attrs.updatedAt;
-        // }
-        // return a.attrs.zIndex - b.attrs.zIndex;
-      }),
-    [stageData]
-  );
-
   const header = (
     <Header>
       <TabGroup onClickTab={onClickTab} tabList={tabList} onCreateTab={onCreateTab} onDeleteTab={onDeleteTab} />
@@ -175,6 +159,7 @@ function App() {
       clearSelection={clearSelection}
       stageRef={stage.stageRef}
       transformer={transformer}
+      onSelectItem={onSelectItem}
     />
   );
 
@@ -404,7 +389,7 @@ function App() {
     <Layout header={header} navBar={navBar} settingBar={settingBar}>
       {hotkeyModal}
       <View onSelect={onSelectItem} stage={stage}>
-        {stageData.length ? sortedStageData.map((item) => renderObject(item)) : null}
+        {stageData.length ? stageData.map((item) => renderObject(item)) : null}
         <Transformer
           ref={transformer.transformerRef}
           keepRatio

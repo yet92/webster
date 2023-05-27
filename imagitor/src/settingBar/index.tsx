@@ -1,6 +1,6 @@
 import React from "react";
 import { Accordion } from "react-bootstrap";
-import { Node, NodeConfig } from "konva/lib/Node";
+import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import Widget, { WidgetKind } from "./Widget";
 import widgetList from "../config/widget.json";
 import FrameWidget from "./widgetList/FrameWidget";
@@ -22,6 +22,7 @@ export type SettingBarProps = {
   clearSelection: ReturnType<typeof useSelection>["clearSelection"];
   stageRef: ReturnType<typeof useStage>["stageRef"];
   transformer?: ReturnType<typeof useTransformer>;
+  onSelectItem?: (e?: KonvaEventObject<MouseEvent>, itemList?: Node<NodeConfig>[]) => void;
 };
 
 const Widgets = {

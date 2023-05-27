@@ -112,7 +112,6 @@ const useHotkeyFunc = () => {
     selectedItems.forEach((item) => {
       if (count) {
         for (let i = 0; i < count; i++) {
-          console.log("TUT");
           item.moveUp();
         }
       } else {
