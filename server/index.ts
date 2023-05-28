@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import { auth, projects, users } from "./src/api";
+import { auth, projects, users, collections } from "./src/api";
 
 dotenv.config();
 
@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", auth);
 app.use("/api/projects", projects);
+app.use("/api/collections", collections);
 app.use("/api/users", users);
 
 app.listen(port, () => {
