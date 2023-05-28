@@ -34,12 +34,12 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
   const [editingItem, setEditingItem] = useState<Node<NodeConfig> | null | undefined>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [displayedName, setDisplayedName] = useState("");
-  
-  const { stageData } = useItem();
+
+  const { stageData, updateItem } = useItem();
   const { layerDown, layerUp } = useHotkeyFunc();
 
   useEffect(() => {
-    console.log("CURRENT CHILDREN:",data.stageRef.current?.getLayers()[0].getChildren());
+    console.log("CURRENT CHILDREN:", data.stageRef.current?.getLayers()[0].getChildren());
     if (data.stageRef.current && data.stageRef.current.getLayers()[0].children) {
       if ([...data.stageRef.current.getLayers()[0].getChildren()].length) {
         setLayersItems(
@@ -55,6 +55,7 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
   }, [data.selectedItems]);
 
   const handleClick = (item: Node<NodeConfig>, isCtrlPressed: boolean) => {
+    // handleInputBlur();
     let updatedSelectedItems: Node<NodeConfig>[];
     if (isCtrlPressed) {
       if (selectedItems.includes(item)) {
@@ -69,25 +70,28 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
     data.onSelectItem!(undefined, updatedSelectedItems);
   };
 
-
   const handleDoubleClick = (item: Node<NodeConfig>) => {
+    console.log("IN DOUBLE CLICK!", item);
     setIsEditing(true);
     setEditingItem(item);
-    setDisplayedName(item.className);
+    setDisplayedName(item.attrs.displayedName);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setEditingItem((prevItem) => {
-    //   if (prevItem) {
-    //     return { ...prevItem, name: e.target.value };
-    //   }
-    //   return null;
-    // });
+    setDisplayedName(e.target.value);
   };
 
   const handleInputBlur = () => {
+    console.log("IN BLUR!");
+    if (editingItem?.attrs.name !== displayedName) {
+      updateItem(editingItem?.attrs.id, (attrs) => ({
+        ...attrs,
+        displayedName: displayedName,
+      }));
+    }
     setIsEditing(false);
     setEditingItem(null);
+    setDisplayedName("");
   };
 
   const onMoveEnd = (newList: any, movedItem: any, oldIdx: number, newIdx: number) => {
@@ -165,7 +169,6 @@ const Item = React.forwardRef<HTMLDivElement, ItemProps>(function ItemComponent(
   { item, itemSelected, dragHandleProps, parentData },
   ref
 ) {
-
   const { onMouseDown, onTouchStart } = dragHandleProps;
   const {
     editingItem,
@@ -178,31 +181,56 @@ const Item = React.forwardRef<HTMLDivElement, ItemProps>(function ItemComponent(
     displayedName,
   } = parentData;
 
+  useEffect(() => {
+    console.log(!editingItem?.attrs.id === item.attrs.id);
+  }, [editingItem]);
+
   return (
     <div
       key={item.attrs.id || nanoid()}
       ref={ref}
       className={`${
         selectedItems.find((itemS) => itemS.attrs.id === item.attrs.id) && "tw-bg-blue-300"
-      } disable-select tw-flex tw-w-full tw-flex-row tw-items-center tw-gap-2 tw-rounded-md tw-p-2`}
+      } tw-flex tw-w-full tw-flex-row tw-items-center tw-gap-2 tw-rounded-md tw-p-2`}
       onClick={(e) => handleClick(item, e.ctrlKey)}
       onDoubleClick={() => handleDoubleClick(item)}
     >
       <div className="tw-flex tw-w-full tw-flex-row tw-gap-2 tw-rounded-md tw-p-2">
         <img src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/Layers.svg`} alt={item.className} />
-        {editingItem && isEditing ? (
-          <input
-            type="text"
-            value={displayedName}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            autoFocus
-            onFocus={(e) => e.target.select()}
-          />
-        ) : (
-          <span>{ item?.className }</span>
-        )}
+        {/* {editingItem && isEditing ? ( */}
+        <input
+          type="text"
+          className="tw-w-2/3 tw-border-none tw-bg-transparent tw-outline-none tw-cursor-default tw-caret-transparent"
+          disabled={!editingItem?.attrs.id === item.attrs.id}
+          value={editingItem?.attrs.id === item.attrs.id ? displayedName : item.attrs.displayedName}
+          onChange={handleInputChange}
+          // onBlur={handleInputBlur}
+          // autoFocus
+          // onFocus={(e) => e.target.select()}
+        />
+        {/* ) : (
+          <span>{item.attrs.displayedName}</span>
+        )} */}
       </div>
+      {/* {editingItem?.attrs.id === item.attrs.id ? (
+        <div
+          className=""
+          onClick={(e) => {
+            handleInputBlur();
+          }}
+        >
+          <Figure.Image alt={"pencil.svg"} src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/check2.svg`} />
+        </div>
+      ) : (
+        <div
+          className=""
+          onClick={(e) => {
+            handleDoubleClick(item);
+          }}
+        >
+          <Figure.Image alt={"pencil.svg"} src={`${process.env.PUBLIC_URL}/assets/icon/bootstrap/pencil.svg`} />
+        </div>
+      )} */}
       <div className="disable-select dragHandle" onTouchStart={onTouchStart} onMouseDown={onMouseDown}>
         <Figure.Image
           alt={"grip-vertical.svg"}

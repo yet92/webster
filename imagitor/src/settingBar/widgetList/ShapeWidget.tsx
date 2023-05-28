@@ -19,6 +19,7 @@ const ShapeWidget: React.FC = () => (
           radius,
           icon,
           "data-item-type": type,
+          displayedName: "shape"
         }}
         maxPx={80}
       />

@@ -84,6 +84,7 @@ const ImageWidget: React.FC = () => {
           <ImageThumbnail
             key={`image-thumbnail-${_data.id}`}
             data={{
+              displayedName: "image",
               id: _data.id,
               src: _data.src ?? `find:${_data.id}`,
               name: _data.name,

@@ -7,6 +7,7 @@ import useTransformer from "../../../hook/useTransformer";
 import { StageData } from "../../../redux/currentStageData";
 
 export type TextItemKind = {
+  displayedName: string;
   "data-item-type": string;
   id: string;
   name: string;
@@ -240,6 +241,7 @@ const TextItem: React.FC<TextItemProps> = ({ data, e, transformer, onSelect }) =
       opacity={attrs.opacity ?? 1}
       rotation={attrs.rotation ?? 0}
       draggable
+      displayedName={attrs.displayedName}
       onDragMove={onDragMoveFrame}
       onDragEnd={onDragEndFrame}
     />

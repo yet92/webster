@@ -22,6 +22,7 @@ const TextWidget: React.FC = () => (
           fontFamily,
           text,
           "data-item-type": type,
+          displayedName: text
         }}
         maxPx={80}
       />

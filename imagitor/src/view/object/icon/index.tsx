@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { StoreState } from "../../../redux/store";
 
 export type IconItemKind = {
+  displayedName: string;
   "data-item-type": string;
   id: string;
   name: string;
@@ -78,6 +79,7 @@ const IconItem: React.FC<IconItemProps> = ({ data, e, onSelect }) => {
       opacity={attrs.opacity ?? 1}
       rotation={attrs.rotation ?? 0}
       draggable={currentTool === "pointer"}
+      displayedName={attrs.displayedName}
       // onDragMove={onDragMoveFrame}
       // onDragEnd={onDragEndFrame}
     />

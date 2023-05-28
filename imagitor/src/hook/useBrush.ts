@@ -63,6 +63,7 @@ const useBrush = (stageRef: React.RefObject<Stage>) => {
             updatedAt: Date.now(),
             "data-item-type": "line",
             name: "label-target",
+            displayedName: "brush"
           },
           className: "brush-line",
           children: [],

@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { StoreState } from "../../../redux/store";
 
 export type LineItemKind = {
+  displayedName: string;
   "data-item-type": string;
   id: string;
   icon: string;

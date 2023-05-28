@@ -43,6 +43,7 @@ const IconWidget: React.FC = () => {
           <IconThumbnail
             key={`icon-thumbnail-${_data.id}`}
             data={{
+              displayedName: "icon",
               id: _data.id,
               name: _data.name,
               icon: _data.icon,

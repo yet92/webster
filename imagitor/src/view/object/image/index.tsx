@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { StoreState } from "../../../redux/store";
 
 export type ImageItemKind = {
+  displayedName: string;
   "data-item-type": string;
   id: string;
   name: string;
@@ -142,6 +143,7 @@ const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
       rotation={attrs.rotation ?? 0}
       filters={filters ?? [Konva.Filters.Brighten]}
       draggable={currentTool === "pointer"}
+      displayedName={attrs.displayedName}
       onDragMove={onDragMoveFrame}
       onDragEnd={onDragEndFrame}
     />

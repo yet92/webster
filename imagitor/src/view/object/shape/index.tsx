@@ -9,6 +9,7 @@ import useDragAndDrop from "../../../hook/useDragAndDrop";
 import useStage from "../../../hook/useStage";
 
 export type ShapeItemKind = {
+  displayedName: string;
   "data-item-type": string;
   id: string;
   icon: string;
@@ -63,6 +64,7 @@ const ShapeItem: React.FC<ShapeItemProps> = ({ data, e, transformer, onSelect })
         opacity={attrs.opacity ?? 1}
         rotation={attrs.rotation ?? 0}
         draggable
+        displayedName={attrs.displayedName}
         onDragMove={onDragMoveFrame}
         onDragEnd={onDragEndFrame}
       />
@@ -87,6 +89,7 @@ const ShapeItem: React.FC<ShapeItemProps> = ({ data, e, transformer, onSelect })
       strokeWidth={attrs.stroke ? 5 : undefined}
       opacity={attrs.opacity ?? 1}
       rotation={attrs.rotation ?? 0}
+      displayedName={attrs.displayedName}
       draggable
       onDragMove={onDragMoveFrame}
       onDragEnd={onDragEndFrame}

@@ -24,6 +24,7 @@ const useDragAndDrop = (
     const newFrame: StageData = {
       id: nanoid(),
       attrs: {
+        displayedName: "frame",
         name: "label-target",
         "data-item-type": "frame",
         "data-frame-type": data["data-frame-type"],
@@ -62,6 +63,7 @@ const useDragAndDrop = (
       const newImage: StageData = {
         id: nanoid(),
         attrs: {
+          displayedName: "image",
           name: "label-target",
           "data-item-type": "image",
           x: position.x,
@@ -88,6 +90,7 @@ const useDragAndDrop = (
     const newText: StageData = {
       id: nanoid(),
       attrs: {
+        displayedName: "text",
         name: "label-target",
         "data-item-type": "text",
         width: data.text
@@ -124,6 +127,7 @@ const useDragAndDrop = (
     const newShape: StageData = {
       id: nanoid(),
       attrs: {
+        displayedName: "shape",
         name: "label-target",
         "data-item-type": "shape",
         fill: "#00000",
@@ -148,6 +152,7 @@ const useDragAndDrop = (
     const newIcon: StageData = {
       id: nanoid(),
       attrs: {
+        displayedName: "icon",
         name: "label-target",
         "data-item-type": "icon",
         width: 100,
@@ -177,6 +182,7 @@ const useDragAndDrop = (
     const newLine: StageData = {
       id: nanoid(),
       attrs: {
+        displayedName: "line",
         name: "label-target",
         "data-item-type": "line",
         stroke: "#00000",
