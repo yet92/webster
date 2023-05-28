@@ -71,7 +71,7 @@ export default function CreateCollectionForm({
   return (
     <div className='flex w-full flex-col items-center justify-center gap-8'>
       {loading ? (
-        <Spinner size={100} />
+        <Spinner size={80} />
       ) : (
         <>
           <div className='flex w-full flex-col gap-4 text-text'>

@@ -63,7 +63,7 @@ export function SideBar({
           <span>Create Collection</span>
           <CreateCollectionModal show={showModal} onClose={onCreateClick} />
         </div>
-        {collections.map((collection, index) => (
+        {collections && collections.map((collection, index) => (
           <CollectionItem key={index} collection={collection} />
         ))}
       </div>
@@ -79,12 +79,13 @@ const CollectionItem = ({ collection }: { collection: any }) => {
     imgElement.src =
       'https://res.cloudinary.com/drq4rqj3n/image/upload/v1685287400/webster_ews2pu.png';
   };
+  
   return (
     <div className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'>
       <img
         onError={handleImageError}
         alt='preview'
-        src={collection.thumbnail}
+        src={collection.thumbnail || ""}
         className='h-[50px] w-[50px] rounded-md'
       />
       <span className=' text-text'>{collection.title}</span>

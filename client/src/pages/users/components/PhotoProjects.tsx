@@ -48,7 +48,7 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
       'https://res.cloudinary.com/drq4rqj3n/image/upload/v1685287400/webster_ews2pu.png';
   };
   return (
-    <div className='flex h-fit w-fit cursor-pointer flex-col rounded-md bg-bg hover:bg-contrast'>
+    <div className='flex h-fit w-fit cursor-pointer flex-col rounded-md border-2 border-transparent bg-bg transition hover:border-contrast hover:shadow-2xl hover:shadow-contrast'>
       <img
         className='h-[300px] w-[400px] rounded-t-xl'
         src={project.thumbnail}

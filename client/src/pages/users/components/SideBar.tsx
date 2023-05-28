@@ -54,10 +54,6 @@ export function SideBar({
       </button>
       <span className='text-center text-2xl text-contrast'>Collections</span>
       <div className='flex w-full flex-col items-center justify-center gap-5 rounded-xl bg-secondary p-5 text-base'>
-        <div className='flex w-full cursor-pointer flex-row items-center gap-5 rounded-xl p-1 hover:bg-contrast hover:text-text'>
-          <AiOutlinePlusSquare size={50} />
-          <span>Create Collection</span>
-        </div>
         {collections.map((collection, index) => (
           <CollectionItem key={index} collection={collection} />
         ))}
