@@ -128,4 +128,30 @@ export default class ProjectsController {
 
 
 	}
+
+	async updateItem(
+		req: IRequest<{
+			updatedObject: any 
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const updatedObject = req.body.updatedObject;
+
+
+		if (updatedObject) {
+			const { project } = await this.service.updateItem({projectId, updatedObject});
+
+			return response.send({ message: "success update", data: { project } })
+		}
+
+		response.send400({});
+
+
+	}
 }

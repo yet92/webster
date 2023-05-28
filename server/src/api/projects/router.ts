@@ -11,5 +11,6 @@ router.post("/", passport.authenticate("jwt", { session: false }), controller.cr
 router.get("/:id", passport.authenticate("jwt", { session: false }), controller.retrieveOne.bind(controller));
 router.get("/", passport.authenticate("jwt", { session: false }), controller.retrieveAll.bind(controller));
 router.post("/:id", passport.authenticate("jwt", { session: false }), controller.addItem.bind(controller));
+router.put("/:id", passport.authenticate("jwt", { session: false }), controller.updateItem.bind(controller));
 
 export default router;

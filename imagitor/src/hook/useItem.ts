@@ -90,6 +90,17 @@ const useItem = () => {
     } as StageData;
     dispatch(stageDataAction.updateItem(updatedObject));
     // send update to server
+
+    if (page.current !== -1) {
+      fetch(`${SERVER_URL}/api/projects/${page.current}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${auth.me.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ updatedObject }),
+      });
+    }
   };
 
   const removeItem = (targetItemId: string | string[]) => {
