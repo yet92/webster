@@ -6,6 +6,7 @@ import {
   stageDataAction,
   stageDataSelector,
 } from "../redux/currentStageData";
+import { StoreState } from "../redux/store";
 
 export type ItemData = {
   "data-item-type": string;
@@ -39,11 +40,29 @@ export type ITEMS_CONTEXT = {
   onAlter: (dataList: StageData[]) => void;
 };
 
+const SERVER_URL = "http://localhost:4000";
+
 const useItem = () => {
   const dispatch = useDispatch();
   const stageData = useSelector(stageDataSelector.selectAll);
+  const auth = useSelector((state: StoreState) => state.auth);
+
+  const page = useSelector((state: StoreState) => state.page);
+
   const createItem = (newItem: StageData) => {
     dispatch(stageDataAction.addItem(newItem));
+    // send new item to server
+
+    if (page.current !== -1) {
+      fetch(`${SERVER_URL}/api/projects/${page.current}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${auth.me.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ newItem }),
+      });
+    }
   };
 
   const updatePoints = (id: string)  => {
@@ -70,6 +89,18 @@ const useItem = () => {
       },
     } as StageData;
     dispatch(stageDataAction.updateItem(updatedObject));
+    // send update to server
+
+    if (page.current !== -1) {
+      fetch(`${SERVER_URL}/api/projects/${page.current}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${auth.me.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ updatedObject }),
+      });
+    }
   };
 
   const removeItem = (targetItemId: string | string[]) => {

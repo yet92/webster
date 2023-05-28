@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
-import CreateProjectModal from './CreateProjectModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import {
-  fetchProjectsAsync,
-  changeIsPublicAsync,
-} from '../../../store/projectsSlice';
+import { Project, fetchProjectsAsync } from '../../../store/projectsSlice';
 import { useAppDispatch } from '../../../hooks/redux.hook';
-import { RiSettings4Fill } from 'react-icons/ri';
-import { Dropdown, Tooltip } from 'flowbite-react';
-import { removeFetch } from '../utils/removeProject';
 
 // const projects = [
 //   {
@@ -31,34 +24,11 @@ import { removeFetch } from '../utils/removeProject';
 //   },
 // ];
 
-export function PhotoProjects() {
-  const [showModal, setShowModal] = useState(false);
-  const dispatch = useAppDispatch();
-
-  const {
-    auth,
-    projects: { projects },
-  } = useSelector((selector: RootState) => selector);
-
-  const onCreateClick = () => {
-    setShowModal(!showModal);
-  };
-
-  useEffect(() => {
-    dispatch(fetchProjectsAsync(auth.me.accessToken as string));
-  }, [auth]);
-
+export function PhotoProjects({ projects }: { projects: Project[] }) {
   return (
     <div className='flex h-full w-full flex-col items-center justify-start gap-10 p-4'>
       <div className='flex w-full flex-row items-center justify-between text-text '>
-        <h3 className='text-4xl'>Your Photo Projects</h3>
-        <button
-          onClick={onCreateClick}
-          className='flex w-1/4 flex-row items-center justify-center gap-5 rounded-xl bg-contrast p-2'>
-          <AiOutlinePlus size={30} />
-          <span className='text-xl font-bold'>Create</span>
-          <CreateProjectModal show={showModal} onClose={onCreateClick} />
-        </button>
+        <h3 className='text-4xl'>Photo Projects</h3>
       </div>
       <div className='flex h-full w-full flex-wrap items-center justify-evenly gap-5 rounded-xl bg-secondary p-2 py-5'>
         {projects.map((project, index) => (
@@ -70,27 +40,6 @@ export function PhotoProjects() {
 }
 
 const ProjectThumbnail = ({ project }: { project: any }) => {
-  const dispatch = useAppDispatch();
-  const { me } = useSelector((selector: RootState) => selector.auth);
-  const onClickRemove = async () => {
-    await removeFetch(project.id, me.accessToken as string);
-    dispatch(fetchProjectsAsync(me.accessToken as string));
-  };
-
-  const onClickChangePrivacy = async () => {
-    console.log('there');
-    dispatch(
-      changeIsPublicAsync({
-        accessToken: me.accessToken as string,
-        id: project.id,
-        isPublic: !project.isPublic,
-      })
-    );
-  };
-  const { collections } = useSelector(
-    (selector: RootState) => selector.collections
-  );
-
   const handleImageError = (
     event: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
@@ -106,65 +55,7 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
         onError={handleImageError}
         alt='project img'
       />
-      <div className='flex  w-full flex-row items-center justify-between gap-4'>
-        <span className='p-2 text-center text-lg text-text'>
-          {project.title}
-        </span>
-
-        <Dropdown
-          arrowIcon={false}
-          inline
-          placement='top'
-          label={
-            <Tooltip content='Settings' style='dark'>
-              <div className='p-2 text-contrast hover:text-black'>
-                <RiSettings4Fill size={40} />
-              </div>
-            </Tooltip>
-          }>
-          <Dropdown.Item>
-            <span>Open</span>
-          </Dropdown.Item>
-          <Tooltip
-            content={
-              <div className='flex w-full flex-col gap-5'>
-                {collections.map((collection, index) => (
-                  <div
-                    key={index}
-                    className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'>
-                    <img
-                      onError={handleImageError}
-                      alt='preview'
-                      src={collection.thumbnail || ''}
-                      className='h-[50px] w-[50px] rounded-md'
-                    />
-                    <span className=' text-text'>{collection.title}</span>
-                  </div>
-                ))}
-              </div>
-            }
-            placement='left'
-            style='dark'>
-            <Dropdown.Item>
-              <span>Add to Collection</span>
-            </Dropdown.Item>
-          </Tooltip>
-          <Dropdown.Item onClick={onClickChangePrivacy}>
-            <span
-              className={`${
-                project.isPublic ? 'text-contrast' : 'text-red-600'
-              }`}>
-              {project.isPublic ? 'Make Private' : 'Make Public'}
-            </span>
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <span>Share</span>
-          </Dropdown.Item>
-          <Dropdown.Item onClick={onClickRemove}>
-            <span className='text-red-600'>Remove</span>
-          </Dropdown.Item>
-        </Dropdown>
-      </div>
+      <span className='p-2 text-center text-lg text-text'>{project.title}</span>
     </div>
   );
 };

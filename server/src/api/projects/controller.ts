@@ -36,6 +36,7 @@ export default class ProjectsController {
 		}
 		const result = await this.service.createProject({
 			...req.body,
+			// @ts-ignore
 			ownerId: req.user!.user!.id,
 		});
 
@@ -57,8 +58,8 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveAll({
-			...req.body,
-			userId:  req.user!.user!.id,
+			// @ts-ignore
+			userId: req.user!.user!.id,
 		});
 
 		if (result && result.error) {
@@ -86,7 +87,7 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveOne({
-			projectId: parseInt(req.body.id),
+			projectId: parseInt(req.params.id),
 		});
 
 		if (result && result.error) {
@@ -96,11 +97,118 @@ export default class ProjectsController {
 			});
 		}
 
-		if (result && result.projects) {
+		if (result && result.project) {
 			return response.send({
-				message: 'Projects retrieved',
-				data: result.projects,
+				message: 'Project retrieved',
+				data: result.project,
 			});
 		}
+	}
+	async removeOne(
+		req: IRequest<{
+			id: string;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const result = await this.service.removeOne({
+			projectId: parseInt(req.params.id),
+		});
+
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
+
+		return response.send({
+			message: 'Project retrieved',
+		});
+	}
+
+	async changeIsPublic(
+		req: IRequest<{
+			id: string;
+			isPublic: boolean;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const result = await this.service.changeIsPublic({
+			projectId: parseInt(req.params.id),
+			isPublic: req.body.isPublic,
+		});
+
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
+
+		return response.send({
+			message: 'Project retrieved',
+		});
+	}
+
+	async addItem(
+		req: IRequest<{
+			newItem: any;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const newItem = req.body.newItem;
+
+		if (newItem) {
+			const { project } = await this.service.addItem({
+				projectId,
+				newItem,
+			});
+
+			return response.send({
+				message: 'success update',
+				data: { project },
+			});
+		}
+
+		response.send400({});
+	}
+
+	async updateItem(
+		req: IRequest<{
+			updatedObject: any;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const updatedObject = req.body.updatedObject;
+
+		if (updatedObject) {
+			const { project } = await this.service.updateItem({
+				projectId,
+				updatedObject,
+			});
+
+			return response.send({
+				message: 'success update',
+				data: { project },
+			});
+		}
+
+		response.send400({});
 	}
 }
