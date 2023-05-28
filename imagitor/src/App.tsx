@@ -41,6 +41,8 @@ import { initialStageDataList } from "./redux/initilaStageDataList";
 import Konva from "konva";
 import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
 import BrushDropdown from "./navBar/BrushDropdown";
+import { BrowserRouter } from "react-router-dom";
+import useRoutes from "./hook/useRoutes";
 
 export type FileKind = {
   "file-id": string;
@@ -385,20 +387,28 @@ function App() {
     recordPast(stageData);
   }, [stageData]);
 
+  const newLayout = <Layout header={header} navBar={navBar} settingBar={settingBar}>
+    {hotkeyModal}
+    <View onSelect={onSelectItem} stage={stage}>
+      {stageData.length ? stageData.map((item) => renderObject(item)) : null}
+      <Transformer
+        ref={transformer.transformerRef}
+        keepRatio
+        shouldOverdrawWholeArea
+        boundBoxFunc={(_, newBox) => newBox}
+        onTransformEnd={transformer.onTransformEnd}
+      />
+    </View>
+  </Layout>;
+
+  const routes = useRoutes(
+    { header, navBar, settingBar, hotkeyModal, onSelectItem, stage, stageData, transformer, renderObject }
+  );
+
   return (
-    <Layout header={header} navBar={navBar} settingBar={settingBar}>
-      {hotkeyModal}
-      <View onSelect={onSelectItem} stage={stage}>
-        {stageData.length ? stageData.map((item) => renderObject(item)) : null}
-        <Transformer
-          ref={transformer.transformerRef}
-          keepRatio
-          shouldOverdrawWholeArea
-          boundBoxFunc={(_, newBox) => newBox}
-          onTransformEnd={transformer.onTransformEnd}
-        />
-      </View>
-    </Layout>
+    <BrowserRouter>
+      {routes}
+    </BrowserRouter>
   );
 }
 
