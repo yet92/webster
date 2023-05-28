@@ -57,7 +57,6 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveAll({
-			...req.body,
 			userId:  req.user!.user!.id,
 		});
 
@@ -86,7 +85,7 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveOne({
-			projectId: parseInt(req.body.id),
+			projectId: parseInt(req.params.id),
 		});
 
 		if (result && result.error) {
@@ -96,10 +95,10 @@ export default class ProjectsController {
 			});
 		}
 
-		if (result && result.projects) {
+		if (result && result.project) {
 			return response.send({
-				message: 'Projects retrieved',
-				data: result.projects,
+				message: 'Project retrieved',
+				data: result.project,
 			});
 		}
 	}
