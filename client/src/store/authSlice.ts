@@ -6,6 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { API_URL, IMAGITOR_AUTH } from '../utils/constants';
+import { Project } from './projectsSlice';
 
 export type User = {
   id: number;
@@ -13,6 +14,7 @@ export type User = {
   email: string;
   avatar?: string;
   accessToken?: string;
+  projects?: Project[];
 };
 
 type userState = {

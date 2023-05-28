@@ -61,11 +61,11 @@ export function NavBar() {
             Tools
           </Link>
           <Link
-            to='/news'
+            to='/users'
             className={`self-center text-2xl font-bold ${
-              pathname === '/news' ? 'text-contrast' : ''
+              pathname === '/users' ? 'text-contrast' : ''
             }`}>
-            News
+            Users
           </Link>
           <Link
             to='/reviews'
