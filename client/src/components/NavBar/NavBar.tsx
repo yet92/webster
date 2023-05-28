@@ -5,6 +5,7 @@ import { User, logout } from '../../store/authSlice';
 import React, { MouseEventHandler, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SignInModal from './SignInModal';
+import { clearAllProjects } from '../../store/projectsSlice';
 
 export function NavBar() {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ function ProfileMenu({ user }: { user: User }) {
   const dispatch = useDispatch();
   const onLogoutClick = () => {
     dispatch(logout());
+    dispatch(clearAllProjects());
   };
   console.log(user.avatar);
   return (
