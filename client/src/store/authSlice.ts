@@ -80,7 +80,6 @@ const authSlice = createSlice({
       state.loading = true;
       state.me = { email: '', id: -1, login: '' };
       state.isAuthenticated = false;
-      
       localStorage.removeItem('user');
       state.loading = false;
     },

@@ -33,7 +33,7 @@ export function SideBar({
           src={me.avatar}
         />
         <span className='text-center text-xl text-text'>
-          {me.login || 'You'}
+          {me.login || me.email.slice(0, me.email.indexOf('@'))}
         </span>
       </div>
       <button
