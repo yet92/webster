@@ -24,6 +24,6 @@ export async function fetchOneProject(token: string, projectId: string) {
     },
   });
 
-  const json: IResponseWithData<{projects: Project[]}> = await response.json();
+  const json: IResponseWithData<{project: Project}> = await response.json();
   return { response, json };
 }

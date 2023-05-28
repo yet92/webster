@@ -9,7 +9,7 @@ export default class ProjectValidator {
 			project: Joi.string().min(2).max(30).required().messages({
 				'*': 'Incorrect project title. Must consist of only letters and numbers. Length should be from 3 to 30 characters',
 			}),
-			thumbnail: Joi.string(),
+			thumbnail: Joi.any(),
 		});
 		return schema.validate(body);
 	}

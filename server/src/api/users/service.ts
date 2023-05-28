@@ -18,6 +18,9 @@ export default class ProjectsService {
 		try {
 			const user = await this.prisma.user.findFirst({
 				where: { id: userId },
+				include: {
+					projects: true,
+				},
 			});
 
 			if (!user)
@@ -34,6 +37,9 @@ export default class ProjectsService {
 	async retrieveAll(): Promise<UsersServiceMethodReturns> {
 		try {
 			const users = await this.prisma.user.findMany({
+				include: {
+					projects: true,
+				},
 			});
 			return { users };
 		} catch (error) {
