@@ -32,7 +32,7 @@ export default function ToolsPage() {
                 case projectTypes.video:
                   return <VideoProjects />;
                 default:
-                  break;
+                  return <PhotoProjects />;
               }
             })()}
           </div>
