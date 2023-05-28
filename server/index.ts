@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import { auth } from "./src/api";
+import { auth, projects } from "./src/api";
 
 dotenv.config();
 
@@ -33,6 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", auth);
+app.use("/api/projects", projects);
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
