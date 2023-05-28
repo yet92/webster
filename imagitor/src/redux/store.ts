@@ -9,7 +9,8 @@ import stageDataReducer, { StageData, stageDataEpic } from "./currentStageData";
 import stageDataListReducer, { StageDataListItem } from "./StageDataList";
 import imageAssetListReducer, { ImageAssetListItem } from "./imageAssetList";
 import toolSelectionReducer, { ToolSelectionState } from "./selectTool";
-import authSlice from "./authSlice";
+import authSlice, { userState } from "./authSlice";
+import pageSlice, { PageState } from "./pageSlice";
 
 export type StoreState = {
   fileMeta: FileMeta;
@@ -17,6 +18,8 @@ export type StoreState = {
   stageDataList: EntityState<StageDataListItem>;
   imageAssetList: EntityState<ImageAssetListItem>;
   toolSelection: ToolSelectionState;
+  auth: userState,
+  page: PageState,
 };
 
 const epicMiddleware = createEpicMiddleware();
@@ -32,6 +35,7 @@ const configureKonvaEditorStore = (preloadedState?: StoreState) => {
       imageAssetList: imageAssetListReducer,
       toolSelection: toolSelectionReducer,
       auth: authSlice,
+      page: pageSlice
     },
     middleware: getDefaultMiddleware({ serializableCheck: false }).concat(
       epicMiddleware

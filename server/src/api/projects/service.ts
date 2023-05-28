@@ -77,4 +77,25 @@ export default class ProjectsService {
 			return { error: { message: 'Something went wrong', status: 500 } };
 		}
 	}
+
+	async addItem({ projectId, newItem }: {projectId: number, newItem: any}) {
+
+		const {project} = await this.retrieveOne({projectId});
+
+		const items = JSON.parse(project.project);
+		items[0].data.push(newItem);
+
+		const newProject = JSON.stringify(items);
+
+		await this.prisma.project.update({
+			where: {
+				id: projectId,
+			},
+			data: {
+				project: newProject
+			}
+		});
+
+		return {project: {...project, project: newProject}};
+	}
 }

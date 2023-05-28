@@ -32,7 +32,7 @@ export type User = {
     accessToken?: string;
 };
 
-type userState = {
+export type userState = {
     me: User;
     loading: boolean;
     isAuthenticated: boolean;
@@ -92,7 +92,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loadUserWithToken.fulfilled, (state, action) => {
-        console.log("FULLFILLED: ", action);
+        console.log("FULFILLED: ", action);
         const json = action.payload.json;
         state.me = {id: json.user.id, email: json.user.email, accessToken: action.payload.token, };
         state.isAuthenticated = true;

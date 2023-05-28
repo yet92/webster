@@ -36,13 +36,15 @@ import useHotkeyFunc from "./hook/useHotkeyFunc";
 import useWorkHistory from "./hook/useWorkHistory";
 import useI18n from "./hook/usei18n";
 import { useSaveStageState } from "./hook/useSaveStageState";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { initialStageDataList } from "./redux/initilaStageDataList";
 import Konva from "konva";
 import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
 import BrushDropdown from "./navBar/BrushDropdown";
 import { BrowserRouter } from "react-router-dom";
 import useRoutes from "./hook/useRoutes";
+import { loadUser } from "./redux/authSlice";
+import { StoreState } from "./redux/store";
 
 export type FileKind = {
   "file-id": string;
@@ -101,7 +103,7 @@ function App() {
     createStageDataObject,
     onSelectItem
   );
-  const { getStageFromLocalStorage, saveStageToLocalStorage } = useSaveStageState();
+  const { getStageFromLocalStorage, saveStageToLocalStorage, getStageFromServer, loading } = useSaveStageState();
   const stageDataList = useSelector(stageDataListSelector.selectAll);
   const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
 
@@ -378,6 +380,37 @@ function App() {
   }, []);
 
   useEffect(() => {
+    dispatch(loadUser());
+  }, []);
+
+  const auth = useSelector((state: StoreState) => state.auth);
+
+  useEffect(() => {
+
+    const projectId = parseInt(window.location.href.split("/").reverse()[0]);
+    if (!isNaN(projectId)) {
+      getStageFromServer(projectId).then((stageData) => {
+      
+        if (stageData) {
+          console.log(stageData);
+          stageData.forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
+          initializeFileDataList(stageData);
+        } else {
+          console.log("PROJECT NOT FOUND");
+        }
+  
+        stage.stageRef.current.setPosition({
+          x: Math.max(Math.ceil(stage.stageRef.current.width() - 1280) / 2, 0),
+          y: Math.max(Math.ceil(stage.stageRef.current.height() - 760) / 2, 0),
+        });
+        stage.stageRef.current.batchDraw();
+  
+      });
+    }
+
+  }, [auth.me]);
+
+  useEffect(() => {
     if (currentTabId) {
       updateFileData({
         id: currentTabId,
@@ -386,6 +419,10 @@ function App() {
     }
     recordPast(stageData);
   }, [stageData]);
+
+  const dispatch = useDispatch();
+
+
 
   const newLayout = <Layout header={header} navBar={navBar} settingBar={settingBar}>
     {hotkeyModal}
