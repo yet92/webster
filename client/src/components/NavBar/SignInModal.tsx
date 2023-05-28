@@ -50,7 +50,7 @@ export default function SignInModal({
           className='text-text hover:text-contrast cursor-pointer absolute top-5 right-5'
           onClick={onClose}
         />
-        <h1 className='text-4xl py-20 text-text'>GATHERWISE</h1>
+        <h1 className='text-4xl py-20 text-text'>WEBSTER</h1>
         <div className='max-w-sm w-full rounded-lg shadow dark:bg-transparent dark:border-gray-700'>
           <EmailForm isLogin={isLogin} />
           <div className='text-xs flex flex-row gap-2 p-2'>
