@@ -46,6 +46,14 @@ const useItem = () => {
     dispatch(stageDataAction.addItem(newItem));
   };
 
+  const updatePoints = (id: string)  => {
+    console.log(stageData);
+    const lineIndex = stageData.findIndex(data => data.id === id);
+
+    console.log("LINE INDEX: ", lineIndex);
+    
+  };
+
   const updateItem = (
     id: string,
     attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"]
@@ -82,6 +90,7 @@ const useItem = () => {
     removeItem,
     alterItems,
     clearItems,
+    updatePoints,
   };
 };
 
