@@ -3,6 +3,7 @@ import authSlice from './authSlice';
 import errorsSlice from './errorsSlice';
 import projectsSlice from './projectsSlice';
 import usersSlice from './usersSlice';
+import collectionsSlice from './collectionSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     errors: errorsSlice,
     projects: projectsSlice,
     users: usersSlice,
+    collections: collectionsSlice,
   },
 });
 

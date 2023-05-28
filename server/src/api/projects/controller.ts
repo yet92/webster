@@ -102,4 +102,56 @@ export default class ProjectsController {
 			});
 		}
 	}
+
+	async addItem(
+		req: IRequest<{
+			newItem: any 
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const newItem = req.body.newItem;
+
+
+		if (newItem) {
+			const { project } = await this.service.addItem({projectId, newItem});
+
+			return response.send({ message: "success update", data: { project } })
+		}
+
+		response.send400({});
+
+
+	}
+
+	async updateItem(
+		req: IRequest<{
+			updatedObject: any 
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const updatedObject = req.body.updatedObject;
+
+
+		if (updatedObject) {
+			const { project } = await this.service.updateItem({projectId, updatedObject});
+
+			return response.send({ message: "success update", data: { project } })
+		}
+
+		response.send400({});
+
+
+	}
 }
