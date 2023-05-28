@@ -1,6 +1,6 @@
 import useRoutes from "./routes";
 import { BrowserRouter } from 'react-router-dom';
-import { NavBar } from "./components";
+import { NavBar, PageFooter } from "./components";
 
 import './index.css';
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +38,7 @@ function App() {
                 <NavBar/>
                   {routes}
                 </BrowserRouter>
+                <PageFooter />
               </>
             )
         }

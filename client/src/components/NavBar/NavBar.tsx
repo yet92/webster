@@ -16,25 +16,6 @@ export function NavBar() {
     setShowAuthModal(!showAuthModal);
   };
 
-  // const showSignLinks = () => {
-  //     if (auth.isAuthenticated) {
-  //         // return logout
-  //         return (
-  //             <Button onClick={onLogoutClick}>Logout</Button>
-  //         );
-  //     } else {
-  //         return (
-  //             <>
-  //                 <Navbar.Link active href="/auth/login">
-  //                     Login
-  //                 </Navbar.Link>
-  //                 <Navbar.Link active href="/auth/register">
-  //                     Register
-  //                 </Navbar.Link>
-  //             </>
-  //         )
-  //     }
-  // }
   return (
     <React.Fragment>
       <Navbar
@@ -72,7 +53,7 @@ export function NavBar() {
             Home
           </Link>
           <Link
-            to='/events'
+            to='/tools'
             className={`self-center text-2xl font-bold ${
               pathname === '/tools' ? 'text-contrast' : ''
             }`}>

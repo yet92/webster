@@ -12,8 +12,23 @@
     "brightness": {
       "name": "Brightness"
     },
-    "grayScale": {
+    "Grayscale": {
       "name": "Gray Scale"
+    },
+    "Invert": {
+      "name": "Invert"
+    },
+    "Sepia": {
+      "name": "Sepia"
+    },
+    "Solarize": {
+      "name": "Solarize"
+    },
+    "Noise": {
+      "name": "Noise"
+    },
+    "Pixelate": {
+      "name": "Pixelate"
     },
     "addColor": {
       "name": "Add color"
@@ -306,5 +321,9 @@
       "name": "Export Selected Frame",
       "icon": "box-arrow-down"
     }
+  },
+  "filter": {
+    "id": "filter",
+    "name": "Filter"
   }
 }
