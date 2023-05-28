@@ -4,16 +4,16 @@ import jwt from "jsonwebtoken";
 import passport from "passport";
 import {
     Strategy as GoogleStrategy,
-    VerifyCallback
+    VerifyCallback,
 } from "passport-google-oauth2";
-import {
-    ExtractJwt,
-    Strategy as JwtStrategy
-} from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
 import { IRequest, ResponseSender } from "../../utils/rest";
 import AuthService from "./service";
 import AuthValidator from "./validator";
+import { OAuth2Client } from "google-auth-library";
+
+let callbackUrl = "";
 
 type PassportDoneFunction = (
     error: any,
@@ -26,6 +26,7 @@ export default class AuthController {
     private googleClientId: string = "";
     private googleClientSecret: string = "";
     private host = "";
+    private googleClient: OAuth2Client;
 
     validator: AuthValidator;
     service: AuthService;
@@ -67,6 +68,8 @@ export default class AuthController {
 
         this.setEnvironmentParameters();
 
+        this.googleClient = new OAuth2Client(this.googleClientId);
+
         passport.use(
             "login",
             new LocalStrategy(
@@ -90,7 +93,8 @@ export default class AuthController {
             )
         );
 
-        const callBackURL = `${this.host}/auth/google/callback`;
+        const callBackURL = `${this.host}/api/auth/google/callback`;
+        callbackUrl = callBackURL;
         console.log("Google callback URL:", callBackURL);
 
         passport.use(
@@ -175,7 +179,12 @@ export default class AuthController {
     sendToken(user: User, res: Response) {
         const response = new ResponseSender(res);
 
-        const body = { id: user.id, email: user.email };
+        const body = {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            avatar: user.avatar,
+        };
         const token = jwt.sign({ user: body }, this.JWT_SECRET as string);
         return response.send({
             data: { token, user: body },
@@ -222,9 +231,44 @@ export default class AuthController {
         )(req, res);
     }
 
-    async googleLogin(req: IRequest<{}>, res: Response, next: NextFunction) {
-        this.sendToken(req.user as User, res);
+    async googleLogin(
+        req: IRequest<{ credential: string }>,
+        res: Response,
+        next: NextFunction
+    ) {
+        // this.sendToken(req.user as User, res);
         // TODO: add redirect for react client
+
+        console.log(req.body.credential);
+
+        if (req.body.credential) {
+            const ticket = await this.googleClient.verifyIdToken({
+                idToken: req.body.credential,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+            const payload = ticket.getPayload();
+            if (payload && payload.email) {
+                const email = payload.email;
+                const firstName = payload.given_name;
+                const lastName = payload.family_name;
+                const imageURL = payload.picture;
+
+                const { user } = await this.service.googleAuth(
+                    email,
+                    firstName,
+                    lastName,
+                    imageURL,
+                );
+
+                if (user) {
+                    return this.sendToken(user, res);
+                }
+            }
+
+            return res.json({ payload });
+        }
+
+        res.send("Error");
     }
 
     async verifyGoogle(

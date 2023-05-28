@@ -15,15 +15,7 @@
 				"id": "brushDrop",
 				"name": "Type",
 				"desc": "Brush",
-				"icon": "arrow-right"
-			}
-		],
-		"sub-input": [
-			{
-				"id": "brushDrop",
-				"name": "Type",
-				"desc": "Brush",
-				"icon": "arrow-right"
+				"icon": ""
 			}
 		]
 	},

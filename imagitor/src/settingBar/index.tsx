@@ -1,6 +1,6 @@
 import React from "react";
 import { Accordion } from "react-bootstrap";
-import { Node, NodeConfig } from "konva/lib/Node";
+import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import Widget, { WidgetKind } from "./Widget";
 import widgetList from "../config/widget.json";
 import FrameWidget from "./widgetList/FrameWidget";
@@ -13,12 +13,16 @@ import useSelection from "../hook/useSelection";
 import useStage from "../hook/useStage";
 import ShapeWidget from "./widgetList/ShapeWidget";
 import IconWidget from "./widgetList/IconWidget";
+import LayerWidget from "./widgetList/LayerWidget";
 import LineWidget from "./widgetList/LineWidget";
+import useTransformer from "../hook/useTransformer";
 
 export type SettingBarProps = {
   selectedItems: Node<NodeConfig>[];
   clearSelection: ReturnType<typeof useSelection>["clearSelection"];
   stageRef: ReturnType<typeof useStage>["stageRef"];
+  transformer?: ReturnType<typeof useTransformer>;
+  onSelectItem?: (e?: KonvaEventObject<MouseEvent>, itemList?: Node<NodeConfig>[]) => void;
 };
 
 const Widgets = {
@@ -30,6 +34,7 @@ const Widgets = {
   text: (data: WidgetKind & SettingBarProps) => <TextWidget />,
   line: (data: WidgetKind & SettingBarProps) => <LineWidget />,
   icon: (data: WidgetKind & SettingBarProps) => <IconWidget />,
+  layer: (data: WidgetKind & SettingBarProps) => <LayerWidget data={data}/>,
   export: (data: WidgetKind & SettingBarProps) => <ExportWidget data={data} />,
 };
 

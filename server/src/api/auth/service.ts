@@ -111,7 +111,8 @@ export default class AuthService {
     async googleAuth(
         email: string,
         firstName?: string,
-        lastName?: string
+        lastName?: string,
+        avatar?: string,
     ): Promise<AuthServiceMethodReturns> {
         let user = await this.prisma.user.findFirst({
             where: {
@@ -126,10 +127,11 @@ export default class AuthService {
                     password: "",
                     firstName,
                     lastName,
+                    avatar,
                 },
             });
         }
-
+        
         return { user };
     }
 }

@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Figure, Form, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Figure,
+  Form,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 import { Filter, Node, NodeConfig } from "konva/lib/Node";
 import RangeSlider from "react-bootstrap-range-slider";
 import { ColorResult, SketchPicker } from "react-color";
@@ -19,6 +27,8 @@ import { SettingBarProps } from "..";
 import useItem from "../../hook/useItem";
 import useLocalStorage from "../../hook/useLocalStorage";
 import useI18n from "../../hook/usei18n";
+import { setToolColor } from "../../redux/selectTool";
+import { useDispatch } from "react-redux";
 
 export type ColorPaletteKind = {
   "data-item-type": string;
@@ -34,7 +44,6 @@ type ColorPaletteWidgetProps = {
 export const COLOR_LIST_KEY = "colorList";
 
 const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
-  console.log("here",data);
   const { getValue, setValue } = useLocalStorage();
   const { updateItem } = useItem();
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -82,10 +91,13 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
     } else {
       data.selectedItems[0].attrs.fill = "transparent";
     }
-    updateItem(data.selectedItems[0].id(), (attrs) => data.selectedItems[0].attrs);
+    updateItem(
+      data.selectedItems[0].id(),
+      (attrs) => data.selectedItems[0].attrs
+    );
   };
   return (
-    <Col style={{ overflowY: "auto", overflowX: "hidden", maxHeight: "300px" }}>
+    <Col>
       <h6>
         {getTranslation("widget", "colorPalette", "name")}
         <OverlayTrigger
@@ -94,7 +106,8 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
             <Tooltip id="tooltip-clear-color">
               {getTranslation("widget", "colorPalette", "addColor", "name")}
             </Tooltip>
-          }>
+          }
+        >
           <Button
             className={[
               colorStyles.transparentDarkColorTheme,
@@ -105,7 +118,8 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
               spaceStyles.ml1rem,
               alignStyles["text-left"],
             ].join(" ")}
-            onClick={toggleColorPicker}>
+            onClick={toggleColorPicker}
+          >
             <i className="bi-plus" />
           </Button>
         </OverlayTrigger>
@@ -115,7 +129,8 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
             <Tooltip id="tooltip-clear-color">
               {getTranslation("widget", "colorPalette", "clearColor", "name")}
             </Tooltip>
-          }>
+          }
+        >
           <Button
             className={[
               colorStyles.transparentDarkColorTheme,
@@ -126,7 +141,8 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
               spaceStyles.ml1rem,
               alignStyles["text-left"],
             ].join(" ")}
-            onClick={onClearColorClick}>
+            onClick={onClearColorClick}
+          >
             <i className="bi-x-circle" />
           </Button>
         </OverlayTrigger>
@@ -135,9 +151,11 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
         <SketchPicker
           color={newColor}
           onChange={changeNewColor}
-          className={[positionStyles.absolute, positionStyles.left0, positionStyles.zIndex3].join(
-            " ",
-          )}
+          className={[
+            positionStyles.absolute,
+            positionStyles.left0,
+            positionStyles.zIndex3,
+          ].join(" ")}
         />
       )}
       <Row xs={4}>
@@ -180,6 +198,7 @@ export default ColorPaletteWidget;
 const ColorPaletteThumbnail: React.FC<{
   data: ColorPaletteKind;
 }> = ({ data: { id, ...data } }) => {
+  const dispatch = useDispatch();
   const { updateItem } = useItem();
 
   const onClickColorBlock = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -194,16 +213,22 @@ const ColorPaletteThumbnail: React.FC<{
       }
       updateItem(item.id(), () => item.attrs);
     });
-    data.selectedItems[0].getStage()?.batchDraw();
+    if (data.selectedItems[0]) data.selectedItems[0].getStage()?.batchDraw();
+    dispatch(setToolColor(data.colorCode));
   };
 
   return (
-    <Figure as={Col} className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}>
+    <Figure
+      as={Col}
+      className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}
+    >
       <div
         onClick={onClickColorBlock}
         style={{ width: 20, height: 20, backgroundColor: data.colorCode }}
       />
-      <Figure.Caption className={[fontStyles.fontHalf1em, "text-center"].join(" ")}>
+      <Figure.Caption
+        className={[fontStyles.fontHalf1em, "text-center"].join(" ")}
+      >
         {`${data.colorCode}`}
       </Figure.Caption>
     </Figure>
@@ -217,7 +242,7 @@ const ColorPaletteOpacitySlider: React.FC<{
   const { getTranslation } = useI18n();
 
   const [opacity, setOpacity] = useState(
-    data.selectedItems[0] ? data.selectedItems[0].attrs.opacity * 100 : 100,
+    data.selectedItems[0] ? data.selectedItems[0].attrs.opacity * 100 : 100
   );
 
   useEffect(() => {
@@ -226,7 +251,7 @@ const ColorPaletteOpacitySlider: React.FC<{
         && data.selectedItems[0].attrs.opacity !== undefined
         && data.selectedItems[0].attrs.opacity !== null
         ? data.selectedItems[0].attrs.opacity * 100
-        : 100,
+        : 100
     );
   }, [data.selectedItems]);
 
@@ -264,7 +289,7 @@ const ColorPaletteBrightnessSlider: React.FC<{
   const [brightness, setBrightNess] = useState(
     data.selectedItems[0] && data.selectedItems[0].attrs.brightness
       ? data.selectedItems[0].attrs.brightness * 100
-      : 0,
+      : 0
   );
 
   useEffect(() => {
@@ -273,7 +298,7 @@ const ColorPaletteBrightnessSlider: React.FC<{
         && data.selectedItems[0].attrs.brightness !== undefined
         && data.selectedItems[0].attrs.brightness !== null
         ? data.selectedItems[0].attrs.brightness * 100
-        : 0,
+        : 0
     );
   }, [data.selectedItems]);
 
@@ -385,6 +410,3 @@ const ColorPaletteFilterToggle: React.FC<{
     </Col>
   );
 };
-
-
-
