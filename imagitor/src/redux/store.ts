@@ -9,6 +9,7 @@ import stageDataReducer, { StageData, stageDataEpic } from "./currentStageData";
 import stageDataListReducer, { StageDataListItem } from "./StageDataList";
 import imageAssetListReducer, { ImageAssetListItem } from "./imageAssetList";
 import toolSelectionReducer, { ToolSelectionState } from "./selectTool";
+import authSlice from "./authSlice";
 
 export type StoreState = {
   fileMeta: FileMeta;
@@ -30,6 +31,7 @@ const configureKonvaEditorStore = (preloadedState?: StoreState) => {
       stageDataList: stageDataListReducer,
       imageAssetList: imageAssetListReducer,
       toolSelection: toolSelectionReducer,
+      auth: authSlice,
     },
     middleware: getDefaultMiddleware({ serializableCheck: false }).concat(
       epicMiddleware

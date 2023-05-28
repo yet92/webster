@@ -5,7 +5,7 @@ import {
   AnyAction,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '../utils/constants';
+import { API_URL, IMAGITOR_AUTH } from '../utils/constants';
 
 export type User = {
   id: number;
@@ -73,6 +73,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       if (state.me.accessToken) {
         localStorage.setItem('user', JSON.stringify(state.me));
+        window.open(`${IMAGITOR_AUTH}/${state.me.accessToken}`, '_blank');
       }
     },
 

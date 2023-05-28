@@ -105,7 +105,6 @@ const ImageThumbnail: React.FC<{
   data: Omit<ImageItemKind, "image">;
 }> = ({ data: { id, ...data }, maxPx }) => {
   const { getImageAssetSrc } = useImageAsset();
-  console.log("HERE5", data.src);
   return (
     <Figure as={Col} className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}>
       <Drag
