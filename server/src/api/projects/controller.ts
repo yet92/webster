@@ -57,7 +57,7 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveAll({
-			userId:  req.user!.user!.id,
+			userId: req.user!.user!.id,
 		});
 
 		if (result && result.error) {
@@ -102,56 +102,84 @@ export default class ProjectsController {
 			});
 		}
 	}
-
-	async addItem(
+	async removeOne(
 		req: IRequest<{
-			newItem: any 
+			id: string;
 		}>,
 		res: Response,
 		next: NextFunction
 	) {
+		const response = new ResponseSender(res);
 
+		const result = await this.service.removeOne({
+			projectId: parseInt(req.params.id),
+		});
+
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
+		
+		return response.send({
+			message: 'Project retrieved',
+		});
+	}
+
+	async addItem(
+		req: IRequest<{
+			newItem: any;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
 		const response = new ResponseSender(res);
 
 		const projectId = parseInt(req.params.id);
 
 		const newItem = req.body.newItem;
 
-
 		if (newItem) {
-			const { project } = await this.service.addItem({projectId, newItem});
+			const { project } = await this.service.addItem({
+				projectId,
+				newItem,
+			});
 
-			return response.send({ message: "success update", data: { project } })
+			return response.send({
+				message: 'success update',
+				data: { project },
+			});
 		}
 
 		response.send400({});
-
-
 	}
 
 	async updateItem(
 		req: IRequest<{
-			updatedObject: any 
+			updatedObject: any;
 		}>,
 		res: Response,
 		next: NextFunction
 	) {
-
 		const response = new ResponseSender(res);
 
 		const projectId = parseInt(req.params.id);
 
 		const updatedObject = req.body.updatedObject;
 
-
 		if (updatedObject) {
-			const { project } = await this.service.updateItem({projectId, updatedObject});
+			const { project } = await this.service.updateItem({
+				projectId,
+				updatedObject,
+			});
 
-			return response.send({ message: "success update", data: { project } })
+			return response.send({
+				message: 'success update',
+				data: { project },
+			});
 		}
 
 		response.send400({});
-
-
 	}
 }

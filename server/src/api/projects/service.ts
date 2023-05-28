@@ -62,6 +62,28 @@ export default class ProjectsService {
             return { error: { message: "Something went wrong", status: 500 } };
         }
     }
+
+    async removeOne({
+        projectId,
+    }: {
+        projectId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const project = await this.prisma.project.delete({
+                where: { id: projectId },
+            });
+
+            if (!project)
+                return {
+                    error: { message: "No project with such id", status: 404 },
+                };
+
+            return {};
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
     async retrieveAll({
         userId,
     }: {
