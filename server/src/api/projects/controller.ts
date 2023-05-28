@@ -36,6 +36,7 @@ export default class ProjectsController {
 		}
 		const result = await this.service.createProject({
 			...req.body,
+			// @ts-ignore
 			ownerId: req.user!.user!.id,
 		});
 
@@ -57,6 +58,7 @@ export default class ProjectsController {
 		const response = new ResponseSender(res);
 
 		const result = await this.service.retrieveAll({
+			// @ts-ignore
 			userId: req.user!.user!.id,
 		});
 
@@ -121,7 +123,34 @@ export default class ProjectsController {
 				message: result.error.message,
 			});
 		}
-		
+
+		return response.send({
+			message: 'Project retrieved',
+		});
+	}
+
+	async changeIsPublic(
+		req: IRequest<{
+			id: string;
+			isPublic: boolean;
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const result = await this.service.changeIsPublic({
+			projectId: parseInt(req.params.id),
+			isPublic: req.body.isPublic,
+		});
+
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
+
 		return response.send({
 			message: 'Project retrieved',
 		});

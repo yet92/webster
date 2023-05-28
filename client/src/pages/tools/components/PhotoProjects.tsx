@@ -3,7 +3,10 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import CreateProjectModal from './CreateProjectModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import { fetchProjectsAsync } from '../../../store/projectsSlice';
+import {
+  fetchProjectsAsync,
+  changeIsPublicAsync,
+} from '../../../store/projectsSlice';
 import { useAppDispatch } from '../../../hooks/redux.hook';
 import { RiSettings4Fill } from 'react-icons/ri';
 import { Dropdown, Tooltip } from 'flowbite-react';
@@ -73,6 +76,17 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
     await removeFetch(project.id, me.accessToken as string);
     dispatch(fetchProjectsAsync(me.accessToken as string));
   };
+
+  const onClickChangePrivacy = async () => {
+    console.log('there');
+    dispatch(
+      changeIsPublicAsync({
+        accessToken: me.accessToken as string,
+        id: project.id,
+        isPublic: !project.isPublic,
+      })
+    );
+  };
   const { collections } = useSelector(
     (selector: RootState) => selector.collections
   );
@@ -114,12 +128,14 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
           <Tooltip
             content={
               <div className='flex w-full flex-col gap-5'>
-                {collections.map((collection) => (
-                  <div className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'>
+                {collections.map((collection, index) => (
+                  <div
+                    key={index}
+                    className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'>
                     <img
                       onError={handleImageError}
                       alt='preview'
-                      src={collection.thumbnail || ""}
+                      src={collection.thumbnail || ''}
                       className='h-[50px] w-[50px] rounded-md'
                     />
                     <span className=' text-text'>{collection.title}</span>
@@ -133,8 +149,13 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
               <span>Add to Collection</span>
             </Dropdown.Item>
           </Tooltip>
-          <Dropdown.Item>
-            <span className='text-contrast'>Make Public</span>
+          <Dropdown.Item onClick={onClickChangePrivacy}>
+            <span
+              className={`${
+                project.isPublic ? 'text-contrast' : 'text-red-600'
+              }`}>
+              {project.isPublic ? 'Make Private' : 'Make Public'}
+            </span>
           </Dropdown.Item>
           <Dropdown.Item>
             <span>Share</span>

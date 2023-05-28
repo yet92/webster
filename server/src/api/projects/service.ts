@@ -101,7 +101,7 @@ export default class ProjectsService {
 	async addItem({ projectId, newItem }: { projectId: number; newItem: any }) {
 		const { project } = await this.retrieveOne({ projectId });
 
-		const items = JSON.parse(project.project);
+		const items = JSON.parse(project!.project);
 		items[0].data.push(newItem);
 
 		const newProject = JSON.stringify(items);
@@ -127,9 +127,9 @@ export default class ProjectsService {
 	}) {
 		const { project } = await this.retrieveOne({ projectId });
 
-		const items = JSON.parse(project.project);
+		const items = JSON.parse(project!.project);
 
-		const item = items[0].data.find((item) => item.id === updatedObject.id);
+		const item = items[0].data.find((item: {id: number}) => item.id === updatedObject.id);
 
 		for (const key in item) {
 			item[key] = updatedObject[key];
@@ -147,6 +147,31 @@ export default class ProjectsService {
 		});
 
 		return { project: { ...project, project: updatedProject } };
+	}
+
+	async changeIsPublic({
+		projectId,
+		isPublic
+	}: {
+		projectId: number;
+		isPublic: boolean;
+	}): Promise<ProjectsServiceMethodReturns> {
+		try {
+			const project = await this.prisma.project.update({
+				where: { id: projectId },
+				data: {isPublic},
+			});
+
+			if (!project)
+				return {
+					error: { message: 'No project with such id', status: 404 },
+				};
+
+			return {};
+		} catch (error) {
+			console.error(error);
+			return { error: { message: 'Something went wrong', status: 500 } };
+		}
 	}
 
 	async removeOne({
