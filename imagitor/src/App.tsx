@@ -392,7 +392,7 @@ function App() {
       getStageFromServer(projectId).then((stageData) => {
       
         if (stageData) {
-          console.log(stageData);
+          
           stageData.forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
           initializeFileDataList(stageData);
         } else {
