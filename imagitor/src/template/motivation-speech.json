@@ -43,7 +43,7 @@
           "src": "find:LdygWYCzE1zg4Q0FqaFlf",
           "zIndex": 0,
           "brightness": 0,
-          "_filters": ["Brighten", "Grayscale", "Grayscale"],
+          "_filters": ["Brighten", "Grayscale", "Sepia", "Invert", "Solarize", "Noise", "Pixelate"],
           "updatedAt": 1648525991247,
           "image": {},
           "data-frame-type": "image",

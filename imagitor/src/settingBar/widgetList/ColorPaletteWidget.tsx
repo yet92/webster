@@ -34,6 +34,7 @@ type ColorPaletteWidgetProps = {
 export const COLOR_LIST_KEY = "colorList";
 
 const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
+  console.log("here",data);
   const { getValue, setValue } = useLocalStorage();
   const { updateItem } = useItem();
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -84,7 +85,7 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
     updateItem(data.selectedItems[0].id(), (attrs) => data.selectedItems[0].attrs);
   };
   return (
-    <Col>
+    <Col style={{ overflowY: "auto", overflowX: "hidden", maxHeight: "300px" }}>
       <h6>
         {getTranslation("widget", "colorPalette", "name")}
         <OverlayTrigger
@@ -164,9 +165,9 @@ const ColorPaletteWidget: React.FC<ColorPaletteWidgetProps> = ({ data }) => {
           selectedItems: data.selectedItems,
         }}
       />
-      <ColorPaletteGrayScaleToggle
+      <ColorPaletteFilterToggle
         data={{
-          "data-item-type": "grayScale",
+          "data-item-type": "filterToggle",
           selectedItems: data.selectedItems,
         }}
       />
@@ -301,67 +302,89 @@ const ColorPaletteBrightnessSlider: React.FC<{
   );
 };
 
-const ColorPaletteGrayScaleToggle: React.FC<{
+const FilterOptions = {
+  Grayscale: Konva.Filters.Grayscale,
+  Sepia: Konva.Filters.Sepia,
+  Invert: Konva.Filters.Invert,
+  Solarize: Konva.Filters.Solarize,
+  Noise: Konva.Filters.Noise,
+  Pixelate: Konva.Filters.Pixelate,
+};
+
+const ColorPaletteFilterToggle: React.FC<{
   data: Omit<Omit<ColorPaletteKind, "colorCode">, "id">;
 }> = ({ data }) => {
   const { updateItem } = useItem();
   const { getTranslation } = useI18n();
-  const [grayScale, setGrayScale] = useState<boolean>(
-    !!(
-      data.selectedItems[0]
-      && data.selectedItems[0].filters()
-      && data.selectedItems[0].filters().find((_filter) => _filter === Konva.Filters.Grayscale)
-    ),
-  );
+  const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
 
-  const onChangeGrayScale = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGrayScale(e.currentTarget.checked);
+  const filterOptions = Object.values(FilterOptions);
+
+  useEffect(() => {
+    const initialFilters = filterOptions.filter((filter) => {
+      return data.selectedItems.every((item) =>
+        item.filters()?.find((f) => f === filter)
+      );
+    });
+    setSelectedFilters(initialFilters);
+  }, [data.selectedItems]);
+
+  const toggleFilter = (filter: Filter) => {
+    const isFilterSelected = selectedFilters.includes(filter);
+
+    let newFilters: Filter[] = [];
+    if (isFilterSelected) {
+      newFilters = selectedFilters.filter((f) => f !== filter);
+    } else {
+      newFilters = [...selectedFilters, filter];
+    }
+    setSelectedFilters(newFilters);
+
     if (data.selectedItems.length === 0) {
       return;
     }
-    let newFilters: Filter[] = [];
-    if (data.selectedItems[0].filters().find((_filter) => _filter === Konva.Filters.Grayscale)) {
-      data.selectedItems[0].filters(
-        data.selectedItems[0]
-          .filters()
-          .filter((_filter: Filter) => _filter !== Konva.Filters.Grayscale),
-      );
-      newFilters = data.selectedItems[0]
-        .filters()
-        .filter((_filter) => _filter !== Konva.Filters.Grayscale);
-    } else {
-      data.selectedItems[0].filters([...data.selectedItems[0].filters(), Konva.Filters.Grayscale]);
-      newFilters = [...data.selectedItems[0].filters(), Konva.Filters.Grayscale];
-    }
-    updateItem(data.selectedItems[0].id(), () => ({
-      ...data.selectedItems[0].attrs,
-      _filters: newFilters.map((_filter: Filter) => _filter.name),
-    }));
-    data.selectedItems[0].getStage()?.batchDraw();
-  };
 
-  useEffect(() => {
-    setGrayScale(
-      !!(
-        data.selectedItems[0]
-        && data.selectedItems[0].filters()
-        && data.selectedItems[0].filters().find((_filter) => _filter === Konva.Filters.Grayscale)
-      ),
-    );
-  }, [data.selectedItems]);
+    data.selectedItems.forEach((item) => {
+      const currentFilters = item.filters();
+      if (currentFilters) {
+        if (isFilterSelected) {
+          item.filters(currentFilters.filter((f) => f !== filter));
+        } else {
+          item.filters([...currentFilters, filter]);
+        }
+      }
+    });
+
+    const updatedFilters = newFilters.map((f) => f.name);
+    data.selectedItems.forEach((item) => {
+      updateItem(item.id(), () => ({
+        ...item.attrs,
+        _filters: updatedFilters,
+      }));
+      item.getStage()?.batchDraw();
+    });
+  };
 
   return (
     <Col>
-      <h6>{getTranslation("widget", "colorPalette", "grayScale", "name")}</h6>
-      <Form>
-        <Form.Check
-          checked={grayScale}
-          onChange={onChangeGrayScale}
-          type="switch"
-          label=""
-          id="grayScaleSwitch"
-        />
-      </Form>
+      {filterOptions.map((filter) => (
+        <div key={filter.name}>
+          <h6>{getTranslation("widget", "colorPalette", filter.name, "name")}</h6>
+          <Figure.Image
+            alt={filter.name}
+            src={`${process.env.PUBLIC_URL}/assets/filters/${filter.name}.png`}
+            onClick={() => toggleFilter(filter)}
+            style={{
+              border: selectedFilters.includes(filter) ? "2px solid red" : "none",
+              maxHeight: "80px",
+              maxWidth: "80px"
+            }}
+          />
+        </div>
+      ))}
     </Col>
   );
 };
+
+
+

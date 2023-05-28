@@ -30,5 +30,9 @@
   {
     "id": "export",
     "name": "Export"
+  },
+  {
+    "id": "filter",
+    "name": "Filter"
   }
 ]

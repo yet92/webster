@@ -26,6 +26,11 @@ export type ImageItemProps = OverrideItemProps<{
 export const filterMap: { [name: string]: Filter } = {
   Brighten: Konva.Filters.Brighten,
   Grayscale: Konva.Filters.Grayscale,
+  Sepia: Konva.Filters.Sepia,
+  Invert: Konva.Filters.Invert,
+  Solarize: Konva.Filters.Solarize,
+  Noise: Konva.Filters.Noise,
+  Pixelate: Konva.Filters.Pixelate,
 };
 
 const ImageItem: React.FC<ImageItemProps> = ({ data, e, onSelect }) => {
