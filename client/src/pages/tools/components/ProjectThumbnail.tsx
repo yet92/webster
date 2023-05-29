@@ -29,8 +29,8 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
   );
 
   const onProjectOpen = () => {
-    window.open(`${IMAGITOR_URL}/project/${project.id}`, "_blank");
-  }
+    window.open(`${IMAGITOR_URL}/project/${project.id}`, '_blank');
+  };
 
   const onClickChangePrivacy = async () => {
     console.log('there');
@@ -72,8 +72,9 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
       'https://res.cloudinary.com/drq4rqj3n/image/upload/v1685287400/webster_ews2pu.png';
   };
   return (
-    <div onClick={onProjectOpen} className='flex h-fit w-fit cursor-pointer flex-col rounded-md border-2 border-transparent bg-bg transition hover:border-contrast hover:shadow-2xl hover:shadow-contrast'>
+    <div className='flex h-fit w-fit cursor-pointer flex-col rounded-md border-2 border-transparent bg-bg transition hover:border-contrast hover:shadow-2xl hover:shadow-contrast'>
       <img
+        onClick={onProjectOpen}
         className='h-[300px] w-[400px] rounded-t-xl'
         src={project.thumbnail}
         onError={handleImageError}
