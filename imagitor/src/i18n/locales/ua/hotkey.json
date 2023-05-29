@@ -1,84 +1,84 @@
 {
   "moveBackground": {
-    "name": "배경 움직이기",
+    "name": "Перемістити фон",
     "keys": ["spacebar", "click & move"],
     "desc": ""
   },
   "resetZoom": {
-    "name": "줌 초기화",
+    "name": "Скинути масштаб",
     "keys": ["ctrl", "0"],
     "desc": ""
   },
   "zoomIn": {
-    "name": "화면 확대",
+    "name": "Збільшити масштаб",
     "keys": ["mouse wheel"],
     "desc": ""
   },
   "zoomOut": {
-    "name": "화면 축소",
+    "name": "Зменшити масштаб",
     "keys": ["mouse wheel"],
     "desc": ""
   },
   "layerUp": {
-    "name": "레이어 올리기",
+    "name": "Перемістити шар вище",
     "keys": ["shift", "up"],
     "desc": ""
   },
   "layerDown": {
-    "name": "레이어 내리기",
+    "name": "Перемістити шар нижче",
     "keys": ["shift", "down"],
     "desc": ""
   },
   "deleteItems": {
-    "name": "선택한 아이템 삭제",
+    "name": "Видалити",
     "keys": ["backspace"],
     "desc": ""
   },
   "duplicateItems": {
-    "name": "선택한 아이템 복제",
+    "name": "Дублювати",
     "keys": ["ctrl", "d"],
     "desc": ""
   },
   "copyItems": {
-    "name": "선택한 아이템 복사",
+    "name": "Копіювати вибрані елементи",
     "keys": ["ctrl", "c"],
     "desc": ""
   },
   "pasteItems": {
-    "name": "복사한 아이템 붙이기",
+    "name": "Вставити вибрані елементи",
     "keys": ["ctrl", "v"],
     "desc": ""
   },
   "selectAllItems": {
-    "name": "모든 아이템 선택하기",
+    "name": "Вибрати усі елементи",
     "keys": ["ctrl", "a"],
     "desc": ""
   },
   "flipHorizontally": {
-    "name": "선택한 아이템 수평 반전",
+    "name": "Перевернути горизонтально",
     "keys": ["shift", "h"],
     "desc": ""
   },
   "flipVertically": {
-    "name": "선택한 아이템 수직 반전",
+    "name": "Перевернути вертикально",
     "keys": ["shift", "v"],
     "desc": ""
   },
   "undo": {
     "id": "undo",
-    "name": "이전으로 되감기",
+    "name": "Скасувати",
     "keys": ["ctrl", "z"],
     "desc": ""
   },
   "redo": {
     "id": "redo",
-    "name": "다시 앞으로 감기",
+    "name": "Повторити",
     "keys": ["ctrl", "y"],
     "desc": ""
   },
   "remove-background": {
-    "name": "선택한 이미지 배경제거",
-    "keys": ["[왼쪽 버튼 중 사진 버튼 선택]"],
-    "desc": "선택한 이미지 배경제거"
+    "name": "Прибрати задній фон вибраних елементів",
+    "keys": ["ctrl", "x", "b"],
+    "desc": "Прибрати задній фон вибраних елементів"
   }
 }

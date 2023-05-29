@@ -20,6 +20,7 @@ export const loadUserWithToken = createAsyncThunk(
         }        
       });
     const json = await response.json();
+    console.log("JSON", json);
     return {response, json, token};
   }
 );
@@ -94,7 +95,7 @@ const authSlice = createSlice({
       .addCase(loadUserWithToken.fulfilled, (state, action) => {
         console.log("FULFILLED: ", action);
         const json = action.payload.json;
-        state.me = {id: json.user.id, email: json.user.email, accessToken: action.payload.token, };
+        state.me = {id: json.user.id, email: json.user.email, accessToken: action.payload.token, avatar: json.user.avatar};
         state.isAuthenticated = true;
         if (state.me.accessToken) {
           localStorage.setItem("user", JSON.stringify(state.me));
