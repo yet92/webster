@@ -6,6 +6,7 @@ import React, { MouseEventHandler, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SignInModal from './SignInModal';
 import { clearAllProjects } from '../../store/projectsSlice';
+import { clearAllCollections } from '../../store/collectionSlice';
 
 export function NavBar() {
   const dispatch = useDispatch();
@@ -86,6 +87,7 @@ function ProfileMenu({ user }: { user: User }) {
   const onLogoutClick = () => {
     dispatch(logout());
     dispatch(clearAllProjects());
+    dispatch(clearAllCollections());
   };
   console.log(user.avatar);
   return (

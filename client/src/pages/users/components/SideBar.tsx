@@ -52,12 +52,12 @@ export function SideBar({
         className='w-full rounded-xl bg-secondary p-2 text-2xl text-text hover:bg-contrast'>
         Video Projects
       </button>
-      <span className='text-center text-2xl text-contrast'>Collections</span>
+      {/* <span className='text-center text-2xl text-contrast'>Collections</span>
       <div className='flex w-full flex-col items-center justify-center gap-5 rounded-xl bg-secondary p-5 text-base'>
         {collections.map((collection, index) => (
           <CollectionItem key={index} collection={collection} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

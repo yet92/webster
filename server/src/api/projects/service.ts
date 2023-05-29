@@ -1,173 +1,173 @@
-import { PrismaClient, Project } from '@prisma/client';
-import Database from '../../database';
+import { PrismaClient, Project } from "@prisma/client";
+import Database from "../../database";
 
 export type CreateProjectParams = {
-	thumbnail?: string;
-	project: string;
-	title: string;
-	ownerId: number;
+  thumbnail?: string;
+  project: string;
+  title: string;
+  ownerId: number;
 };
 
 export type ProjectsServiceMethodReturns = {
-	project?: Project;
-	error?: { status: number; message: string };
-	projects?: Project[];
+  project?: Project;
+  error?: { status: number; message: string };
+  projects?: Project[];
 };
 
 export default class ProjectsService {
-	private prisma: PrismaClient = Database.client();
+  private prisma: PrismaClient = Database.client();
 
-	async createProject({
-		project,
-		ownerId,
-		title,
-		thumbnail,
-	}: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
-		try {
-			console.log('asfsafsaf', ownerId);
-			const newProject = await this.prisma.project.create({
-				data: {
-					project,
-					ownerId,
-					title,
-					thumbnail,
-				},
-			});
+  async createProject({
+    project,
+    ownerId,
+    title,
+    thumbnail,
+  }: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
+    try {
+      console.log("asfsafsaf", ownerId);
+      const newProject = await this.prisma.project.create({
+        data: {
+          project,
+          ownerId,
+          title,
+          thumbnail,
+        },
+      });
 
-			return { project: newProject };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+      return { project: newProject };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
 
-	async addToCollection({
-		collectionId,
-		projectId,
-	}: {
-		collectionId: number;
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const newProject = await this.prisma.project.update({
-				where: { id: projectId },
-				data: { collectionId: collectionId },
-			});
+  async addToCollection({
+    collectionId,
+    projectId,
+  }: {
+    collectionId: number;
+    projectId: number;
+  }): Promise<ProjectsServiceMethodReturns> {
+    try {
+      console.table({
+        collectionId,
+        projectId,
+      });
+      const newProject = await this.prisma.project.update({
+        where: { id: projectId },
+        data: { collectionId: collectionId },
+      });
 
-			return { project: newProject };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+      return { project: newProject };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
 
-	async retrieveOne({
-		projectId,
-	}: {
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const project = await this.prisma.project.findFirst({
-				where: { id: projectId },
-			});
+  async removeFromCollection({ projectId }: { projectId: number }): Promise<ProjectsServiceMethodReturns> {
+    try {
+      const newProject = await this.prisma.project.update({
+        where: { id: projectId },
+        data: { collectionId: null },
+      });
 
-			if (!project)
-				return {
-					error: { message: 'No project with such id', status: 404 },
-				};
+      return { project: newProject };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
 
-			return { project };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
-	async retrieveAll({
-		userId,
-	}: {
-		userId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const projects = await this.prisma.project.findMany({
-				where: { ownerId: userId },
-			});
-			return { projects };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+  async retrieveOne({ projectId }: { projectId: number }): Promise<ProjectsServiceMethodReturns> {
+    try {
+      const project = await this.prisma.project.findFirst({
+        where: { id: projectId },
+      });
 
-	async addItem({ projectId, newItem }: { projectId: number; newItem: any }) {
-		const { project } = await this.retrieveOne({ projectId });
+      if (!project)
+        return {
+          error: { message: "No project with such id", status: 404 },
+        };
 
-		const items = JSON.parse(project.project);
-		items[0].data.push(newItem);
+      return { project };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
+  async retrieveAll({ userId }: { userId: number }): Promise<ProjectsServiceMethodReturns> {
+    try {
+      const projects = await this.prisma.project.findMany({
+        where: { ownerId: userId },
+      });
+      return { projects };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
 
-		const newProject = JSON.stringify(items);
+  async addItem({ projectId, newItem }: { projectId: number; newItem: any }) {
+    const { project } = await this.retrieveOne({ projectId });
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: newProject,
-			},
-		});
+    const items = JSON.parse(project.project);
+    items[0].data.push(newItem);
 
-		return { project: { ...project, project: newProject } };
-	}
+    const newProject = JSON.stringify(items);
 
-	async updateItem({
-		projectId,
-		updatedObject,
-	}: {
-		projectId: number;
-		updatedObject: any;
-	}) {
-		const { project } = await this.retrieveOne({ projectId });
+    await this.prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        project: newProject,
+      },
+    });
 
-		const items = JSON.parse(project.project);
+    return { project: { ...project, project: newProject } };
+  }
 
-		const item = items[0].data.find((item) => item.id === updatedObject.id);
+  async updateItem({ projectId, updatedObject }: { projectId: number; updatedObject: any }) {
+    const { project } = await this.retrieveOne({ projectId });
 
-		for (const key in item) {
-			item[key] = updatedObject[key];
-		}
+    const items = JSON.parse(project.project);
 
-		const updatedProject = JSON.stringify(items);
+    const item = items[0].data.find((item) => item.id === updatedObject.id);
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: updatedProject,
-			},
-		});
+    for (const key in item) {
+      item[key] = updatedObject[key];
+    }
 
-		return { project: { ...project, project: updatedProject } };
-	}
+    const updatedProject = JSON.stringify(items);
 
-	async removeOne({
-		projectId,
-	}: {
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const project = await this.prisma.project.delete({
-				where: { id: projectId },
-			});
+    await this.prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        project: updatedProject,
+      },
+    });
 
-			if (!project)
-				return {
-					error: { message: 'No project with such id', status: 404 },
-				};
+    return { project: { ...project, project: updatedProject } };
+  }
 
-			return {};
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+  async removeOne({ projectId }: { projectId: number }): Promise<ProjectsServiceMethodReturns> {
+    try {
+      const project = await this.prisma.project.delete({
+        where: { id: projectId },
+      });
+
+      if (!project)
+        return {
+          error: { message: "No project with such id", status: 404 },
+        };
+
+      return {};
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
 }

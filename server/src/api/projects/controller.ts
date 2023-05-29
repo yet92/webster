@@ -1,185 +1,230 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response } from "express";
 
-import { IRequest, ResponseSender } from '../../utils/rest';
-import ProjectsService from './service';
-import ProjectValidator from './validator';
+import { IRequest, ResponseSender } from "../../utils/rest";
+import ProjectsService from "./service";
+import ProjectValidator from "./validator";
 
-let callbackUrl = '';
+let callbackUrl = "";
 
 export default class ProjectsController {
-	validator: ProjectValidator;
-	service: ProjectsService;
+  validator: ProjectValidator;
+  service: ProjectsService;
 
-	constructor() {
-		this.validator = new ProjectValidator();
-		this.service = new ProjectsService();
-	}
+  constructor() {
+    this.validator = new ProjectValidator();
+    this.service = new ProjectsService();
+  }
 
-	async create(
-		req: IRequest<{
-			title: string;
-			project: string;
-			thumbnail?: string;
-		}>,
-		res: Response,
-		next: NextFunction
-	) {
-		const validationResult = this.validator.create(req.body);
+  async create(
+    req: IRequest<{
+      title: string;
+      project: string;
+      thumbnail?: string;
+    }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    const validationResult = this.validator.create(req.body);
 
-		const response = new ResponseSender(res);
+    const response = new ResponseSender(res);
 
-		if (validationResult.error) {
-			console.log('Bad request: ', validationResult.error);
-			return response.send400({
-				message: validationResult.error.message,
-			});
-		}
-		const result = await this.service.createProject({
-			...req.body,
-			ownerId: req.user!.user!.id,
-		});
+    if (validationResult.error) {
+      console.log("Bad request: ", validationResult.error);
+      return response.send400({
+        message: validationResult.error.message,
+      });
+    }
+    const result = await this.service.createProject({
+      ...req.body,
+      ownerId: req.user!.user!.id,
+    });
 
-		if (result && result.error) {
-			return response.send({
-				status: result.error.status,
-				message: result.error.message,
-			});
-		}
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-		if (result && result.project) {
-			return response.send201({
-				message: 'Project created',
-				data: result.project,
-			});
-		}
-	}
-	async retrieveAll(req: IRequest<{}>, res: Response, next: NextFunction) {
-		const response = new ResponseSender(res);
+    if (result && result.project) {
+      return response.send201({
+        message: "Project created",
+        data: result.project,
+      });
+    }
+  }
 
-		const result = await this.service.retrieveAll({
-			userId: req.user!.user!.id,
-		});
+  async retrieveAll(req: IRequest<{}>, res: Response, next: NextFunction) {
+    const response = new ResponseSender(res);
 
-		if (result && result.error) {
-			return response.send({
-				status: result.error.status,
-				message: result.error.message,
-			});
-		}
+    const result = await this.service.retrieveAll({
+      userId: req.user!.user!.id,
+    });
 
-		if (result && result.projects) {
-			return response.send({
-				message: 'Projects retrieved',
-				data: result.projects,
-			});
-		}
-	}
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-	async retrieveOne(
-		req: IRequest<{
-			id: string;
-		}>,
-		res: Response,
-		next: NextFunction
-	) {
-		const response = new ResponseSender(res);
+    if (result && result.projects) {
+      return response.send({
+        message: "Projects retrieved",
+        data: result.projects,
+      });
+    }
+  }
 
-		const result = await this.service.retrieveOne({
-			projectId: parseInt(req.params.id),
-		});
+  async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, next: NextFunction) {
+    const response = new ResponseSender(res);
+    const result = await this.service.addToCollection({
+      collectionId: parseInt(req.body.collectionId),
+      projectId: parseInt(req.params.id),
+    });
 
-		if (result && result.error) {
-			return response.send({
-				status: result.error.status,
-				message: result.error.message,
-			});
-		}
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-		if (result && result.project) {
-			return response.send({
-				message: 'Project retrieved',
-				data: result.project,
-			});
-		}
-	}
-	async removeOne(
-		req: IRequest<{
-			id: string;
-		}>,
-		res: Response,
-		next: NextFunction
-	) {
-		const response = new ResponseSender(res);
+    if (result && result.projects) {
+      return response.send({
+        message: "Project added to collection",
+        data: result.projects,
+      });
+    }
+  }
 
-		const result = await this.service.removeOne({
-			projectId: parseInt(req.params.id),
-		});
+  async removeFromCollection(req: IRequest<{}>, res: Response, next: NextFunction) {
+    const response = new ResponseSender(res);
 
-		if (result && result.error) {
-			return response.send({
-				status: result.error.status,
-				message: result.error.message,
-			});
-		}
-		
-		return response.send({
-			message: 'Project retrieved',
-		});
-	}
+    const result = await this.service.removeFromCollection({
+      projectId: parseInt(req.params.id),
+    });
 
-	async addItem(
-		req: IRequest<{
-			newItem: any;
-		}>,
-		res: Response,
-		next: NextFunction
-	) {
-		const response = new ResponseSender(res);
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-		const projectId = parseInt(req.params.id);
+    if (result && result.projects) {
+      return response.send({
+        message: "Project removed from collection",
+        data: result.projects,
+      });
+    }
+  }
 
-		const newItem = req.body.newItem;
+  async retrieveOne(
+    req: IRequest<{
+      id: string;
+    }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    const response = new ResponseSender(res);
 
-		if (newItem) {
-			const { project } = await this.service.addItem({
-				projectId,
-				newItem,
-			});
+    const result = await this.service.retrieveOne({
+      projectId: parseInt(req.params.id),
+    });
 
-			return response.send({
-				message: 'success update',
-				data: { project },
-			});
-		}
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-		response.send400({});
-	}
+    if (result && result.project) {
+      return response.send({
+        message: "Project retrieved",
+        data: result.project,
+      });
+    }
+  }
+  async removeOne(
+    req: IRequest<{
+      id: string;
+    }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    const response = new ResponseSender(res);
 
-	async updateItem(
-		req: IRequest<{
-			updatedObject: any;
-		}>,
-		res: Response,
-		next: NextFunction
-	) {
-		const response = new ResponseSender(res);
+    const result = await this.service.removeOne({
+      projectId: parseInt(req.params.id),
+    });
 
-		const projectId = parseInt(req.params.id);
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
 
-		const updatedObject = req.body.updatedObject;
+    return response.send({
+      message: "Project retrieved",
+    });
+  }
 
-		if (updatedObject) {
-			const { project } = await this.service.updateItem({
-				projectId,
-				updatedObject,
-			});
+  async addItem(
+    req: IRequest<{
+      newItem: any;
+    }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    const response = new ResponseSender(res);
 
-			return response.send({
-				message: 'success update',
-				data: { project },
-			});
-		}
+    const projectId = parseInt(req.params.id);
 
-		response.send400({});
-	}
+    const newItem = req.body.newItem;
+
+    if (newItem) {
+      const { project } = await this.service.addItem({
+        projectId,
+        newItem,
+      });
+
+      return response.send({
+        message: "success update",
+        data: { project },
+      });
+    }
+
+    response.send400({});
+  }
+
+  async updateItem(
+    req: IRequest<{
+      updatedObject: any;
+    }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    const response = new ResponseSender(res);
+
+    const projectId = parseInt(req.params.id);
+
+    const updatedObject = req.body.updatedObject;
+
+    if (updatedObject) {
+      const { project } = await this.service.updateItem({
+        projectId,
+        updatedObject,
+      });
+
+      return response.send({
+        message: "success update",
+        data: { project },
+      });
+    }
+
+    response.send400({});
+  }
 }

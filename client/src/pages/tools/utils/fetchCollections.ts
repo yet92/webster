@@ -16,7 +16,17 @@ export async function fetchAllCollections(token: string) {
   return { response, json };
 }
 
-export async function fetchOneCollection(token: string, collectionId: string) {
+export async function removeCollection(token: string, id: number) {
+  const endpoint = `${SERVER_URL}/api/collections/${id}`;
+  await fetch(endpoint, {
+    method: 'delete',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function fetchOneCollection(token: string, collectionId: number) {
   const endpoint = `${SERVER_URL}/api/collections/${collectionId}`;
   const response = await fetch(endpoint, {
     method: 'GET',

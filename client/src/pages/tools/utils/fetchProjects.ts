@@ -11,7 +11,45 @@ export async function fetchAllProjects(token: string) {
     },
   });
 
-  const json: IResponseWithData<{projects: Project[]}> = await response.json();
+  const json: IResponseWithData<{ projects: Project[] }> =
+    await response.json();
+  return { response, json };
+}
+
+export async function addToCollection(
+  token: string,
+  collectionId: number,
+  projectId: number
+) {
+  const endpoint = `${SERVER_URL}/api/projects/${projectId}/collection`;
+  const response = await fetch(endpoint, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ collectionId }),
+  });
+
+  const json: IResponseWithData<{ projects: Project }> =
+    await response.json();
+  return { response, json };
+}
+
+export async function removeFromCollection(
+  token: string,
+  projectId: number
+) {
+  const endpoint = `${SERVER_URL}/api/projects/${projectId}/collection`;
+  const response = await fetch(endpoint, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const json: IResponseWithData<{ projects: Project }> =
+    await response.json();
   return { response, json };
 }
 
@@ -24,6 +62,6 @@ export async function fetchOneProject(token: string, projectId: string) {
     },
   });
 
-  const json: IResponseWithData<{project: Project}> = await response.json();
+  const json: IResponseWithData<{ project: Project }> = await response.json();
   return { response, json };
 }

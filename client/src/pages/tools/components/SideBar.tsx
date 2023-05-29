@@ -1,11 +1,15 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { AiOutlinePlusSquare } from 'react-icons/ai';
 import { ProjectType } from '../ToolsPage';
 import CreateCollectionModal from './CreateCollectionModal';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../hooks/redux.hook';
-import { fetchCollectionsAsync } from '../../../store/collectionSlice';
+import {
+  Collection,
+  fetchCollectionsAsync,
+  fetchOneCollectionAsync,
+} from '../../../store/collectionSlice';
 
 export function SideBar({
   setCurrentProjects,
@@ -63,15 +67,28 @@ export function SideBar({
           <span>Create Collection</span>
           <CreateCollectionModal show={showModal} onClose={onCreateClick} />
         </div>
-        {collections && collections.map((collection, index) => (
-          <CollectionItem key={index} collection={collection} />
-        ))}
+        {collections &&
+          collections.map((collection, index) => (
+            <CollectionItem
+              key={index}
+              collection={collection}
+              setCurrentProjects={setCurrentProjects}
+            />
+          ))}
       </div>
     </div>
   );
 }
 
-const CollectionItem = ({ collection }: { collection: any }) => {
+const CollectionItem = ({
+  collection,
+  setCurrentProjects,
+}: {
+  collection: Collection;
+  setCurrentProjects: React.Dispatch<React.SetStateAction<ProjectType | null>>;
+}) => {
+  const dispatch = useAppDispatch();
+  const { auth } = useSelector((selector: RootState) => selector);
   const handleImageError = (
     event: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
@@ -79,13 +96,23 @@ const CollectionItem = ({ collection }: { collection: any }) => {
     imgElement.src =
       'https://res.cloudinary.com/drq4rqj3n/image/upload/v1685287400/webster_ews2pu.png';
   };
-  
+
   return (
-    <div className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'>
+    <div
+      className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'
+      onClick={() => {
+        setCurrentProjects('collection');
+        dispatch(
+          fetchOneCollectionAsync({
+            accessToken: auth.me.accessToken!,
+            id: collection.id,
+          })
+        );
+      }}>
       <img
         onError={handleImageError}
         alt='preview'
-        src={collection.thumbnail || ""}
+        src={collection.thumbnail || ''}
         className='h-[50px] w-[50px] rounded-md'
       />
       <span className=' text-text'>{collection.title}</span>
