@@ -16,6 +16,7 @@ import IconWidget from "./widgetList/IconWidget";
 import LayerWidget from "./widgetList/LayerWidget";
 import LineWidget from "./widgetList/LineWidget";
 import useTransformer from "../hook/useTransformer";
+import FilterWidget from "./widgetList/FilterWidget";
 
 export type SettingBarProps = {
   selectedItems: Node<NodeConfig>[];
@@ -36,6 +37,7 @@ const Widgets = {
   icon: (data: WidgetKind & SettingBarProps) => <IconWidget />,
   layer: (data: WidgetKind & SettingBarProps) => <LayerWidget data={data}/>,
   export: (data: WidgetKind & SettingBarProps) => <ExportWidget data={data} />,
+  filter: (data: WidgetKind & SettingBarProps) => <FilterWidget data={data} />,
 };
 
 export type WidgetIDList = keyof typeof Widgets;

@@ -1,9 +1,14 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import {
   addToCollection,
   fetchAllProjects,
   removeFromCollection,
 } from '../pages/tools/utils/fetchProjects';
+
+import { fetchAllProjects } from '../pages/tools/utils/fetchProjects';
+import { changeIsPublic as changePrivacy } from '../pages/tools/utils/changeIsPublic';
+
 
 export type Project = {
   title: string;
@@ -14,6 +19,7 @@ export type Project = {
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
+  isPublic?: boolean;
 };
 
 type projectsState = {
@@ -81,6 +87,18 @@ export const removeFromCollectionAsync = createAsyncThunk<
   }
 );
 
+export const changeIsPublicAsync = createAsyncThunk<
+  number,
+  { accessToken: string; id: number; isPublic: boolean }
+>('projects/changeIsPublic', async ({ accessToken, id, isPublic }, thunkAPI) => {
+  try {
+    const { response } = await changePrivacy(id, accessToken, isPublic);
+    return id;
+  } catch (error) {
+    return thunkAPI.rejectWithValue('Failed to fetch projects');
+  }
+});
+
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
@@ -141,6 +159,20 @@ const projectsSlice = createSlice({
         state.loading = false;
       })
       .addCase(removeFromCollectionAsync.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(changeIsPublicAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(changeIsPublicAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = state.projects.map((project) => {
+          if (project.id === action.payload)
+            return { ...project, isPublic: !project.isPublic };
+          return project;
+        }) as unknown as Project[];
+      })
+      .addCase(changeIsPublicAsync.rejected, (state) => {
         state.loading = false;
       });
   },

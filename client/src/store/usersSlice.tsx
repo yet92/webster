@@ -21,7 +21,7 @@ export const fetchUsersAsync = createAsyncThunk<User[]>(
   async (_, thunkAPI) => {
     try {
       const { response, json } = await fetchAllUsers();
-      return json.data;
+      return json.data as unknown as User[];
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch users');
     }
@@ -33,7 +33,7 @@ export const fetchUserAsync = createAsyncThunk<User, string>(
   async (userId: string, thunkAPI) => {
     try {
       const { response, json } = await fetchOneUser(userId);
-      return json.data;
+      return json.data as unknown as User;
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch user');
     }
