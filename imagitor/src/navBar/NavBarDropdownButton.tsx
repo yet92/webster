@@ -44,7 +44,7 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({ data, dropd
         variant={[" ", colorStyles.whiteTheme, borderStyles.colorGrey].join(" ")}
       >
         <Dropdown.Toggle as={CustomToggle} data={data} />
-        <Dropdown.Menu className="">
+        <Dropdown.Menu className="tw-bg-secondary">
           {data["sub-button"] &&
             data["sub-button"].map((subData) => (
               <Dropdown.ItemText
@@ -53,7 +53,7 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({ data, dropd
                 onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                   e.stopPropagation();
                 }}
-                className={[colorStyles.whiteTheme, "d-inline"].join(" ")}
+                className={["d-inline"].join(" ")}
               >
                 <div
                   style={{
