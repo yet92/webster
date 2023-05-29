@@ -84,7 +84,7 @@ const ColorPaletteOpacitySlider: React.FC<{
   return (
     <Col>
       <h6>{getTranslation("widget", "colorPalette", "opacity", "name")}</h6>
-      <RangeSlider tooltipLabel={(value) => `${value}%`} value={opacity} onChange={onChangeOpacity} />
+      <RangeSlider className="tw-w-full" tooltipLabel={(value) => `${value}%`} value={opacity} onChange={onChangeOpacity} />
     </Col>
   );
 };
@@ -125,7 +125,7 @@ const ColorPaletteBrightnessSlider: React.FC<{
   return (
     <Col>
       <h6>{getTranslation("widget", "colorPalette", "brightness", "name")}</h6>
-      <RangeSlider tooltipLabel={(value) => `${value}%`} value={brightness} onChange={onChangeBrightness} />
+      <RangeSlider className="tw-w-full" tooltipLabel={(value) => `${value}%`} value={brightness} onChange={onChangeBrightness} />
     </Col>
   );
 };
@@ -203,7 +203,9 @@ const ColorPaletteFilterToggle: React.FC<{
                 src={`${process.env.PUBLIC_URL}/assets/filters/${filter.name}.png`}
                 onClick={() => toggleFilter(filter)}
                 style={{
-                  border: selectedFilters.includes(filter) ? "2px solid red" : "none",
+                  border: selectedFilters.includes(filter) ? "2px solid #078c9e" : "none",
+                  filter: selectedFilters.includes(filter) ? "drop-shadow(5px 5px 4px #078c9e)" : "",
+                  borderRadius: "10px",
                   maxHeight: "80px",
                   maxWidth: "80px",
                 }}

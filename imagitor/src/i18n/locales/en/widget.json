@@ -303,6 +303,9 @@
       "title": "Search Layer",
       "placeholder": "Enter keyword",
       "desc": "Type a keyword to find layer"
+    },
+    "tools":{
+      "name": "Tools"
     }
   },
   "export": {
