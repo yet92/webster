@@ -6,6 +6,7 @@ import DraggableList from "react-draggable-list";
 import { BsBack, BsBoundingBox, BsFront, BsGripVertical, BsLayers, BsTrashFill } from "react-icons/bs";
 import { SettingBarProps } from "..";
 import useHotkeyFunc from "../../hook/useHotkeyFunc";
+import useI18n from "../../hook/usei18n";
 import useItem from "../../hook/useItem";
 import useSelection from "../../hook/useSelection";
 // import { GrDrag,  } from "react-icons/gr";
@@ -20,6 +21,7 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
   const [editingItem, setEditingItem] = useState<Node<NodeConfig> | null | undefined>(null);
   const { deleteItems } = useHotkeyFunc();
   const { setSelectedItems: setGlobalSelectedItems } = useSelection(data.transformer!);
+  const { getTranslation } = useI18n();
 
   const { stageData, updateItem } = useItem();
   const { layerDown, layerUp } = useHotkeyFunc();
@@ -93,12 +95,12 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
       className="tw-mt-2 tw-flex tw-h-full tw-w-full tw-flex-col tw-overflow-y-auto tw-rounded-md tw-border-contrast/20 tw-bg-secondary"
       style={{ border: "1px solid" }}
     >
-      <span className="tw-text-1xl tw-border-b tw-p-3 tw-pl-5 tw-font-bold tw-text-text">Layers</span>
+      <span className="tw-text-1xl tw-border-b tw-p-3 tw-pl-5 tw-font-bold tw-text-text">{getTranslation("widget", "layer", "name")}</span>
       <div
         className="w-full tw-mb-2 tw-flex tw-justify-between tw-gap-3 tw-border-contrast tw-pb-2 tw-pr-2 tw-pt-2 tw-shadow-sm "
         style={{ borderBottom: "1px solid rgba(0, 0, 0, 0.1)", borderTop: "1px solid rgba(0, 0, 0, 0.1)" }}
       >
-        <span className="tw-text-1xl tw-justify-self-start tw-border-b tw-pl-5 tw-text-text">Tools</span>
+        <span className="tw-text-1xl tw-justify-self-start tw-border-b tw-pl-5 tw-text-text">{getTranslation("widget", "layer", "tools", "name")}</span>
         <div className="tw-flex tw-gap-3">
           <OverlayTrigger
             placement="bottom"
