@@ -1,11 +1,11 @@
 import { Spinner } from 'flowbite-react';
 import { useState } from 'react';
-import { Errors } from '../../auth/components';
 import { useDispatch, useSelector } from 'react-redux';
-import { addError, clearErrors } from '../../../store/errorsSlice';
-import { createFetch } from '../utils/createCollection';
 import { RootState } from '../../../store';
 import { createCollection } from '../../../store/collectionSlice';
+import { addError, clearErrors } from '../../../store/errorsSlice';
+import { Errors } from '../../auth/components';
+import { createFetch } from '../utils/createCollection';
 
 export type FormData = {
   title: string;

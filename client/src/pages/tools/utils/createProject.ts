@@ -1,6 +1,6 @@
+import { IResponseWithData } from '../../../utils';
 import { SERVER_URL } from '../../../utils/constants';
 import { FormData } from '../components/CreateProjectModal';
-import { IResponse, IResponseWithData } from '../../../utils';
 
 export async function createFetch(data: FormData, token: string) {
   const endpoint = `${SERVER_URL}/api/projects/`;

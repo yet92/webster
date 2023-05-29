@@ -1,6 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { User } from './authSlice';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchAllUsers, fetchOneUser } from '../pages/users/utils/fetchUsers';
+import { User } from './authSlice';
 
 type UsersState = {
   users: User[];
@@ -20,7 +20,7 @@ export const fetchUsersAsync = createAsyncThunk<User[]>(
   'users/fetchUsers',
   async (_, thunkAPI) => {
     try {
-      const { response, json } = await fetchAllUsers();
+      const { json } = await fetchAllUsers();
       return json.data as unknown as User[];
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch users');
@@ -32,7 +32,7 @@ export const fetchUserAsync = createAsyncThunk<User, string>(
   'users/fetchUser',
   async (userId: string, thunkAPI) => {
     try {
-      const { response, json } = await fetchOneUser(userId);
+      const { json } = await fetchOneUser(userId);
       return json.data as unknown as User;
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch user');
@@ -67,8 +67,5 @@ const usersSlice = createSlice({
       });
   },
 });
-
-// export const {} =
-//   projectsSlice.actions;
 
 export default usersSlice.reducer;

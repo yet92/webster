@@ -1,17 +1,17 @@
-import { PrismaClient, Project } from "@prisma/client";
-import Database from "../../database";
+import { PrismaClient, Project } from '@prisma/client';
+import Database from '../../database';
 
 export type CreateProjectParams = {
-  thumbnail?: string;
-  project: string;
-  title: string;
-  ownerId: number;
+	thumbnail?: string;
+	project: string;
+	title: string;
+	ownerId: number;
 };
 
 export type ProjectsServiceMethodReturns = {
-  project?: Project;
-  error?: { status: number; message: string };
-  projects?: Project[];
+	project?: Project;
+	error?: { status: number; message: string };
+	projects?: Project[];
 };
 
 export default class ProjectsService {
@@ -24,7 +24,6 @@ export default class ProjectsService {
 		thumbnail,
 	}: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
 		try {
-			console.log('asfsafsaf', ownerId);
 			const newProject = await this.prisma.project.create({
 				data: {
 					project,
@@ -82,6 +81,7 @@ export default class ProjectsService {
 			return { error: { message: 'Something went wrong', status: 500 } };
 		}
 	}
+
 	async retrieveAll({
 		userId,
 	}: {
@@ -129,7 +129,9 @@ export default class ProjectsService {
 
 		const items = JSON.parse(project!.project);
 
-		const item = items[0].data.find((item: {id: number}) => item.id === updatedObject.id);
+		const item = items[0].data.find(
+			(item: { id: number }) => item.id === updatedObject.id
+		);
 
 		for (const key in item) {
 			item[key] = updatedObject[key];
@@ -149,9 +151,66 @@ export default class ProjectsService {
 		return { project: { ...project, project: updatedProject } };
 	}
 
+	async removeItem({
+		projectId,
+		updatedObjectId,
+	}: {
+		projectId: number;
+		updatedObjectId: string;
+	}) {
+		const { project } = await this.retrieveOne({ projectId });
+
+		let projectArray = JSON.parse(project!.project);
+
+		projectArray[0].data = projectArray[0].data.filter(
+			(item: { id: string }) => item.id !== updatedObjectId
+		);
+
+		const updatedProject = JSON.stringify(projectArray);
+
+		await this.prisma.project.update({
+			where: {
+				id: projectId,
+			},
+			data: {
+				project: updatedProject,
+			},
+		});
+
+		return { project: { ...project, project: updatedProject } };
+	}
+
+	async removeItems({
+		projectId,
+		updatedObjectIds,
+	}: {
+		projectId: number;
+		updatedObjectIds: string[];
+	}) {
+		const { project } = await this.retrieveOne({ projectId });
+
+		let projectArray = JSON.parse(project!.project);
+
+		projectArray[0].data = projectArray[0].data.filter((item: { id: string }) =>
+			updatedObjectIds.includes(item.id)
+		);
+		const updatedProject = JSON.stringify(projectArray);
+
+		await this.prisma.project.update({
+			where: {
+				id: projectId,
+			},
+			data: {
+				project: updatedProject,
+			},
+		});
+
+		return { project: { ...project, project: updatedProject } };
+	}
+
 	async changeIsPublic({
 		projectId,
-		isPublic
+		isPublic,
 	}: {
 		projectId: number;
 		isPublic: boolean;
@@ -159,7 +218,7 @@ export default class ProjectsService {
 		try {
 			const project = await this.prisma.project.update({
 				where: { id: projectId },
-				data: {isPublic},
+				data: { isPublic },
 			});
 
 			if (!project)
@@ -195,42 +254,22 @@ export default class ProjectsService {
 			return { error: { message: 'Something went wrong', status: 500 } };
 		}
 	}
-  async addToCollection({
-    collectionId,
-    projectId,
-  }: {
-    collectionId: number;
-    projectId: number;
-  }): Promise<ProjectsServiceMethodReturns> {
-    try {
-      console.table({
-        collectionId,
-        projectId,
-      });
-      const newProject = await this.prisma.project.update({
-        where: { id: projectId },
-        data: { collectionId: collectionId },
-      });
 
-      return { project: newProject };
-    } catch (error) {
-      console.error(error);
-      return { error: { message: "Something went wrong", status: 500 } };
-    }
-  }
+	async removeFromCollection({
+		projectId,
+	}: {
+		projectId: number;
+	}): Promise<ProjectsServiceMethodReturns> {
+		try {
+			const newProject = await this.prisma.project.update({
+				where: { id: projectId },
+				data: { collectionId: null },
+			});
 
-  async removeFromCollection({ projectId }: { projectId: number }): Promise<ProjectsServiceMethodReturns> {
-    try {
-      const newProject = await this.prisma.project.update({
-        where: { id: projectId },
-        data: { collectionId: null },
-      });
-
-      return { project: newProject };
-    } catch (error) {
-      console.error(error);
-      return { error: { message: "Something went wrong", status: 500 } };
-    }
-  }
-
+			return { project: newProject };
+		} catch (error) {
+			console.error(error);
+			return { error: { message: 'Something went wrong', status: 500 } };
+		}
+	}
 }

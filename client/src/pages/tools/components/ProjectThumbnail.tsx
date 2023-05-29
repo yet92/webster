@@ -4,19 +4,17 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../hooks/redux.hook';
 import { RootState } from '../../../store';
 import {
-  Project,
-  addToCollectionAsync,
-  removeFromCollectionAsync,
-  changeIsPublicAsync,
-  fetchProjectsAsync,
-} from '../../../store/projectsSlice';
-import { removeFetch } from '../utils/removeProject';
-import {
   Collection,
-  fetchOneCollectionAsync,
   removeProjFromCollection,
 } from '../../../store/collectionSlice';
-import { fetchOneCollection } from '../utils/fetchCollections';
+import {
+  Project,
+  addToCollectionAsync,
+  changeIsPublicAsync,
+  fetchProjectsAsync,
+  removeFromCollectionAsync,
+} from '../../../store/projectsSlice';
+import { removeFetch } from '../utils/removeProject';
 
 export const ProjectThumbnail = ({ project }: { project: Project }) => {
   const dispatch = useAppDispatch();
@@ -25,7 +23,7 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
     await removeFetch(project.id, me.accessToken as string);
     dispatch(fetchProjectsAsync(me.accessToken as string));
   };
-  const { collections, currentCollection } = useSelector(
+  const { collections } = useSelector(
     (selector: RootState) => selector.collections
   );
   const onClickChangePrivacy = async () => {
@@ -39,22 +37,24 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
     );
   };
   const clickCollectionHandler = (collection: Collection) => {
-    dispatch(
-      addToCollectionAsync({
-        accessToken: me.accessToken!,
-        collectionId: collection.id,
-        projectId: project.id,
-      })
-    );
+    if (me.accessToken)
+      dispatch(
+        addToCollectionAsync({
+          accessToken: me.accessToken,
+          collectionId: collection.id,
+          projectId: project.id,
+        })
+      );
   };
 
   const clickRemoveHandler = () => {
-    dispatch(
-      removeFromCollectionAsync({
-        accessToken: me.accessToken!,
-        projectId: project.id,
-      })
-    );
+    if (me.accessToken)
+      dispatch(
+        removeFromCollectionAsync({
+          accessToken: me.accessToken,
+          projectId: project.id,
+        })
+      );
     dispatch(removeProjFromCollection(project));
   };
 

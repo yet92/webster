@@ -16,5 +16,6 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), controller
 router.put("/:id/collection", passport.authenticate("jwt", { session: false }), controller.addToCollection.bind(controller));
 router.delete("/:id/collection", passport.authenticate("jwt", { session: false }), controller.removeFromCollection.bind(controller));
 router.put("/:id", passport.authenticate("jwt", { session: false }), controller.updateItem.bind(controller));
+router.delete("/:id/item", passport.authenticate("jwt", { session: false }), controller.removeItem.bind(controller));
 
 export default router;

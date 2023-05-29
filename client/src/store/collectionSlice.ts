@@ -32,7 +32,7 @@ export const fetchCollectionsAsync = createAsyncThunk<Collection[], string>(
   'collections/fetchCollections',
   async (accessToken: string, thunkAPI) => {
     try {
-      const { response, json } = await fetchAllCollections(accessToken);
+      const { json } = await fetchAllCollections(accessToken);
       return json.data as unknown as Collection[];
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch collections');
@@ -45,7 +45,7 @@ export const fetchOneCollectionAsync = createAsyncThunk<
   { accessToken: string; id: number }
 >('collections/fetchOneCollection', async ({ accessToken, id }, thunkAPI) => {
   try {
-    const { response, json } = await fetchOneCollection(accessToken, id);
+    const { json } = await fetchOneCollection(accessToken, id);
     return json.data as unknown as Collection;
   } catch (error) {
     return thunkAPI.rejectWithValue('Failed to fetch collections');

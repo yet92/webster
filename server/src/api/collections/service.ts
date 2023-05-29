@@ -48,7 +48,7 @@ export default class ProjectsService {
 
       if (!collection)
         return {
-          error: { message: "No project with such id", status: 404 },
+          error: { message: "No collection with such id", status: 404 },
         };
 
       return { collection };
@@ -57,6 +57,25 @@ export default class ProjectsService {
       return { error: { message: "Something went wrong", status: 500 } };
     }
   }
+
+  async removeOne({ collectionId }: { collectionId: number }): Promise<CollectionsServiceMethodReturns> {
+    try {
+      const collection = await this.prisma.collection.delete({
+        where: { id: collectionId },
+      });
+
+      if (!collection)
+        return {
+          error: { message: "No collection with such id", status: 404 },
+        };
+
+      return { collection };
+    } catch (error) {
+      console.error(error);
+      return { error: { message: "Something went wrong", status: 500 } };
+    }
+  }
+
   async retrieveAll({ userId }: { userId: number }): Promise<CollectionsServiceMethodReturns> {
     try {
       const collections = await this.prisma.collection.findMany({
