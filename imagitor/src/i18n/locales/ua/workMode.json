@@ -1,0 +1,88 @@
+{
+  "pointer": {
+    "id": "pointer",
+		"name": "Вказівник",
+		"desc": "Вказівник",
+		"icon": "cursor-fill"
+  },
+  "brush": {
+    "id": "brush",
+		"name": "Пензель",
+		"desc": "Пензель",
+		"icon": "brush-fill",
+		"sub-button": [
+			{
+				"id": "brushDrop",
+				"name": "Тип",
+				"desc": "Пензель",
+				"icon": ""
+			}
+		]
+  },
+  "eraser": {
+    "id": "eraser",
+		"name": "Гумка",
+		"desc": "Гумка",
+		"icon": "eraser-fill"
+  },
+  "select-all": {
+    "id": "select-all",
+    "name": "Виділити все",
+    "desc": "Виділити всі елементи",
+    "icon": "bounding-box"
+  },
+  "remove-background":{
+    "id": "remove-background",
+		"name": "Прибрати задній фон вибраних елементів",
+		"desc": "Прибрати задній фон вибраних елементів",
+		"icon": "card-image"
+  },
+  "flip-horizontally": {
+    "id": "flip-horizontally",
+    "name": "Перевернути горизонтально",
+    "desc": "Перевернути горизонтально",
+    "icon": "arrow-left-right"
+  },
+  "flip-vertically": {
+    "id": "flip-vertically",
+    "name": "Перевернути вертикально",
+    "desc": "Перевернути вертикально",
+    "icon": "arrow-down-up"
+  },
+  "reset-zoom": {
+    "id": "reset-zoom",
+    "name": "Скинути масштаб",
+    "desc": "Скинути масштаб",
+    "icon": "arrows-fullscreen"
+  },
+  "zoom-in": {
+    "id": "zoom-in",
+    "name": "Збільшити масштаб",
+    "desc": "Збільшити масштаб",
+    "icon": "arrows-angle-expand"
+  },
+  "zoom-out": {
+    "id": "zoom-out",
+    "name": "Зменшити масштаб",
+    "desc": "Зменшити масштаб",
+    "icon": "arrows-angle-contract"
+  },
+  "layer-up": {
+    "id": "layer-up",
+    "name": "Перемістити шар вище",
+    "desc": "Перемістити шар вище",
+    "icon": "front"
+  },
+  "layer-down": {
+    "id": "layer-down",
+    "name": "Перемістити шар нижче",
+    "desc": "Перемістити шар нижче",
+    "icon": "back"
+  },
+  "hotkey": {
+    "id": "hotkey",
+    "name": "Гаряча клавіша",
+    "desc": "Гаряча клавіша",
+    "icon": "keyboard-fill"
+  }
+}
