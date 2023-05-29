@@ -105,6 +105,17 @@ const useItem = () => {
 
   const removeItem = (targetItemId: string | string[]) => {
     dispatch(stageDataAction.removeItem(targetItemId));
+    console.log(targetItemId);
+    if (page.current !== -1) {
+      fetch(`${SERVER_URL}/api/projects/${page.current}/item`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${auth.me.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ updatedObjectId: targetItemId[0] }),
+      });
+    }
   };
   const alterItems = (dataList: StageData[]) => {
     dispatch(stageDataAction.clearItems({}));

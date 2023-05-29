@@ -1,10 +1,10 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response } from 'express';
 
-import { IRequest, ResponseSender } from "../../utils/rest";
-import ProjectsService from "./service";
-import ProjectValidator from "./validator";
+import { IRequest, ResponseSender } from '../../utils/rest';
+import ProjectsService from './service';
+import ProjectValidator from './validator';
 
-let callbackUrl = "";
+let callbackUrl = '';
 
 export default class ProjectsController {
 	validator: ProjectValidator;
@@ -54,49 +54,57 @@ export default class ProjectsController {
 			});
 		}
 	}
-async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, next: NextFunction) {
-    const response = new ResponseSender(res);
-    const result = await this.service.addToCollection({
-      collectionId: parseInt(req.body.collectionId),
-      projectId: parseInt(req.params.id),
-    });
+	async addToCollection(
+		req: IRequest<{ collectionId: string }>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+		const result = await this.service.addToCollection({
+			collectionId: parseInt(req.body.collectionId),
+			projectId: parseInt(req.params.id),
+		});
 
-    if (result && result.error) {
-      return response.send({
-        status: result.error.status,
-        message: result.error.message,
-      });
-    }
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
 
-    if (result && result.project) {
-      return response.send({
-        message: "Project added to collection",
-        data: result.project,
-      });
-    }
-  }
+		if (result && result.project) {
+			return response.send({
+				message: 'Project added to collection',
+				data: result.project,
+			});
+		}
+	}
 
-  async removeFromCollection(req: IRequest<{}>, res: Response, next: NextFunction) {
-    const response = new ResponseSender(res);
+	async removeFromCollection(
+		req: IRequest<{}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
 
-    const result = await this.service.removeFromCollection({
-      projectId: parseInt(req.params.id),
-    });
+		const result = await this.service.removeFromCollection({
+			projectId: parseInt(req.params.id),
+		});
 
-    if (result && result.error) {
-      return response.send({
-        status: result.error.status,
-        message: result.error.message,
-      });
-    }
+		if (result && result.error) {
+			return response.send({
+				status: result.error.status,
+				message: result.error.message,
+			});
+		}
 
-    if (result && result.project) {
-      return response.send({
-        message: "Project removed from collection",
-        data: result.project,
-      });
-    }
-  }
+		if (result && result.project) {
+			return response.send({
+				message: 'Project removed from collection',
+				data: result.project,
+			});
+		}
+	}
 	async retrieveAll(req: IRequest<{}>, res: Response, next: NextFunction) {
 		const response = new ResponseSender(res);
 
@@ -250,6 +258,44 @@ async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, ne
 				message: 'success update',
 				data: { project },
 			});
+		}
+
+		response.send400({});
+	}
+
+	async removeItem(
+		req: IRequest<{
+			updatedObjectId: string | string[];
+		}>,
+		res: Response,
+		next: NextFunction
+	) {
+		const response = new ResponseSender(res);
+
+		const projectId = parseInt(req.params.id);
+
+		const updatedObjectId = req.body.updatedObjectId;
+
+		if (updatedObjectId) {
+			if (Array.isArray(updatedObjectId)) {
+				const { project } = await this.service.removeItems({
+					projectId,
+					updatedObjectIds: updatedObjectId,
+				});
+				return response.send({
+					message: 'success update',
+					data: { project },
+				});
+			} else {
+				const { project } = await this.service.removeItem({
+					projectId,
+					updatedObjectId,
+				});
+				return response.send({
+					message: 'success update',
+					data: { project },
+				});
+			}
 		}
 
 		response.send400({});
