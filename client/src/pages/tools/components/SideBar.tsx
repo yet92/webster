@@ -1,6 +1,6 @@
 import { Tooltip } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { AiOutlinePlusSquare } from 'react-icons/ai';
+import { AiOutlinePlusSquare, AiOutlineSearch } from 'react-icons/ai';
 import { BsFillTrashFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../hooks/redux.hook';
@@ -28,6 +28,12 @@ export function SideBar({
 
   const onCreateClick = () => {
     setShowModal(!showModal);
+  };
+
+  const [search, setSearch] = useState('');
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
   };
 
   useEffect(() => {
@@ -62,6 +68,15 @@ export function SideBar({
         Video Projects
       </button>
       <span className='text-center text-2xl text-contrast'>Collections</span>
+      <div className='flex w-full flex-row items-center justify-between gap-2 border-b-2 border-b-contrast text-text'>
+        <div className='absolute'>
+          <AiOutlineSearch size={30} />
+        </div>
+        <input
+          onChange={onSearchChange}
+          className='w-full bg-transparent p-4 pl-10 focus:outline-none focus:ring-0'
+          placeholder='Search for Collections'></input>
+      </div>
       <div className='flex w-full flex-col items-center justify-center gap-5 rounded-xl bg-secondary p-5 text-base'>
         <div
           onClick={onCreateClick}
@@ -71,13 +86,15 @@ export function SideBar({
           <CreateCollectionModal show={showModal} onClose={onCreateClick} />
         </div>
         {collections &&
-          collections.map((collection, index) => (
-            <CollectionItem
-              key={index}
-              collection={collection}
-              setCurrentProjects={setCurrentProjects}
-            />
-          ))}
+          collections
+            .filter((collection) => collection.title.includes(search))
+            .map((collection, index) => (
+              <CollectionItem
+                key={index}
+                collection={collection}
+                setCurrentProjects={setCurrentProjects}
+              />
+            ))}
       </div>
     </div>
   );
