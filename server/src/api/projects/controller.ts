@@ -283,6 +283,7 @@ export default class ProjectsController {
 				const { project } = await this.service.removeItems({
 					projectId,
 					updatedObjectIds: updatedObjectId,
+					userId: String(req.user.user.id)
 				});
 				return response.send({
 					message: 'success update',
@@ -292,6 +293,7 @@ export default class ProjectsController {
 				const { project } = await this.service.removeItem({
 					projectId,
 					updatedObjectId,
+					userId: String(req.user.user.id)
 				});
 				return response.send({
 					message: 'success update',
