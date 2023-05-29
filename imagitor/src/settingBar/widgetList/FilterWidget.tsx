@@ -9,8 +9,6 @@ import useItem from "../../hook/useItem";
 import sizeStyles from "../../style/size.module.css";
 import { WidgetKind } from "../Widget";
 
-// import ImageFilter from "react-image-filter";
-
 export type FilterKind = {
   "data-item-type": string;
   id: string;
@@ -23,12 +21,20 @@ type FilterWidgetProps = {
 };
 
 const FilterWidget: React.FC<FilterWidgetProps> = ({data}) => {
-  const { getTranslation } = useI18n();
+  const { getTranslation, setLanguage,  currentLanguage } = useI18n();
+
+  const handleLanguageChange = () => {
+    const newLanguage = currentLanguage === "en" ? "ua" : "en";
+    setLanguage(newLanguage);
+  };
   return(
     <Col className={[sizeStyles["mx-h-30vh"]].join(" ")}>
       <h6>
         {getTranslation("widget", "filter", "name")}
       </h6>
+      <button onClick={handleLanguageChange}>
+      {currentLanguage === "en" ? "Switch to UA" : "Switch to EN"}
+    </button>
       <ColorPaletteOpacitySlider
         data={{
           "data-item-type": "opacity",
