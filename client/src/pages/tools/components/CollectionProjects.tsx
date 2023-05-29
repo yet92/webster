@@ -4,7 +4,6 @@ import { useAppDispatch } from '../../../hooks/redux.hook';
 import { RootState } from '../../../store';
 import { fetchProjectsAsync } from '../../../store/projectsSlice';
 import { ProjectThumbnail } from './ProjectThumbnail';
-import { fetchOneCollectionAsync } from '../../../store/collectionSlice';
 
 export function CollectionProjects() {
   const dispatch = useAppDispatch();
@@ -12,7 +11,6 @@ export function CollectionProjects() {
   const {
     auth,
     collections: { currentCollection },
-    projects: { projects },
   } = useSelector((selector: RootState) => selector);
 
   useEffect(() => {

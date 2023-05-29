@@ -9,5 +9,6 @@ const controller = new CollectionsController();
 router.post("/", passport.authenticate("jwt", { session: false }), controller.create.bind(controller));
 router.get("/:id", passport.authenticate("jwt", { session: false }), controller.retrieveOne.bind(controller));
 router.get("/", passport.authenticate("jwt", { session: false }), controller.retrieveAll.bind(controller));
+router.delete("/:id", passport.authenticate("jwt", { session: false }), controller.removeOne.bind(controller));
 
 export default router;

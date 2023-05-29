@@ -82,6 +82,7 @@ export default class ProjectsService {
 			return { error: { message: 'Something went wrong', status: 500 } };
 		}
 	}
+	
 	async retrieveAll({
 		userId,
 	}: {
@@ -195,29 +196,6 @@ export default class ProjectsService {
 			return { error: { message: 'Something went wrong', status: 500 } };
 		}
 	}
-  async addToCollection({
-    collectionId,
-    projectId,
-  }: {
-    collectionId: number;
-    projectId: number;
-  }): Promise<ProjectsServiceMethodReturns> {
-    try {
-      console.table({
-        collectionId,
-        projectId,
-      });
-      const newProject = await this.prisma.project.update({
-        where: { id: projectId },
-        data: { collectionId: collectionId },
-      });
-
-      return { project: newProject };
-    } catch (error) {
-      console.error(error);
-      return { error: { message: "Something went wrong", status: 500 } };
-    }
-  }
 
   async removeFromCollection({ projectId }: { projectId: number }): Promise<ProjectsServiceMethodReturns> {
     try {

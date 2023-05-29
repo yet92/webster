@@ -68,10 +68,10 @@ async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, ne
       });
     }
 
-    if (result && result.projects) {
+    if (result && result.project) {
       return response.send({
         message: "Project added to collection",
-        data: result.projects,
+        data: result.project,
       });
     }
   }
@@ -90,10 +90,10 @@ async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, ne
       });
     }
 
-    if (result && result.projects) {
+    if (result && result.project) {
       return response.send({
         message: "Project removed from collection",
-        data: result.projects,
+        data: result.project,
       });
     }
   }

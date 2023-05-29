@@ -1,8 +1,6 @@
 import { SERVER_URL } from '../../../utils/constants';
-import { FormData } from '../components/CreateProjectModal';
-import { IResponse, IResponseWithData } from '../../../utils';
 
-export async function removeFetch(id: string, token: string) {
+export async function removeFetch(id: number, token: string) {
   const endpoint = `${SERVER_URL}/api/projects/${id}`;
 
   const response = await fetch(endpoint, {

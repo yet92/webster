@@ -8,7 +8,6 @@ import {
 
 import { changeIsPublic as changePrivacy } from '../pages/tools/utils/changeIsPublic';
 
-
 export type Project = {
   title: string;
   thumbnail?: string;
@@ -41,7 +40,7 @@ export const fetchProjectsAsync = createAsyncThunk<Project[], string>(
   'projects/fetchProjects',
   async (accessToken: string, thunkAPI) => {
     try {
-      const { response, json } = await fetchAllProjects(accessToken);
+      const { json } = await fetchAllProjects(accessToken);
       return json.data as unknown as Project[];
     } catch (error) {
       return thunkAPI.rejectWithValue('Failed to fetch projects');
@@ -56,7 +55,7 @@ export const addToCollectionAsync = createAsyncThunk<
   'projects/addToCollection',
   async ({ accessToken, collectionId, projectId }, thunkAPI) => {
     try {
-      const { response, json } = await addToCollection(
+      const { json } = await addToCollection(
         accessToken,
         collectionId,
         projectId
@@ -75,7 +74,7 @@ export const removeFromCollectionAsync = createAsyncThunk<
   'projects/removeFromCollection',
   async ({ accessToken, projectId }, thunkAPI) => {
     try {
-      const { response, json } = await removeFromCollection(
+      const { json } = await removeFromCollection(
         accessToken,
         projectId
       );
@@ -89,14 +88,17 @@ export const removeFromCollectionAsync = createAsyncThunk<
 export const changeIsPublicAsync = createAsyncThunk<
   number,
   { accessToken: string; id: number; isPublic: boolean }
->('projects/changeIsPublic', async ({ accessToken, id, isPublic }, thunkAPI) => {
-  try {
-    const { response } = await changePrivacy(id, accessToken, isPublic);
-    return id;
-  } catch (error) {
-    return thunkAPI.rejectWithValue('Failed to fetch projects');
+>(
+  'projects/changeIsPublic',
+  async ({ accessToken, id, isPublic }, thunkAPI) => {
+    try {
+      await changePrivacy(id, accessToken, isPublic);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to fetch projects');
+    }
   }
-});
+);
 
 const projectsSlice = createSlice({
   name: 'projects',

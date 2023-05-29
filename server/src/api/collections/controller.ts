@@ -35,6 +35,7 @@ export default class CollectionController {
     }
     const result = await this.service.createCollection({
       ...req.body,
+      //@ts-ignore
       ownerId: req.user!.user!.id,
     });
 
@@ -56,6 +57,7 @@ export default class CollectionController {
     const response = new ResponseSender(res);
 
     const result = await this.service.retrieveAll({
+      //@ts-ignore
       userId: req.user!.user!.id,
     });
 
@@ -102,10 +104,11 @@ export default class CollectionController {
     }
   }
 
+
   async removeOne(req: IRequest<{}>, res: Response, next: NextFunction) {
     const response = new ResponseSender(res);
 
-    const result = await this.service.retrieveOne({
+    const result = await this.service.removeOne({
       collectionId: parseInt(req.params.id),
     });
 

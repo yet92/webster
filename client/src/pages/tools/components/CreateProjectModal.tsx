@@ -1,12 +1,12 @@
 import { Modal, Spinner } from 'flowbite-react';
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
-import { Errors } from '../../auth/components';
 import { useDispatch, useSelector } from 'react-redux';
-import { addError, clearErrors } from '../../../store/errorsSlice';
-import { createFetch } from '../utils/createProject';
 import { RootState } from '../../../store';
+import { addError, clearErrors } from '../../../store/errorsSlice';
 import { createProject } from '../../../store/projectsSlice';
+import { Errors } from '../../auth/components';
+import { createFetch } from '../utils/createProject';
 
 export type FormData = {
   title: string;

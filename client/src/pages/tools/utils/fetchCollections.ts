@@ -19,7 +19,7 @@ export async function fetchAllCollections(token: string) {
 export async function removeCollection(token: string, id: number) {
   const endpoint = `${SERVER_URL}/api/collections/${id}`;
   await fetch(endpoint, {
-    method: 'delete',
+    method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
     },
