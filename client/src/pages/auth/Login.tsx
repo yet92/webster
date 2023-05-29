@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { useDispatch, useSelector } from "react-redux"
 import { Errors, LoginForm } from "./components"
@@ -14,6 +15,7 @@ export default function LoginPage() {
     const onFormData = async (formData: FormData) => {
         dispatch(clearErrors());
 
+        // @ts-ignore
         const { response, json } = await authFetch(RequestType.Login, formData);
 
         if (!response.ok) {
@@ -21,6 +23,7 @@ export default function LoginPage() {
             dispatch(addError({ message: json.message }));
         } else {
             const user = { me: json.data.user, accessToken: json.data.token };
+            // @ts-ignore
             dispatch(login(user));
         }
 

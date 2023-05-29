@@ -5,7 +5,7 @@ import {
   AnyAction,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL, IMAGITOR_AUTH } from '../utils/constants';
+import { API_URL, ENVIRONMENT, IMAGITOR_AUTH } from '../utils/constants';
 import { Project } from './projectsSlice';
 
 export type User = {
@@ -75,7 +75,9 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       if (state.me.accessToken) {
         localStorage.setItem('user', JSON.stringify(state.me));
-        window.open(`${IMAGITOR_AUTH}/${state.me.accessToken}`, '_blank');
+        if (ENVIRONMENT === 'development') {
+          window.open(`${IMAGITOR_AUTH}/${state.me.accessToken}`, '_blank');
+        }
       }
     },
 
@@ -87,22 +89,6 @@ const authSlice = createSlice({
       state.loading = false;
     },
   },
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(checkAuth.pending, (state) => {
-  //       state.loading = true;
-  //       state.error = null;
-  //     })
-  //     .addCase(checkAuth.fulfilled, (state, action) => {
-  //       state.me = { ...action.payload, accessToken: undefined };
-  //       state.isAuthenticated = true;
-  //       state.loading = false;
-  //     })
-  //     .addMatcher(isError, (state, action: PayloadAction<string>) => {
-  //       state.error = action.payload;
-  //       state.loading = false;
-  //     });
-  // },
 });
 
 // export const { addTodo, toggleComplete, removeTodo } = authSlice.actions;

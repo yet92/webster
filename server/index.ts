@@ -41,6 +41,8 @@ app.get("/", (req, res) => {
 });
 
 import { auth, projects, users, collections } from "./src/api";
+import path from "path";
+
 
 io.on('connection', onConnect);
 
@@ -48,6 +50,11 @@ app.use("/api/auth", auth);
 app.use("/api/projects", projects);
 app.use("/api/collections", collections);
 app.use("/api/users", users);
+
+
+if (process.env.ENVIRONMENT === 'production') {
+    
+} 
 
 server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

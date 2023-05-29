@@ -19,6 +19,9 @@ const Authorize = () => {
       console.log(token);
       // @ts-ignore
       dispatch(loadUserWithToken(token));
+      setTimeout(() => {
+        window.close();
+      }, 1000);
     }
     // save to redux
     // close window
