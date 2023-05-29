@@ -1,295 +1,356 @@
-import { PrismaClient, Project } from '@prisma/client';
-import Database from '../../database';
+import { PrismaClient, Project } from "@prisma/client";
+import Database from "../../database";
 import { Server } from "socket.io";
-import { ServerIO } from '../../sockets';
+import { ServerIO } from "../../sockets";
+import { EventEmitter } from "stream";
 
 export type CreateProjectParams = {
-	thumbnail?: string;
-	project: string;
-	title: string;
-	ownerId: number;
+    thumbnail?: string;
+    project: string;
+    title: string;
+    ownerId: number;
 };
 
 export type ProjectsServiceMethodReturns = {
-	project?: Project;
-	error?: { status: number; message: string };
-	projects?: Project[];
+    project?: Project;
+    error?: { status: number; message: string };
+    projects?: Project[];
 };
 
 export default class ProjectsService {
-	private prisma: PrismaClient = Database.client();
-	private io = ServerIO.get();
+    private prisma: PrismaClient = Database.client();
+    private io = ServerIO.get();
 
-	async createProject({
-		project,
-		ownerId,
-		title,
-		thumbnail,
-	}: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const newProject = await this.prisma.project.create({
-				data: {
-					project,
-					ownerId,
-					title,
-					thumbnail,
-				},
-			});
+    private canWriteEventEmitter = new EventEmitter();
+    private blocked: { [n: number]: boolean } = {};
 
-			return { project: newProject };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+    private queue: {
+        [n: number]: { projectId: number; from: string; item: any }[];
+    } = {};
 
-	async addToCollection({
-		collectionId,
-		projectId,
-	}: {
-		collectionId: number;
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const newProject = await this.prisma.project.update({
-				where: { id: projectId },
-				data: { collectionId: collectionId },
-			});
+    constructor() {
+        this.canWriteEventEmitter.on("canWrite", async (projectId: number) => {
+            // add projectId to blocked
+            this.blocked[projectId] = true;
+            // get next write from queue
+            const next = this.queue[projectId].shift();
+            // execute next
+            if (next) {
+							  const updatedObject = next.item;
+								const userId = next.from;
 
-			return { project: newProject };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+                const { project } = await this.retrieveOne({ projectId });
 
-	async retrieveOne({
-		projectId,
-	}: {
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const project = await this.prisma.project.findFirst({
-				where: { id: projectId },
-			});
+                const items = JSON.parse(project!.project);
 
-			if (!project)
-				return {
-					error: { message: 'No project with such id', status: 404 },
-				};
+                const item = items[0].data.find(
+                    (item: { id: number }) => item.id === updatedObject.id
+                );
 
-			return { project };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+                for (const key in item) {
+                    item[key] = updatedObject[key];
+                }
 
-	async retrieveAll({
-		userId,
-	}: {
-		userId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const projects = await this.prisma.project.findMany({
-				where: { ownerId: userId },
-			});
-			return { projects };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+                this.io
+                    .to(String(projectId))
+                    .emit("updateItem", { from: userId, item });
 
-	async addItem({ projectId, newItem, userId }: { projectId: number; newItem: any, userId: string }) {
-		const { project } = await this.retrieveOne({ projectId });
+                const updatedProject = JSON.stringify(items);
 
-		const items = JSON.parse(project!.project);
-		items[0].data.push(newItem);
+                await this.prisma.project.update({
+                    where: {
+                        id: projectId,
+                    },
+                    data: {
+                        project: updatedProject,
+                    },
+                });
 
-		const newProject = JSON.stringify(items);
+								this.canWriteEventEmitter.emit('canWrite', projectId);
 
-		console.log("User ID", userId);
+            } else {
+                // delete project
+                this.blocked[projectId] = false;
+            }
+        });
+    }
 
-		this.io.to(String(projectId)).emit('createItem', { from: userId, type: 'create', item: newItem });
+    async createProject({
+        project,
+        ownerId,
+        title,
+        thumbnail,
+    }: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const newProject = await this.prisma.project.create({
+                data: {
+                    project,
+                    ownerId,
+                    title,
+                    thumbnail,
+                },
+            });
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: newProject,
-			},
-		});
+            return { project: newProject };
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
 
-		return { project: { ...project, project: newProject } };
-	}
+    async addToCollection({
+        collectionId,
+        projectId,
+    }: {
+        collectionId: number;
+        projectId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const newProject = await this.prisma.project.update({
+                where: { id: projectId },
+                data: { collectionId: collectionId },
+            });
 
-	async updateItem({
-		projectId,
-		updatedObject,
-		userId
-	}: {
-		projectId: number;
-		updatedObject: any;
-		userId: string
-	}) {
-		const { project } = await this.retrieveOne({ projectId });
+            return { project: newProject };
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
 
-		const items = JSON.parse(project!.project);
+    async retrieveOne({
+        projectId,
+    }: {
+        projectId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const project = await this.prisma.project.findFirst({
+                where: { id: projectId },
+            });
 
-		const item = items[0].data.find(
-			(item: { id: number }) => item.id === updatedObject.id
-		);
+            if (!project)
+                return {
+                    error: { message: "No project with such id", status: 404 },
+                };
+
+            return { project };
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
+
+    async retrieveAll({
+        userId,
+    }: {
+        userId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const projects = await this.prisma.project.findMany({
+                where: { ownerId: userId },
+            });
+            return { projects };
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
+
+    async addItem({
+        projectId,
+        newItem,
+        userId,
+    }: {
+        projectId: number;
+        newItem: any;
+        userId: string;
+    }) {
+
+        const { project } = await this.retrieveOne({ projectId });
+
+        const items = JSON.parse(project!.project);
+        items[0].data.push(newItem);
+
+        const newProject = JSON.stringify(items);
+
+        console.log("User ID", userId);
+
+        this.io
+            .to(String(projectId))
+            .emit("createItem", {
+                from: userId,
+                type: "create",
+                item: newItem,
+            });
+
+        await this.prisma.project.update({
+            where: {
+                id: projectId,
+            },
+            data: {
+                project: newProject,
+            },
+        });
+
+        return { project: { ...project, project: newProject } };
+    }
+
+    updateItem({
+        projectId,
+        updatedObject,
+        userId,
+    }: {
+        projectId: number;
+        updatedObject: any;
+        userId: string;
+    }) {
+
+			if (!this.queue[projectId]) {
+				this.queue[projectId] = [];
+			}
+
+			this.queue[projectId].push({ from: userId, item: updatedObject, projectId });
 
 
-		for (const key in item) {
-			item[key] = updatedObject[key];
-		}
+			// if not queue for project id or queue for project is empty
+			if (!this.blocked[projectId]) {
+				// emit signal
+				this.canWriteEventEmitter.emit('canWrite', projectId);
+			}
 
-		this.io.to(String(projectId)).emit('updateItem', { from: userId, item });
+    }
 
-		const updatedProject = JSON.stringify(items);
+    async removeItem({
+        projectId,
+        updatedObjectId,
+        userId,
+    }: {
+        projectId: number;
+        updatedObjectId: string;
+        userId: string;
+    }) {
+        const { project } = await this.retrieveOne({ projectId });
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: updatedProject,
-			},
-		});
+        let projectArray = JSON.parse(project!.project);
 
-		return { project: { ...project, project: updatedProject } };
-	}
+        projectArray[0].data = projectArray[0].data.filter(
+            (item: { id: string }) => item.id !== updatedObjectId
+        );
 
-	async removeItem({
-		projectId,
-		updatedObjectId,
-		userId
-	}: {
-		projectId: number;
-		updatedObjectId: string;
-		userId: string
-	}) {
-		const { project } = await this.retrieveOne({ projectId });
+        this.io
+            .to(String(projectId))
+            .emit("removeItem", { from: userId, itemId: updatedObjectId });
 
-		let projectArray = JSON.parse(project!.project);
+        const updatedProject = JSON.stringify(projectArray);
 
-		projectArray[0].data = projectArray[0].data.filter(
-			(item: { id: string }) => item.id !== updatedObjectId
-		);
+        await this.prisma.project.update({
+            where: {
+                id: projectId,
+            },
+            data: {
+                project: updatedProject,
+            },
+        });
 
-		this.io.to(String(projectId)).emit('removeItem', { from: userId, itemId: updatedObjectId });
+        return { project: { ...project, project: updatedProject } };
+    }
 
-		const updatedProject = JSON.stringify(projectArray);
+    async removeItems({
+        projectId,
+        updatedObjectIds,
+        userId,
+    }: {
+        projectId: number;
+        updatedObjectIds: string[];
+        userId: string;
+    }) {
+        const { project } = await this.retrieveOne({ projectId });
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: updatedProject,
-			},
-		});
+        let projectArray = JSON.parse(project!.project);
 
-		return { project: { ...project, project: updatedProject } };
-	}
+        projectArray[0].data = projectArray[0].data.filter(
+            (item: { id: string }) => !updatedObjectIds.includes(item.id)
+        );
+        const updatedProject = JSON.stringify(projectArray);
 
-	async removeItems({
-		projectId,
-		updatedObjectIds,
-		userId
-	}: {
-		projectId: number;
-		updatedObjectIds: string[];
-		userId: string
-	}) {
-		const { project } = await this.retrieveOne({ projectId });
+        this.io
+            .to(String(projectId))
+            .emit("removeItem", { from: userId, itemId: updatedObjectIds });
 
-		let projectArray = JSON.parse(project!.project);
+        await this.prisma.project.update({
+            where: {
+                id: projectId,
+            },
+            data: {
+                project: updatedProject,
+            },
+        });
 
-		projectArray[0].data = projectArray[0].data.filter((item: { id: string }) =>
-			!updatedObjectIds.includes(item.id)
-		);
-		const updatedProject = JSON.stringify(projectArray);
+        return { project: { ...project, project: updatedProject } };
+    }
 
-		this.io.to(String(projectId)).emit('removeItem', { from: userId, itemId: updatedObjectIds });
+    async changeIsPublic({
+        projectId,
+        isPublic,
+    }: {
+        projectId: number;
+        isPublic: boolean;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const project = await this.prisma.project.update({
+                where: { id: projectId },
+                data: { isPublic },
+            });
 
-		await this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
-			data: {
-				project: updatedProject,
-			},
-		});
+            if (!project)
+                return {
+                    error: { message: "No project with such id", status: 404 },
+                };
 
-		return { project: { ...project, project: updatedProject } };
-	}
+            return {};
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
 
-	async changeIsPublic({
-		projectId,
-		isPublic,
-	}: {
-		projectId: number;
-		isPublic: boolean;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const project = await this.prisma.project.update({
-				where: { id: projectId },
-				data: { isPublic },
-			});
+    async removeOne({
+        projectId,
+    }: {
+        projectId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const project = await this.prisma.project.delete({
+                where: { id: projectId },
+            });
 
-			if (!project)
-				return {
-					error: { message: 'No project with such id', status: 404 },
-				};
+            if (!project)
+                return {
+                    error: { message: "No project with such id", status: 404 },
+                };
 
-			return {};
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+            return {};
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
 
-	async removeOne({
-		projectId,
-	}: {
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const project = await this.prisma.project.delete({
-				where: { id: projectId },
-			});
+    async removeFromCollection({
+        projectId,
+    }: {
+        projectId: number;
+    }): Promise<ProjectsServiceMethodReturns> {
+        try {
+            const newProject = await this.prisma.project.update({
+                where: { id: projectId },
+                data: { collectionId: null },
+            });
 
-			if (!project)
-				return {
-					error: { message: 'No project with such id', status: 404 },
-				};
-
-			return {};
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
-
-	async removeFromCollection({
-		projectId,
-	}: {
-		projectId: number;
-	}): Promise<ProjectsServiceMethodReturns> {
-		try {
-			const newProject = await this.prisma.project.update({
-				where: { id: projectId },
-				data: { collectionId: null },
-			});
-
-			return { project: newProject };
-		} catch (error) {
-			console.error(error);
-			return { error: { message: 'Something went wrong', status: 500 } };
-		}
-	}
+            return { project: newProject };
+        } catch (error) {
+            console.error(error);
+            return { error: { message: "Something went wrong", status: 500 } };
+        }
+    }
 }

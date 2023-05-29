@@ -249,29 +249,16 @@ export default class ProjectsController {
 
         let updatedObject = req.body.updatedObject;
 
-        console.log(updatedObject);
-
         if (updatedObject) {
-            if (!Array.isArray(updatedObject)) {
-                updatedObject = [updatedObject];
-            }
-						
-						let proj = null;
-
-						// @ts-ignore
-						updatedObject.forEach(async (uObject) => {
-							const { project } = await this.service.updateItem({
+            // @ts-ignore
+            this.service.updateItem({
                 projectId,
-                updatedObject: uObject,
+                updatedObject,
                 userId: String(req.user.user.id),
-            	});
-							proj = project;
-						});
-            
+            });
 
             return response.send({
-                message: "success update",
-                data: { project: proj },
+                message: "add to queue",
             });
         }
 
