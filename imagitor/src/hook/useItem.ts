@@ -92,6 +92,9 @@ const useItem = () => {
       },
     } as StageData;
     dispatch(stageDataAction.updateItem(updatedObject));
+
+    console.log(updatedObject);
+
     // send update to server
 
     if (sendToServer && page.current !== -1) {
