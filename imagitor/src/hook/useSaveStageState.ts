@@ -21,7 +21,6 @@ export const useSaveStageState = () => {
   const stageDataList = useSelector(stageDataListSelector.selectAll);
 
   const saveStageToLocalStorage = () => {
-    console.log("Stage", stageDataList);
     localStorage.setItem("StageDataList", JSON.stringify(stageDataList));
   };
 
@@ -33,8 +32,6 @@ export const useSaveStageState = () => {
   const getStageFromServer = async (projectId: number): Promise<StageDataListItem[]> => {
 
     setLoading(true);
-    console.log("Load from server");
-    console.log("Me: ", auth.me);
     if (auth.me.accessToken) {
 
       dispatch(setCurrent(projectId));
@@ -47,14 +44,10 @@ export const useSaveStageState = () => {
         });
 
       const json = await response.json();
-      console.log("PROJECT: ", json);
 
       if (response.ok) {
         const projectString = json.data.project;
         const project = JSON.parse(projectString);
-        
-        console.log("PROJECT: ", project);
-
         return project;
       }
     }

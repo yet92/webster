@@ -16,7 +16,6 @@ const Authorize = () => {
 
   useEffect(() => {
     if (token) {
-      console.log(token);
       // @ts-ignore
       dispatch(loadUserWithToken(token));
       setTimeout(() => {

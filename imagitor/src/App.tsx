@@ -347,7 +347,6 @@ function App() {
     "delete",
     (e) => {
       e.preventDefault();
-      console.log("In Delete");
       deleteItems(selectedItems, setSelectedItems, transformer.transformerRef);
     },
     { enabled: Boolean(selectedItems.length) },

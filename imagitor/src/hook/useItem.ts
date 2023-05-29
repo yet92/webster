@@ -68,14 +68,6 @@ const useItem = () => {
     
   };
 
-  const updatePoints = (id: string)  => {
-    console.log(stageData);
-    const lineIndex = stageData.findIndex(data => data.id === id);
-
-    console.log("LINE INDEX: ", lineIndex);
-    
-  };
-
   const updateItem = (
     id: string,
     attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"],
@@ -94,10 +86,6 @@ const useItem = () => {
     } as StageData;
     dispatch(stageDataAction.updateItem(updatedObject));
 
-    console.log(updatedObject);
-
-    // send update to server
-
     if (sendToServer && page.current !== -1) {
       fetch(`${SERVER_URL}/api/projects/${page.current}`, {
         method: "PUT",
@@ -112,7 +100,6 @@ const useItem = () => {
 
   const removeItem = (targetItemId: string | string[], sendToServer = true) => {
     dispatch(stageDataAction.removeItem(targetItemId));
-    console.log(targetItemId);
     if (sendToServer && page.current !== -1) {
       fetch(`${SERVER_URL}/api/projects/${page.current}/item`, {
         method: "DELETE",
@@ -139,7 +126,6 @@ const useItem = () => {
     removeItem,
     alterItems,
     clearItems,
-    updatePoints,
   };
 };
 

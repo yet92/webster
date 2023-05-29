@@ -9,7 +9,6 @@ const useI18n = () => {
     t(`${category}:${values.join(":")}`);
 
     const setLanguage = (language: string) => {
-      console.log(language);
       localStorage.setItem("language", language);
       i18n.changeLanguage(language);
     };

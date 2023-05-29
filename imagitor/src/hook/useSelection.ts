@@ -17,12 +17,6 @@ const useSelection = (transformer: ReturnType<typeof useTransformer>) => {
       return;
     }
     if (itemList) {
-      // const newNodeList = itemList.filter(
-      //   (item, _, array) =>
-      //     item.attrs["data-item-type"] === "frame" ||
-      //     item.getParent().attrs["name"] !== "label-group"
-      // );
-      // console.log("item list", newNodeList);
       transformer.transformerRef.current.nodes(itemList);
       transformer.setTransformerConfig(transformer.transformerRef.current);
       setSelectedItems(itemList);
