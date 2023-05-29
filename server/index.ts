@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import http from 'http';
-import { auth, projects, users, collections } from "./src/api";
-import { onConnect } from "./src/sockets";
+import { onConnect, ServerIO } from "./src/sockets";
 import { Server } from "socket.io";
 
 
@@ -22,9 +21,7 @@ app.use(
 );
 
 const server = http.createServer(app);
-const io = new Server(server, {cors: {
-    origin: "http://localhost:3000"
-}});
+const io = ServerIO.get(server);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,6 +39,8 @@ app.use(morgan("combined"));
 app.get("/", (req, res) => {
     res.send("Hello world");
 });
+
+import { auth, projects, users, collections } from "./src/api";
 
 io.on('connection', onConnect);
 

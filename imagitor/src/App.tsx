@@ -63,7 +63,7 @@ function App() {
   const transformer = useTransformer();
   const { selectedItems, onSelectItem, setSelectedItems, clearSelection } = useSelection(transformer);
   const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(transformer, clearHistory);
-  const { stageData } = useItem();
+  const { stageData, createItem, updateItem } = useItem();
   const { initializeFileDataList, updateFileData } = useStageDataList();
   const stage = useStage();
   const modal = useModal();
@@ -437,8 +437,29 @@ function App() {
         console.log('joined to', projectId, 'project');
       });
 
+      socket.on('createItem', (data: { from: string, item: any }) => {
+
+        if (String(auth.me.id) !== data.from) {
+          createItem(data.item as StageData, false);
+        }
+
+      });
+
+      socket.on('updateItem', (data: { from: string, item: any }) => {
+
+        if (String(auth.me.id) !== data.from) {
+          updateItem(data.item.id,  () => ({
+            ...data.item.attrs,
+          }), false);
+          // createItem(data.item as StageData, false);
+        }
+
+      });
+
       return () => {
         socket.off('joined');
+        socket.off('createItem');
+        socket.off('updateItem');
       }
     }
 

@@ -1,4 +1,5 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
+import http from 'http';
 
 const socketRoom = new Map<string, string>();
 
@@ -26,3 +27,24 @@ export const onConnect = (socket: Socket) => {
         console.log("user disconnected");
     });
 };
+
+export class ServerIO {
+
+  private static io: Server | null = null;
+
+  static get(server?: http.Server) {
+    if (!ServerIO.io) {
+      if (!server) {
+        console.log('SERVER cannot be null when io creates');
+        process.exit(1);
+      }
+      ServerIO.io = new Server(server, {
+        cors: {
+          origin: "*"
+        }
+      });
+    }
+    return ServerIO.io;
+  }
+
+}
