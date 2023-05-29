@@ -1,50 +1,32 @@
 import { Group } from "konva/lib/Group";
 import { Node, NodeConfig } from "konva/lib/Node";
 import React from "react";
-import { Col, Figure, Row } from "react-bootstrap";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { BsDownload } from "react-icons/bs";
 import { SettingBarProps } from "..";
-import exportList from "../../config/export.json";
 import useSelection from "../../hook/useSelection";
 import useStage from "../../hook/useStage";
 import useI18n from "../../hook/usei18n";
-import alignStyles from "../../style/align.module.css";
-import fontStyles from "../../style/font.module.css";
-import sizeStyles from "../../style/size.module.css";
-import { WidgetKind } from "../Widget";
 
 export type ExportKind = {
-  "data-item-type": string;
-  id: string;
-  icon: string;
-  name: string;
   selectedItems: Node<NodeConfig>[];
   clearSelection: ReturnType<typeof useSelection>["clearSelection"];
   stageRef: ReturnType<typeof useStage>["stageRef"];
 };
 
 type ExportWidgetProps = {
-  data: WidgetKind & SettingBarProps;
+  data: SettingBarProps;
 };
 
 const ExportWidget: React.FC<ExportWidgetProps> = ({ data }) => (
-  <Col>
-    <Row>
-      {exportList.map((_data) => (
-        <ExportThumbnail
-          key={`export-thumbnail-${_data.id}`}
-          data={{
-            id: _data.id,
-            icon: _data.icon,
-            name: _data.name,
-            "data-item-type": "export",
-            selectedItems: data.selectedItems,
-            clearSelection: data.clearSelection,
-            stageRef: data.stageRef,
-          }}
-        />
-      ))}
-    </Row>
-  </Col>
+  <ExportThumbnail
+    key={`export-thumbnail`}
+    data={{
+      selectedItems: data.selectedItems,
+      clearSelection: data.clearSelection,
+      stageRef: data.stageRef,
+    }}
+  />
 );
 
 export default ExportWidget;
@@ -79,33 +61,16 @@ const ExportThumbnail: React.FC<{
     }
   };
 
-  const downloadAll = () => {
-    const frames = data.stageRef.current.getChildren()[0].getChildren((item) => item.attrs.name === "label-group");
-    frames
-      .map((frame) => (frame as Group).getChildren((item) => item.attrs.name === "label-target")[0])
-      .forEach((frame) => {
-        downloadSelected(frame as Node<NodeConfig>);
-      });
-  };
-
-  const onClickDownload = (exportId: string) => () => {
-    if (exportId === "export-all-frame") {
-      downloadAll();
-      return;
-    }
+  const onClickDownload = () => () => {
     downloadSelected();
   };
 
   return (
-    <Figure
-      as={Col}
-      onClick={onClickDownload(data.id)}
-      className={[alignStyles.absoluteCenter, alignStyles.wrapTrue].join(" ")}
-    >
-      <i className={`bi-${data.icon}`} style={{ fontSize: 20, width: 25 }} />
-      <Figure.Caption className={[fontStyles.font075em, sizeStyles.width100, "text-center"].join(" ")}>
-        {`${getTranslation("widget", "export", data.id, "name")}`}
-      </Figure.Caption>
-    </Figure>
+    <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip_navbar-id}`}>Export as png</Tooltip>}>
+      <div className="tw-cursor-pointer tw-flex tw-flex-col tw-items-center tw-justify-center" onClick={onClickDownload()}>
+        <BsDownload size={25}/>
+        <span className="tw-text-sm">Export</span>
+      </div>
+    </OverlayTrigger>
   );
 };

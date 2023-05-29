@@ -105,40 +105,29 @@ function App() {
   const stageDataList = useSelector(stageDataListSelector.selectAll);
   const currentTabId = useMemo(() => tabList.find((tab) => tab.active)?.id ?? null, [tabList]);
 
-  const header = (
-    <Header>
-      <TabGroup onClickTab={onClickTab} tabList={tabList} onCreateTab={onCreateTab} onDeleteTab={onDeleteTab} />
-    </Header>
-  );
+  const header = <Header data={{ selectedItems, clearSelection, stageRef: stage.stageRef }} />;
 
-	const navBar = (
-		<NavBar>
-			{workModeList.map((data) => {
-				if (data.id === 'brush') {
-					return (
-						<NavBarDropdownButton
-							key={`navbar-${data.id}`}
-							onClick={getClickCallback(data.id)}
-							dropdownData={<BrushDropdown />}
-							data={data}
-							stage={stage}
-						/>
-					);
-				}
-				if (data.id === 'color') {
-					return (<ColorPalette selectedItems={selectedItems} />);
-				}
-				return (
-					<NavBarButton
-						key={`navbar-${data.id}`}
-						data={data}
-						stage={stage}
-						onClick={getClickCallback(data.id)}
-					/>
-				);
-			})}
-		</NavBar>
-	);
+  const navBar = (
+    <NavBar>
+      {workModeList.map((data) => {
+        if (data.id === "brush") {
+          return (
+            <NavBarDropdownButton
+              key={`navbar-${data.id}`}
+              onClick={getClickCallback(data.id)}
+              dropdownData={<BrushDropdown />}
+              data={data}
+              stage={stage}
+            />
+          );
+        }
+        if (data.id === "color") {
+          return <ColorPalette selectedItems={selectedItems} />;
+        }
+        return <NavBarButton key={`navbar-${data.id}`} data={data} stage={stage} onClick={getClickCallback(data.id)} />;
+      })}
+    </NavBar>
+  );
 
   const hotkeyModal = (
     <Modal className="tw-text-text" show={modal.displayModal} onHide={modal.closeModal}>
@@ -154,7 +143,9 @@ function App() {
                 <React.Fragment key={hotkey.name + key}>
                   {idx !== 0 && "+"}
                   <Col xs="auto" className="align-items-center tw-justify-center">
-                    <div className="tw-p-2 tw-flex tw-items-center tw-justify-center tw-bg-contrast tw-rounded-xl">{key}</div>
+                    <div className="tw-flex tw-items-center tw-justify-center tw-rounded-xl tw-bg-contrast tw-p-2">
+                      {key}
+                    </div>
                   </Col>
                 </React.Fragment>
               ))}
@@ -394,13 +385,10 @@ function App() {
   const auth = useSelector((state: StoreState) => state.auth);
 
   useEffect(() => {
-
     const projectId = parseInt(window.location.href.split("/").reverse()[0]);
     if (!isNaN(projectId)) {
       getStageFromServer(projectId).then((stageData) => {
-
         if (stageData) {
-
           stageData.forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
           initializeFileDataList(stageData);
         } else {
@@ -412,10 +400,8 @@ function App() {
           y: Math.max(Math.ceil(stage.stageRef.current.height() - 760) / 2, 0),
         });
         stage.stageRef.current.batchDraw();
-
       });
     }
-
   }, [auth.me]);
 
   useEffect(() => {
@@ -436,78 +422,78 @@ function App() {
 
   useEffect(() => {
     if (page.current !== -1) {
-      socket?.emit('join_project', { projectId: page.current });
+      socket?.emit("join_project", { projectId: page.current });
     }
 
     if (socket) {
-      socket.on('joined', ({ projectId }) => {
-        console.log('joined to', projectId, 'project');
+      socket.on("joined", ({ projectId }) => {
+        console.log("joined to", projectId, "project");
       });
 
-      socket.on('createItem', (data: { from: string, item: any }) => {
-
+      socket.on("createItem", (data: { from: string; item: any }) => {
         if (String(auth.me.id) !== data.from) {
           createItem(data.item as StageData, false);
         }
-
       });
 
-      socket.on('updateItem', (data: { from: string, item: any }) => {
-
+      socket.on("updateItem", (data: { from: string; item: any }) => {
         if (String(auth.me.id) !== data.from) {
-          updateItem(data.item.id,  () => ({
-            ...data.item.attrs,
-          }), false);
+          updateItem(
+            data.item.id,
+            () => ({
+              ...data.item.attrs,
+            }),
+            false
+          );
           // createItem(data.item as StageData, false);
         }
-
       });
 
-      socket.on('removeItem', (data: { from: string, itemId: string | string[] }) => {
-
+      socket.on("removeItem", (data: { from: string; itemId: string | string[] }) => {
         if (String(auth.me.id) !== data.from) {
           removeItem(data.itemId, false);
           // createItem(data.item as StageData, false);
         }
-
-      })
+      });
 
       return () => {
-        socket.off('joined');
-        socket.off('createItem');
-        socket.off('updateItem');
-        socket.off('removeItem');
-      }
+        socket.off("joined");
+        socket.off("createItem");
+        socket.off("updateItem");
+        socket.off("removeItem");
+      };
     }
-
-
   }, [page.current, socket]);
 
-
-  const newLayout = <Layout header={header} navBar={navBar} settingBar={settingBar}>
-    {hotkeyModal}
-    <View onSelect={onSelectItem} stage={stage}>
-      {stageData.length ? stageData.map((item) => renderObject(item)) : null}
-      <Transformer
-        ref={transformer.transformerRef}
-        keepRatio
-        shouldOverdrawWholeArea
-        boundBoxFunc={(_, newBox) => newBox}
-        onTransformEnd={transformer.onTransformEnd}
-      />
-    </View>
-  </Layout>;
-
-
-  const routes = useRoutes(
-    { header, navBar, settingBar, hotkeyModal, onSelectItem, stage, stageData, transformer, renderObject }
+  const newLayout = (
+    <Layout header={header} navBar={navBar} settingBar={settingBar}>
+      {hotkeyModal}
+      <View onSelect={onSelectItem} stage={stage}>
+        {stageData.length ? stageData.map((item) => renderObject(item)) : null}
+        <Transformer
+          ref={transformer.transformerRef}
+          keepRatio
+          shouldOverdrawWholeArea
+          boundBoxFunc={(_, newBox) => newBox}
+          onTransformEnd={transformer.onTransformEnd}
+        />
+      </View>
+    </Layout>
   );
 
-  return (
-    <BrowserRouter>
-      {routes}
-    </BrowserRouter>
-  );
+  const routes = useRoutes({
+    header,
+    navBar,
+    settingBar,
+    hotkeyModal,
+    onSelectItem,
+    stage,
+    stageData,
+    transformer,
+    renderObject,
+  });
+
+  return <BrowserRouter>{routes}</BrowserRouter>;
 }
 
 export default App;
