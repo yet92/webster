@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ header, navBar, settingBar, children, f
           sizeStyles.height100,
           positionStyles.relative,
           positionStyles.zIndex1,
-        ].join(" ")}>
+        ].join(" ") + " tw-bg-white"}>
         {settingBar}
       </Col>
     </Row>

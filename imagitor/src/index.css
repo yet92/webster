@@ -26,3 +26,17 @@ body,
 	background-color: var(--color-dark) !important;
 	overflow: hidden;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #078c9e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #1a1a1a;
+}
