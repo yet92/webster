@@ -4,16 +4,8 @@
     "name": "Image"
   },
   {
-    "id": "colorPalette",
-    "name": "Color Palette"
-  },
-  {
     "id": "align",
     "name": "Align"
-  },
-  {
-    "id": "frame",
-    "name": "Frame"
   },
   {
     "id": "shape",

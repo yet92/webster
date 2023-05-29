@@ -20,8 +20,8 @@ const Widget: React.FC<WidgetProps> = ({ data, children }) => {
   const { getTranslation } = useI18n();
   return (
     <Accordion.Item eventKey={data.id}>
-      <Accordion.Header>{getTranslation("widget", data.id, "name")}</Accordion.Header>
-      <Accordion.Body className={[colorStyles.whiteTheme, overflowStyles["auto-y"]].join(" ")}>
+      <Accordion.Header className="tw-bg-secondary">{getTranslation("widget", data.id, "name")}</Accordion.Header>
+      <Accordion.Body className={[overflowStyles["auto-y"]].join(" ") + " tw-bg-secondary tw-text-text"}>
         {children}
       </Accordion.Body>
     </Accordion.Item>
