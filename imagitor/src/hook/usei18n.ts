@@ -3,12 +3,18 @@ import { useTranslation } from "react-i18next";
 export type Category = "widget" | "hotkey" | "workMode";
 
 const useI18n = () => {
-  const { t } = useTranslation(["widget", "hotkey", "workMode"]);
+  const { t, i18n } = useTranslation(["widget", "hotkey", "workMode"]);
 
   const getTranslation = (category: "widget" | "hotkey" | "workMode", ...values: string[]) =>
     t(`${category}:${values.join(":")}`);
 
-  return { getTranslation };
+    const setLanguage = (language: string) => {
+      console.log(language);
+      localStorage.setItem("language", language);
+      i18n.changeLanguage(language);
+    };
+
+  return { getTranslation, setLanguage, currentLanguage: i18n.language  };
 };
 
 export default useI18n;

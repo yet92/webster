@@ -8,7 +8,7 @@ i18n.use(initReactI18next).init({
     en,
     ua,
   },
-  lng: window.navigator.language ?? "en", // if you're using a language detector, do not define the lng option
+  lng: localStorage.getItem("language") ?? "en", // if you're using a language detector, do not define the lng option
   fallbackLng: "en",
   ns: ["widget", "hotkey", "workMode"],
   interpolation: {
