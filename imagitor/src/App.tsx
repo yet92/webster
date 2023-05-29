@@ -130,7 +130,7 @@ function App() {
 					);
 				}
 				if (data.id === 'color') {
-					return (<ColorPalette />);
+					return (<ColorPalette selectedItems={selectedItems} />);
 				}
 				return (
 					<NavBarButton
