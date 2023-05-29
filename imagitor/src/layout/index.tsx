@@ -20,11 +20,11 @@ const Layout: React.FC<LayoutProps> = ({ header, navBar, settingBar, children, f
     <Row
       xs={12}
       className={[
-        sizeStyles.height5,
+        sizeStyles.height8,
         positionStyles.relative,
         positionStyles.zIndex1,
         spaceStyles.mt1rem,
-      ].join(" ")}>
+      ].join(" ") + " mb-2"}>
       {header}
     </Row>
     <Row
