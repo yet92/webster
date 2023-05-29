@@ -3,14 +3,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useEffect } from "react";
 import { Transformer } from "react-konva";
-import { Route, Routes, useParams } from "react-router-dom";
-import header from "../header";
-import Layout from "../layout";
-import navBar from "../navBar";
-import settingBar from "../settingBar";
-import View from "../view";
-import { loadUserWithToken, logout } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
+import { Route, Routes, useParams } from "react-router-dom";
+import Layout from "../layout";
+import { loadUserWithToken, logout } from "../redux/authSlice";
+import View from "../view";
 
 const Authorize = () => {
 

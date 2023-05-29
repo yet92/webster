@@ -40,5 +40,13 @@
     "icon": "octagon-fill",
     "sides": 8,
     "radius": 100
+  },
+  {
+    "type": "shape",
+    "id": "circle",
+    "icon": "circle-fill",
+    "sides": 360,
+    "radius": 100
   }
+  
 ]

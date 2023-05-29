@@ -1,13 +1,5 @@
 import React, { ReactNode, useState, useEffect } from "react";
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  Form,
-  InputGroup,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
+import { Button, ButtonGroup, Dropdown, Form, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { NavBarItemKind } from "./NavBarButton";
 import colorStyles from "../style/color.module.css";
 import fontStyles from "../style/font.module.css";
@@ -27,14 +19,8 @@ type NavBarDropdownButtonProps = {
   stage: ReturnType<typeof useStage>;
 };
 
-const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
-  data,
-  dropdownData,
-  onClick,
-}) => {
-  const { currentTool } = useSelector(
-    (selector: StoreState) => selector.toolSelection
-  );
+const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({ data, dropdownData, onClick }) => {
+  const { currentTool } = useSelector((selector: StoreState) => selector.toolSelection);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -55,14 +41,12 @@ const NavBarDropdownButton: React.FC<NavBarDropdownButtonProps> = ({
         drop="end"
         show={show}
         data-navbar-id={data.id}
-        variant={[" ", colorStyles.whiteTheme, borderStyles.colorGrey].join(
-          " "
-        )}
+        variant={[" ", colorStyles.whiteTheme, borderStyles.colorGrey].join(" ")}
       >
         <Dropdown.Toggle as={CustomToggle} data={data} />
         <Dropdown.Menu className="">
-          {data["sub-button"]
-            && data["sub-button"].map((subData) => (
+          {data["sub-button"] &&
+            data["sub-button"].map((subData) => (
               <Dropdown.ItemText
                 key={`navbar-${subData.id}`}
                 data-navbar-id={subData.id}
@@ -97,39 +81,36 @@ type CustomToggleProps = {
   data: NavBarItemKind;
 };
 
-const CustomToggle = React.forwardRef<HTMLButtonElement, CustomToggleProps>(
-  function CustomToggleItem({ children, onClick, data }, ref) {
-    return (
-      <OverlayTrigger
-        placement="right"
-        overlay={
-          <Tooltip id={`tooltip_navbar-id_${data.id}`}>{data.desc}</Tooltip>
-        }
+const CustomToggle = React.forwardRef<HTMLButtonElement, CustomToggleProps>(function CustomToggleItem(
+  { children, onClick, data },
+  ref
+) {
+  const { currentTool } = useSelector((selector: StoreState) => selector.toolSelection);
+  return (
+    <OverlayTrigger placement="right" overlay={<Tooltip id={`tooltip_navbar-id_${data.id}`}>{data.desc}</Tooltip>}>
+      <button
+        ref={ref}
+        className={`${
+          currentTool === "brush" ? "tw-bg-contrast" : "tw-bg-secondary "
+        } text-text tw-h-full tw-w-full tw-rounded-md tw-border-contrast/20 tw-p-1 tw-px-3 hover:tw-bg-contrast`}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick(e);
+        }}
       >
-        <Button
-          ref={ref}
-          className={[colorStyles.whiteTheme, positionStyles.relative].join(
-            " "
-          )}
-          onClick={(e) => {
-            e.preventDefault();
-            onClick(e);
-          }}
+        <i className={`bi-${data.icon} tw-text-text`} />
+        <i
+          className={[
+            "bi-three-dots-vertical",
+            fontStyles.fontHalf1em,
+            positionStyles.absolute,
+            positionStyles.right0,
+            positionStyles.verticalCenter,
+          ].join(" ")}
         >
-          <i className={`bi-${data.icon}`} />
-          <i
-            className={[
-              "bi-three-dots-vertical",
-              fontStyles.fontHalf1em,
-              positionStyles.absolute,
-              positionStyles.right0,
-              positionStyles.verticalCenter,
-            ].join(" ")}
-          >
-            {children}
-          </i>
-        </Button>
-      </OverlayTrigger>
-    );
-  }
-);
+          {children}
+        </i>
+      </button>
+    </OverlayTrigger>
+  );
+});
