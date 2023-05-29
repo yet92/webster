@@ -5,7 +5,7 @@ export async function changeIsPublic(
   token: string,
   isPublic: boolean
 ) {
-  const endpoint = `${SERVER_URL}/api/projects/${id}`;
+  const endpoint = `${SERVER_URL}/api/projects/${id}/public`;
 
   const response = await fetch(endpoint, {
     method: 'PUT',
