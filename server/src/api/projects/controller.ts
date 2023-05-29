@@ -1,10 +1,10 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response } from "express";
 
-import { IRequest, ResponseSender } from '../../utils/rest';
-import ProjectsService from './service';
-import ProjectValidator from './validator';
+import { IRequest, ResponseSender } from "../../utils/rest";
+import ProjectsService from "./service";
+import ProjectValidator from "./validator";
 
-let callbackUrl = '';
+let callbackUrl = "";
 
 export default class ProjectsController {
 	validator: ProjectValidator;
@@ -54,6 +54,49 @@ export default class ProjectsController {
 			});
 		}
 	}
+async addToCollection(req: IRequest<{ collectionId: string }>, res: Response, next: NextFunction) {
+    const response = new ResponseSender(res);
+    const result = await this.service.addToCollection({
+      collectionId: parseInt(req.body.collectionId),
+      projectId: parseInt(req.params.id),
+    });
+
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
+
+    if (result && result.projects) {
+      return response.send({
+        message: "Project added to collection",
+        data: result.projects,
+      });
+    }
+  }
+
+  async removeFromCollection(req: IRequest<{}>, res: Response, next: NextFunction) {
+    const response = new ResponseSender(res);
+
+    const result = await this.service.removeFromCollection({
+      projectId: parseInt(req.params.id),
+    });
+
+    if (result && result.error) {
+      return response.send({
+        status: result.error.status,
+        message: result.error.message,
+      });
+    }
+
+    if (result && result.projects) {
+      return response.send({
+        message: "Project removed from collection",
+        data: result.projects,
+      });
+    }
+  }
 	async retrieveAll(req: IRequest<{}>, res: Response, next: NextFunction) {
 		const response = new ResponseSender(res);
 

@@ -13,6 +13,8 @@ router.delete("/:id", passport.authenticate("jwt", { session: false }), controll
 router.put("/:id", passport.authenticate("jwt", { session: false }), controller.changeIsPublic.bind(controller));
 router.get("/", passport.authenticate("jwt", { session: false }), controller.retrieveAll.bind(controller));
 router.post("/:id", passport.authenticate("jwt", { session: false }), controller.addItem.bind(controller));
+router.put("/:id/collection", passport.authenticate("jwt", { session: false }), controller.addToCollection.bind(controller));
+router.delete("/:id/collection", passport.authenticate("jwt", { session: false }), controller.removeFromCollection.bind(controller));
 router.put("/:id", passport.authenticate("jwt", { session: false }), controller.updateItem.bind(controller));
 
 export default router;

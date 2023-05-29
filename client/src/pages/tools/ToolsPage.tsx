@@ -3,12 +3,14 @@ import { PhotoProjects } from './components/PhotoProjects';
 import { SideBar } from './components/SideBar';
 import { useState } from 'react';
 import { VideoProjects } from './components/VideoProjects';
+import { CollectionProjects } from './components/CollectionProjects';
 
-export type ProjectType = 'photo' | 'video';
+export type ProjectType = 'photo' | 'video' | 'collection';
 
 enum projectTypes {
   photo = 'photo',
   video = 'video',
+  collection = 'collection',
 }
 
 export default function ToolsPage() {
@@ -31,6 +33,8 @@ export default function ToolsPage() {
                   return <PhotoProjects />;
                 case projectTypes.video:
                   return <VideoProjects />;
+                case projectTypes.collection:
+                  return <CollectionProjects />;
                 default:
                   return <PhotoProjects />;
               }

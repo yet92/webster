@@ -1,12 +1,21 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import {
+  addToCollection,
+  fetchAllProjects,
+  removeFromCollection,
+} from '../pages/tools/utils/fetchProjects';
+
 import { fetchAllProjects } from '../pages/tools/utils/fetchProjects';
 import { changeIsPublic as changePrivacy } from '../pages/tools/utils/changeIsPublic';
+
 
 export type Project = {
   title: string;
   thumbnail?: string;
   project: string;
   id: number;
+  collectionId?: number;
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -41,6 +50,43 @@ export const fetchProjectsAsync = createAsyncThunk<Project[], string>(
   }
 );
 
+export const addToCollectionAsync = createAsyncThunk<
+  Project,
+  { accessToken: string; collectionId: number; projectId: number }
+>(
+  'projects/addToCollection',
+  async ({ accessToken, collectionId, projectId }, thunkAPI) => {
+    try {
+      const { response, json } = await addToCollection(
+        accessToken,
+        collectionId,
+        projectId
+      );
+      return json.data as unknown as Project;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to add to collection');
+    }
+  }
+);
+
+export const removeFromCollectionAsync = createAsyncThunk<
+  Project,
+  { accessToken: string; projectId: number }
+>(
+  'projects/removeFromCollection',
+  async ({ accessToken, projectId }, thunkAPI) => {
+    try {
+      const { response, json } = await removeFromCollection(
+        accessToken,
+        projectId
+      );
+      return json.data as unknown as Project;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to remove from collection');
+    }
+  }
+);
+
 export const changeIsPublicAsync = createAsyncThunk<
   number,
   { accessToken: string; id: number; isPublic: boolean }
@@ -52,6 +98,7 @@ export const changeIsPublicAsync = createAsyncThunk<
     return thunkAPI.rejectWithValue('Failed to fetch projects');
   }
 });
+
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
@@ -77,11 +124,41 @@ const projectsSlice = createSlice({
       .addCase(fetchProjectsAsync.pending, (state) => {
         state.loading = true;
       })
+      .addCase(addToCollectionAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeFromCollectionAsync.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchProjectsAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.projects = action.payload as unknown as Project[];
       })
+      .addCase(addToCollectionAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = state.projects.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, collectionId: action.payload.collectionId };
+          }
+          return item;
+        });
+      })
+      .addCase(removeFromCollectionAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = state.projects.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, collectionId: action.payload.collectionId };
+          }
+          return item;
+        });
+      })
       .addCase(fetchProjectsAsync.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(addToCollectionAsync.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(removeFromCollectionAsync.rejected, (state) => {
         state.loading = false;
       })
       .addCase(changeIsPublicAsync.pending, (state) => {
