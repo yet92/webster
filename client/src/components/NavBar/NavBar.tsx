@@ -114,9 +114,6 @@ function ProfileMenu({ user }: { user: User }) {
       <Link to={'/profile/favorites'}>
         <Dropdown.Item>Favorites</Dropdown.Item>
       </Link>
-      <Link to={'/events/create'}>
-        <Dropdown.Item>Create Event</Dropdown.Item>
-      </Link>
       <Dropdown.Item>Settings</Dropdown.Item>
       <Link to={'/profile/organization'}>
         <Dropdown.Item>Organization</Dropdown.Item>
