@@ -224,6 +224,7 @@ export default class ProjectsController {
 			const { project } = await this.service.addItem({
 				projectId,
 				newItem,
+				userId: String(req.user.user.id)
 			});
 
 			return response.send({
@@ -252,6 +253,7 @@ export default class ProjectsController {
 			const { project } = await this.service.updateItem({
 				projectId,
 				updatedObject,
+				userId: String(req.user.user.id)
 			});
 
 			return response.send({

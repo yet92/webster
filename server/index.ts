@@ -3,7 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import { auth, projects, users, collections } from "./src/api";
+import http from 'http';
+import { onConnect, ServerIO } from "./src/sockets";
+import { Server } from "socket.io";
+
+
 
 dotenv.config();
 
@@ -15,6 +19,10 @@ app.use(
         maxAge: 24 * 60 * 60 * 100,
     })
 );
+
+const server = http.createServer(app);
+const io = ServerIO.get(server);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -32,11 +40,15 @@ app.get("/", (req, res) => {
     res.send("Hello world");
 });
 
+import { auth, projects, users, collections } from "./src/api";
+
+io.on('connection', onConnect);
+
 app.use("/api/auth", auth);
 app.use("/api/projects", projects);
 app.use("/api/collections", collections);
 app.use("/api/users", users);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
