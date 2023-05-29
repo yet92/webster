@@ -67,8 +67,12 @@ const ExportThumbnail: React.FC<{
 
   return (
     <OverlayTrigger placement="bottom" overlay={<Tooltip id={`tooltip_navbar-id}`}>Export as png</Tooltip>}>
-      <div className="tw-cursor-pointer tw-flex tw-flex-col tw-items-center tw-justify-center" onClick={onClickDownload()}>
-        <BsDownload size={25}/>
+      <div
+        className="tw-flex tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-border-contrast/0 hover:tw-border-contrast"
+        onClick={onClickDownload()}
+        style={{ borderBottom: "1px solid" }}
+      >
+        <BsDownload size={25} />
         <span className="tw-text-sm">Export</span>
       </div>
     </OverlayTrigger>

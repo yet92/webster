@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Col, Figure, Row } from "react-bootstrap";
 import RangeSlider from "react-bootstrap-range-slider";
 import { SettingBarProps } from "..";
-import useI18n from "../../hook/usei18n";
 import useItem from "../../hook/useItem";
+import useI18n from "../../hook/usei18n";
 import sizeStyles from "../../style/size.module.css";
 import { WidgetKind } from "../Widget";
 
@@ -20,21 +20,12 @@ type FilterWidgetProps = {
   data: WidgetKind & SettingBarProps;
 };
 
-const FilterWidget: React.FC<FilterWidgetProps> = ({data}) => {
-  const { getTranslation, setLanguage,  currentLanguage } = useI18n();
+const FilterWidget: React.FC<FilterWidgetProps> = ({ data }) => {
+  const { getTranslation } = useI18n();
 
-  const handleLanguageChange = () => {
-    const newLanguage = currentLanguage === "en" ? "ua" : "en";
-    setLanguage(newLanguage);
-  };
-  return(
+  return (
     <Col className={[sizeStyles["mx-h-30vh"]].join(" ")}>
-      <h6>
-        {getTranslation("widget", "filter", "name")}
-      </h6>
-      <button onClick={handleLanguageChange}>
-      {currentLanguage === "en" ? "Switch to UA" : "Switch to EN"}
-    </button>
+      <h6>{getTranslation("widget", "filter", "name")}</h6>
       <ColorPaletteOpacitySlider
         data={{
           "data-item-type": "opacity",
@@ -59,22 +50,19 @@ const FilterWidget: React.FC<FilterWidgetProps> = ({data}) => {
   );
 };
 
-
 const ColorPaletteOpacitySlider: React.FC<{
   data: Omit<Omit<FilterKind, "colorCode">, "id">;
 }> = ({ data }) => {
   const { updateItem } = useItem();
   const { getTranslation } = useI18n();
 
-  const [opacity, setOpacity] = useState(
-    data.selectedItems[0] ? data.selectedItems[0].attrs.opacity * 100 : 100
-  );
+  const [opacity, setOpacity] = useState(data.selectedItems[0] ? data.selectedItems[0].attrs.opacity * 100 : 100);
 
   useEffect(() => {
     setOpacity(
-      data.selectedItems[0]
-        && data.selectedItems[0].attrs.opacity !== undefined
-        && data.selectedItems[0].attrs.opacity !== null
+      data.selectedItems[0] &&
+        data.selectedItems[0].attrs.opacity !== undefined &&
+        data.selectedItems[0].attrs.opacity !== null
         ? data.selectedItems[0].attrs.opacity * 100
         : 100
     );
@@ -96,11 +84,7 @@ const ColorPaletteOpacitySlider: React.FC<{
   return (
     <Col>
       <h6>{getTranslation("widget", "colorPalette", "opacity", "name")}</h6>
-      <RangeSlider
-        tooltipLabel={(value) => `${value}%`}
-        value={opacity}
-        onChange={onChangeOpacity}
-      />
+      <RangeSlider tooltipLabel={(value) => `${value}%`} value={opacity} onChange={onChangeOpacity} />
     </Col>
   );
 };
@@ -112,16 +96,14 @@ const ColorPaletteBrightnessSlider: React.FC<{
   const { getTranslation } = useI18n();
 
   const [brightness, setBrightNess] = useState(
-    data.selectedItems[0] && data.selectedItems[0].attrs.brightness
-      ? data.selectedItems[0].attrs.brightness * 100
-      : 0
+    data.selectedItems[0] && data.selectedItems[0].attrs.brightness ? data.selectedItems[0].attrs.brightness * 100 : 0
   );
 
   useEffect(() => {
     setBrightNess(
-      data.selectedItems[0]
-        && data.selectedItems[0].attrs.brightness !== undefined
-        && data.selectedItems[0].attrs.brightness !== null
+      data.selectedItems[0] &&
+        data.selectedItems[0].attrs.brightness !== undefined &&
+        data.selectedItems[0].attrs.brightness !== null
         ? data.selectedItems[0].attrs.brightness * 100
         : 0
     );
@@ -143,11 +125,7 @@ const ColorPaletteBrightnessSlider: React.FC<{
   return (
     <Col>
       <h6>{getTranslation("widget", "colorPalette", "brightness", "name")}</h6>
-      <RangeSlider
-        tooltipLabel={(value) => `${value}%`}
-        value={brightness}
-        onChange={onChangeBrightness}
-      />
+      <RangeSlider tooltipLabel={(value) => `${value}%`} value={brightness} onChange={onChangeBrightness} />
     </Col>
   );
 };
@@ -172,9 +150,7 @@ const ColorPaletteFilterToggle: React.FC<{
 
   useEffect(() => {
     const initialFilters = filterOptions.filter((filter) => {
-      return data.selectedItems.every((item) =>
-        item.filters()?.find((f) => f === filter)
-      );
+      return data.selectedItems.every((item) => item.filters()?.find((f) => f === filter));
     });
     setSelectedFilters(initialFilters);
   }, [data.selectedItems]);
@@ -229,7 +205,7 @@ const ColorPaletteFilterToggle: React.FC<{
                 style={{
                   border: selectedFilters.includes(filter) ? "2px solid red" : "none",
                   maxHeight: "80px",
-                  maxWidth: "80px"
+                  maxWidth: "80px",
                 }}
               />
             </div>
