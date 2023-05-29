@@ -35,7 +35,6 @@ const Widgets = {
   text: (data: WidgetKind & SettingBarProps) => <TextWidget />,
   line: (data: WidgetKind & SettingBarProps) => <LineWidget />,
   icon: (data: WidgetKind & SettingBarProps) => <IconWidget />,
-  layer: (data: WidgetKind & SettingBarProps) => <LayerWidget data={data}/>,
   export: (data: WidgetKind & SettingBarProps) => <ExportWidget data={data} />,
   filter: (data: WidgetKind & SettingBarProps) => <FilterWidget data={data} />,
 };
@@ -43,7 +42,7 @@ const Widgets = {
 export type WidgetIDList = keyof typeof Widgets;
 
 const SettingBar: React.FC<SettingBarProps> = (settingProps) => (
-  <aside>
+  <aside className="tw-h-full tw-overflow-y-auto">
     <Accordion>
       {(widgetList as WidgetKind[]).map((data) => (
         <Widget key={`widget-${data.id}`} data={{ ...data, ...settingProps }}>
@@ -51,6 +50,15 @@ const SettingBar: React.FC<SettingBarProps> = (settingProps) => (
         </Widget>
       ))}
     </Accordion>
+    <LayerWidget
+      data={{
+        ...{
+          id: "layer",
+          name: "Layer",
+        },
+        ...settingProps,
+      }}
+    />
   </aside>
 );
 
