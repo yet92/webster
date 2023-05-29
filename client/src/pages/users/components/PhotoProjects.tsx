@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { Project, fetchProjectsAsync } from '../../../store/projectsSlice';
 import { useAppDispatch } from '../../../hooks/redux.hook';
+import { IMAGITOR_URL } from '../../../utils/constants';
 
 // const projects = [
 //   {
@@ -31,15 +32,20 @@ export function PhotoProjects({ projects }: { projects: Project[] }) {
         <h3 className='text-4xl'>Photo Projects</h3>
       </div>
       <div className='flex h-full w-full flex-wrap items-center justify-evenly gap-5 rounded-xl bg-secondary p-2 py-5'>
-        {projects.map((project, index) => (
-          <ProjectThumbnail project={project} key={index} />
-        ))}
+        {projects
+          .filter((project) => project.isPublic)
+          .map((project, index) => (
+            <ProjectThumbnail project={project} key={index} />
+          ))}
       </div>
     </div>
   );
 }
 
 const ProjectThumbnail = ({ project }: { project: any }) => {
+  const onOpenProject = () => {
+    window.open(`${IMAGITOR_URL}/project/${project.id}`);
+  };
   const handleImageError = (
     event: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
@@ -48,7 +54,9 @@ const ProjectThumbnail = ({ project }: { project: any }) => {
       'https://res.cloudinary.com/drq4rqj3n/image/upload/v1685287400/webster_ews2pu.png';
   };
   return (
-    <div className='flex h-fit w-fit cursor-pointer flex-col rounded-md border-2 border-transparent bg-bg transition hover:border-contrast hover:shadow-2xl hover:shadow-contrast'>
+    <div
+      onClick={onOpenProject}
+      className='flex h-fit w-fit cursor-pointer flex-col rounded-md border-2 border-transparent bg-bg transition hover:border-contrast hover:shadow-2xl hover:shadow-contrast'>
       <img
         className='h-[300px] w-[400px] rounded-t-xl'
         src={project.thumbnail}
