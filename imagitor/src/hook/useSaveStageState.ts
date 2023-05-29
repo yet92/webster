@@ -7,8 +7,9 @@ import { useParams } from "react-router-dom";
 import { StoreState } from "../redux/store";
 import { useState } from "react";
 import { setCurrent } from "../redux/pageSlice";
+import { constants } from "../util/constants";
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = constants.SERVER_URL;
 
 export const useSaveStageState = () => {
 

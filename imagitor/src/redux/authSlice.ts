@@ -5,8 +5,9 @@ import {
   createAsyncThunk,
   AnyAction,
 } from "@reduxjs/toolkit";
+import { constants } from "../util/constants";
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = constants.SERVER_URL;
 console.log(`DOES SERVER URL EQUALS TO ${SERVER_URL}?`);
 
 export const loadUserWithToken = createAsyncThunk(

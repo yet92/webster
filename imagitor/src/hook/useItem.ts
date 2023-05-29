@@ -7,6 +7,7 @@ import {
   stageDataSelector,
 } from "../redux/currentStageData";
 import { StoreState } from "../redux/store";
+import {constants} from '../util/constants';
 
 export type ItemData = {
   "data-item-type": string;
@@ -40,7 +41,7 @@ export type ITEMS_CONTEXT = {
   onAlter: (dataList: StageData[]) => void;
 };
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = constants.SERVER_URL;
 
 const useItem = () => {
   const dispatch = useDispatch();
