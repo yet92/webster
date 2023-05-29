@@ -42,23 +42,25 @@ const Widgets = {
 export type WidgetIDList = keyof typeof Widgets;
 
 const SettingBar: React.FC<SettingBarProps> = (settingProps) => (
-  <aside className="tw-h-full tw-overflow-y-auto">
-    <Accordion>
+  <aside className="tw-h-full">
+    <Accordion className="tw-h-1/2 tw-overflow-y-auto">
       {(widgetList as WidgetKind[]).map((data) => (
         <Widget key={`widget-${data.id}`} data={{ ...data, ...settingProps }}>
           {Widgets[data.id] && Widgets[data.id]({ ...data, ...settingProps })}
         </Widget>
       ))}
     </Accordion>
-    <LayerWidget
-      data={{
-        ...{
-          id: "layer",
-          name: "Layer",
-        },
-        ...settingProps,
-      }}
-    />
+    <div className="tw-h-1/2">
+      <LayerWidget
+        data={{
+          ...{
+            id: "layer",
+            name: "Layer",
+          },
+          ...settingProps,
+        }}
+      />
+    </div>
   </aside>
 );
 

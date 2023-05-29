@@ -90,12 +90,12 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
 
   return (
     <div
-      className="tw-mt-2 tw-flex tw-h-[35vh] tw-w-full tw-flex-col tw-overflow-y-auto tw-rounded-md tw-border-contrast/20 tw-bg-secondary"
+      className="tw-mt-2 tw-flex tw-h-full tw-w-full tw-flex-col tw-overflow-y-auto tw-rounded-md tw-border-contrast/20 tw-bg-secondary"
       style={{ border: "1px solid" }}
     >
       <span className="tw-text-1xl tw-border-b tw-p-3 tw-pl-5 tw-font-bold tw-text-text">Layers</span>
       <div
-        className="w-full tw-mb-2 tw-flex tw-justify-between tw-gap-3 tw-border-contrast tw-pb-2 tw-pr-2 tw-pt-2 tw-shadow-sm"
+        className="w-full tw-mb-2 tw-flex tw-justify-between tw-gap-3 tw-border-contrast tw-pb-2 tw-pr-2 tw-pt-2 tw-shadow-sm "
         style={{ borderBottom: "1px solid rgba(0, 0, 0, 0.1)", borderTop: "1px solid rgba(0, 0, 0, 0.1)" }}
       >
         <span className="tw-text-1xl tw-justify-self-start tw-border-b tw-pl-5 tw-text-text">Tools</span>
@@ -174,6 +174,7 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
         onMoveEnd={onMoveEnd}
         container={() => containerRef.current}
       />
+      <div className="tw-mt-1" ></div>
     </div>
   );
 };
