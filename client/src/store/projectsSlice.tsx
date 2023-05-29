@@ -6,7 +6,6 @@ import {
   removeFromCollection,
 } from '../pages/tools/utils/fetchProjects';
 
-import { fetchAllProjects } from '../pages/tools/utils/fetchProjects';
 import { changeIsPublic as changePrivacy } from '../pages/tools/utils/changeIsPublic';
 
 

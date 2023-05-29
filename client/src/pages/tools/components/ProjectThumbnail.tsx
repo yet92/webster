@@ -6,8 +6,9 @@ import { RootState } from '../../../store';
 import {
   Project,
   addToCollectionAsync,
-  fetchProjectsAsync,
   removeFromCollectionAsync,
+  changeIsPublicAsync,
+  fetchProjectsAsync,
 } from '../../../store/projectsSlice';
 import { removeFetch } from '../utils/removeProject';
 import {
@@ -27,7 +28,16 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
   const { collections, currentCollection } = useSelector(
     (selector: RootState) => selector.collections
   );
-
+  const onClickChangePrivacy = async () => {
+    console.log('there');
+    dispatch(
+      changeIsPublicAsync({
+        accessToken: me.accessToken as string,
+        id: project.id,
+        isPublic: !project.isPublic,
+      })
+    );
+  };
   const clickCollectionHandler = (collection: Collection) => {
     dispatch(
       addToCollectionAsync({
@@ -91,10 +101,11 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
               className='shadow-2xl shadow-contrast'
               content={
                 <div className='flex w-full flex-col gap-5'>
-                  {collections.map((collection) => (
+                  {collections.map((collection, index) => (
                     <div
                       className='flex w-full flex-row items-center gap-5 rounded-xl hover:bg-contrast'
-                      onClick={() => clickCollectionHandler(collection)}>
+                      onClick={() => clickCollectionHandler(collection)}
+                      key={index}>
                       <img
                         onError={handleImageError}
                         alt='preview'
@@ -113,8 +124,13 @@ export const ProjectThumbnail = ({ project }: { project: Project }) => {
               </Dropdown.Item>
             </Tooltip>
           )}
-          <Dropdown.Item>
-            <span className='text-contrast'>Make Public</span>
+          <Dropdown.Item onClick={onClickChangePrivacy}>
+            <span
+              className={`${
+                project.isPublic ? 'text-contrast' : 'text-red-600'
+              }`}>
+              {project.isPublic ? 'Make Private' : 'Make Public'}
+            </span>
           </Dropdown.Item>
           <Dropdown.Item>
             <span>Share</span>
