@@ -166,9 +166,11 @@ export default class ProjectsService {
 	async removeItem({
 		projectId,
 		updatedObjectId,
+		userId
 	}: {
 		projectId: number;
 		updatedObjectId: string;
+		userId: string
 	}) {
 		const { project } = await this.retrieveOne({ projectId });
 
@@ -177,6 +179,8 @@ export default class ProjectsService {
 		projectArray[0].data = projectArray[0].data.filter(
 			(item: { id: string }) => item.id !== updatedObjectId
 		);
+
+		this.io.to(String(projectId)).emit('removeItem', { from: userId, itemId: updatedObjectId });
 
 		const updatedProject = JSON.stringify(projectArray);
 
@@ -195,18 +199,22 @@ export default class ProjectsService {
 	async removeItems({
 		projectId,
 		updatedObjectIds,
+		userId
 	}: {
 		projectId: number;
 		updatedObjectIds: string[];
+		userId: string
 	}) {
 		const { project } = await this.retrieveOne({ projectId });
 
 		let projectArray = JSON.parse(project!.project);
 
 		projectArray[0].data = projectArray[0].data.filter((item: { id: string }) =>
-			updatedObjectIds.includes(item.id)
+			!updatedObjectIds.includes(item.id)
 		);
 		const updatedProject = JSON.stringify(projectArray);
+
+		this.io.to(String(projectId)).emit('removeItem', { from: userId, itemId: updatedObjectIds });
 
 		await this.prisma.project.update({
 			where: {

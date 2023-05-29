@@ -64,7 +64,7 @@ function App() {
   const transformer = useTransformer();
   const { selectedItems, onSelectItem, setSelectedItems, clearSelection } = useSelection(transformer);
   const { tabList, onClickTab, onCreateTab, onDeleteTab } = useTab(transformer, clearHistory);
-  const { stageData, createItem, updateItem } = useItem();
+  const { stageData, createItem, updateItem, removeItem } = useItem();
   const { initializeFileDataList, updateFileData } = useStageDataList();
   const stage = useStage();
   const modal = useModal();
@@ -467,10 +467,20 @@ function App() {
 
       });
 
+      socket.on('removeItem', (data: { from: string, itemId: string | string[] }) => {
+
+        if (String(auth.me.id) !== data.from) {
+          removeItem(data.itemId, false);
+          // createItem(data.item as StageData, false);
+        }
+
+      })
+
       return () => {
         socket.off('joined');
         socket.off('createItem');
         socket.off('updateItem');
+        socket.off('removeItem');
       }
     }
 
