@@ -24,7 +24,6 @@ export default class ProjectsService {
 		thumbnail,
 	}: CreateProjectParams): Promise<ProjectsServiceMethodReturns> {
 		try {
-			console.log('asfsafsaf', ownerId);
 			const newProject = await this.prisma.project.create({
 				data: {
 					project,
@@ -163,7 +162,7 @@ export default class ProjectsService {
 
 		let projectArray = JSON.parse(project!.project);
 
-		projectArray[0] = projectArray[0].data.filter(
+		projectArray[0].data = projectArray[0].data.filter(
 			(item: { id: string }) => item.id !== updatedObjectId
 		);
 
@@ -192,10 +191,9 @@ export default class ProjectsService {
 
 		let projectArray = JSON.parse(project!.project);
 
-		projectArray[0] = projectArray[0].data.filter((item: { id: string }) =>
+		projectArray[0].data = projectArray[0].data.filter((item: { id: string }) =>
 			updatedObjectIds.includes(item.id)
 		);
-
 		const updatedProject = JSON.stringify(projectArray);
 
 		await this.prisma.project.update({
