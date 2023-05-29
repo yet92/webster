@@ -84,5 +84,19 @@
 		"name": "Shortcut",
 		"desc": "Keyboard Shortcut",
 		"icon": "keyboard-fill"
+	},
+	{
+		"id": "color",
+		"name": "Color",
+		"desc": "Pick Color",
+		"icon": "aa",
+		"sub-button": [
+			{
+				"id": "colorDrop",
+				"name": "Type",
+				"desc": "color Picker",
+				"icon": ""
+			}
+		]
 	}
 ]

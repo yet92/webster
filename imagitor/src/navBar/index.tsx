@@ -10,7 +10,7 @@ type NavBarProps = {
 const NavBar: React.FC<NavBarProps> = ({ children }) => (
   <Nav className={[colorStyles.darkTheme, alignStyles.fromBottomCenter].join(" ")}>
     <ButtonToolbar>
-      <ButtonGroup vertical>{children}</ButtonGroup>
+      <ButtonGroup className="tw-gap-1" vertical>{children}</ButtonGroup>
     </ButtonToolbar>
   </Nav>
 );
