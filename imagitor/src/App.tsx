@@ -1,52 +1,48 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Transformer } from "react-konva";
-import { Layer } from "konva/lib/Layer";
 import { Node, NodeConfig } from "konva/lib/Node";
-import { useHotkeys } from "react-hotkeys-hook";
 import { nanoid } from "nanoid";
-import { Button, ButtonGroup, Col, Dropdown, DropdownButton, Modal, Row } from "react-bootstrap";
-import Header from "./header";
-import Layout from "./layout";
-import SettingBar from "./settingBar";
-import TabGroup from "./tab";
-import workModeList from "./config/workMode.json";
-import NavBar from "./navBar";
-import NavBarButton from "./navBar/NavBarButton";
-import View from "./view";
-import Frame, { FrameProps } from "./view/frame";
-import { StageData } from "./redux/currentStageData";
-import useItem from "./hook/useItem";
-import { StageDataListItem, stageDataListSelector } from "./redux/StageDataList";
-import useStageDataList from "./hook/useStageDataList";
-import ImageItem, { ImageItemProps } from "./view/object/image";
-import useSelection from "./hook/useSelection";
-import useTab from "./hook/useTab";
-import useTransformer from "./hook/useTransformer";
-import useStage from "./hook/useStage";
-import useTool from "./hook/useTool";
-import TextItem, { TextItemProps } from "./view/object/text";
-import ShapeItem, { ShapeItemProps } from "./view/object/shape";
-import IconItem, { IconItemProps } from "./view/object/icon";
-import LineItem, { LineItemProps } from "./view/object/line";
-import { Line } from "konva/lib/shapes/Line";
-import { Line as KonvaLine } from "react-konva";
-import useModal from "./hook/useModal";
+import React, { useEffect, useMemo, useState } from "react";
+import { Col, Modal, Row } from "react-bootstrap";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Transformer } from "react-konva";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import hotkeyList from "./config/hotkey.json";
+import workModeList from "./config/workMode.json";
+import Header from "./header";
 import useHotkeyFunc from "./hook/useHotkeyFunc";
+import useItem from "./hook/useItem";
+import useModal from "./hook/useModal";
+import useRoutes from "./hook/useRoutes";
+import { useSaveStageState } from "./hook/useSaveStageState";
+import useSelection from "./hook/useSelection";
+import useSocket from "./hook/useSocket";
+import useStage from "./hook/useStage";
+import useStageDataList from "./hook/useStageDataList";
+import useTab from "./hook/useTab";
+import useTool from "./hook/useTool";
+import useTransformer from "./hook/useTransformer";
 import useWorkHistory from "./hook/useWorkHistory";
 import useI18n from "./hook/usei18n";
-import { useSaveStageState } from "./hook/useSaveStageState";
-import { useDispatch, useSelector } from "react-redux";
-import { initialStageDataList } from "./redux/initilaStageDataList";
-import Konva from "konva";
-import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
+import Layout from "./layout";
+import NavBar from "./navBar";
 import BrushDropdown from "./navBar/BrushDropdown";
-import { BrowserRouter } from "react-router-dom";
-import useRoutes from "./hook/useRoutes";
-import { loadUser } from "./redux/authSlice";
-import { StoreState } from "./redux/store";
-import useSocket from "./hook/useSocket";
 import ColorPalette from "./navBar/ColorPalette";
+import NavBarButton from "./navBar/NavBarButton";
+import NavBarDropdownButton from "./navBar/NavBarDropdownButton";
+import { StageDataListItem, stageDataListSelector } from "./redux/StageDataList";
+import { loadUser } from "./redux/authSlice";
+import { StageData } from "./redux/currentStageData";
+import { initialStageDataList } from "./redux/initilaStageDataList";
+import { StoreState } from "./redux/store";
+import SettingBar from "./settingBar";
+import TabGroup from "./tab";
+import View from "./view";
+import Frame, { FrameProps } from "./view/frame";
+import IconItem, { IconItemProps } from "./view/object/icon";
+import ImageItem, { ImageItemProps } from "./view/object/image";
+import LineItem, { LineItemProps } from "./view/object/line";
+import ShapeItem, { ShapeItemProps } from "./view/object/shape";
+import TextItem, { TextItemProps } from "./view/object/text";
 
 export type FileKind = {
   "file-id": string;
@@ -145,11 +141,11 @@ function App() {
 	);
 
   const hotkeyModal = (
-    <Modal show={modal.displayModal} onHide={modal.closeModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>Keyboard Shortcut</Modal.Title>
+    <Modal className="tw-text-text" show={modal.displayModal} onHide={modal.closeModal}>
+      <Modal.Header className="tw-bg-secondary" closeButton>
+        <Modal.Title>Keyboard Shortcuts</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="tw-bg-secondary">
         {hotkeyList.map((hotkey) => (
           <Col key={hotkey.name}>
             <h6>{getTranslation("hotkey", hotkey.id, "name")}</h6>
@@ -157,8 +153,8 @@ function App() {
               {hotkey.keys.map((key, idx) => (
                 <React.Fragment key={hotkey.name + key}>
                   {idx !== 0 && "+"}
-                  <Col xs="auto" className="align-items-center">
-                    <Button disabled>{key}</Button>
+                  <Col xs="auto" className="align-items-center tw-justify-center">
+                    <div className="tw-p-2 tw-flex tw-items-center tw-justify-center tw-bg-contrast tw-rounded-xl">{key}</div>
                   </Col>
                 </React.Fragment>
               ))}
