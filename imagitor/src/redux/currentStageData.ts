@@ -31,7 +31,6 @@ export const stageDataSlice = createSlice({
         stageDataEntity.addMany(state, action.payload);
         return;
       }
-      console.log(action.payload);
       stageDataEntity.addOne(state, action.payload);
     },
     updateItem(state, action: PayloadAction<StageData | StageData[]>) {

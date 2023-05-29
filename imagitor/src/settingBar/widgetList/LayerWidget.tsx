@@ -27,7 +27,6 @@ const LayerWidget: React.FC<LayerWidgetProps> = ({ data }) => {
   const { layerDown, layerUp } = useHotkeyFunc();
 
   useEffect(() => {
-    console.log("CURRENT CHILDREN:", data.stageRef.current?.getLayers()[0].getChildren());
     if (data.stageRef.current && data.stageRef.current.getLayers()[0].children) {
       if ([...data.stageRef.current.getLayers()[0].getChildren()].length) {
         setLayersItems(
@@ -208,10 +207,6 @@ const Item = React.forwardRef<HTMLDivElement, ItemProps>(function ItemComponent(
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayedName(e.target.value);
   };
-
-  useEffect(() => {
-    console.log(!editingItem?.attrs.id === item.attrs.id);
-  }, [editingItem]);
 
   return (
     <div
