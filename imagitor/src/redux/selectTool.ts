@@ -4,6 +4,7 @@ interface ToolSelectionState {
   currentTool: "brush" | "pointer" | "bucket" | "eraser";
   brushOptions: BrushOptions;
   toolColor: string;
+  currentColors: string[];
 }
 
 type BrushOptions = {
@@ -20,6 +21,7 @@ const initialState: ToolSelectionState = {
     brushOpacity: 1,
     brushTension: 0,
   },
+  currentColors: []
 };
 
 const toolSelectionSlice = createSlice({
@@ -38,10 +40,13 @@ const toolSelectionSlice = createSlice({
     setToolColor: (state, action: PayloadAction<string>) => {
       state.toolColor = action.payload;
     },
+    setCurrentColors: (state, action: PayloadAction<string>) => {
+      state.currentColors = [action.payload, ...state.currentColors];
+    },
   },
 });
 
-export const { setTool, setBrushOptions, setToolColor } = toolSelectionSlice.actions;
+export const { setTool, setBrushOptions, setToolColor, setCurrentColors } = toolSelectionSlice.actions;
 
 export default toolSelectionSlice.reducer;
 

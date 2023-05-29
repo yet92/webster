@@ -46,6 +46,7 @@ import useRoutes from "./hook/useRoutes";
 import { loadUser } from "./redux/authSlice";
 import { StoreState } from "./redux/store";
 import useSocket from "./hook/useSocket";
+import ColorPalette from "./navBar/ColorPalette";
 
 export type FileKind = {
   "file-id": string;
@@ -114,24 +115,34 @@ function App() {
     </Header>
   );
 
-  const navBar = (
-    <NavBar>
-      {workModeList.map((data) => {
-        if (data.id === "brush") {
-          return (
-            <NavBarDropdownButton
-              key={`navbar-${data.id}`}
-              onClick={getClickCallback(data.id)}
-              dropdownData={<BrushDropdown />}
-              data={data}
-              stage={stage}
-            />
-          );
-        }
-        return <NavBarButton key={`navbar-${data.id}`} data={data} stage={stage} onClick={getClickCallback(data.id)} />;
-      })}
-    </NavBar>
-  );
+	const navBar = (
+		<NavBar>
+			{workModeList.map((data) => {
+				if (data.id === 'brush') {
+					return (
+						<NavBarDropdownButton
+							key={`navbar-${data.id}`}
+							onClick={getClickCallback(data.id)}
+							dropdownData={<BrushDropdown />}
+							data={data}
+							stage={stage}
+						/>
+					);
+				}
+				if (data.id === 'color') {
+					return (<ColorPalette selectedItems={selectedItems} />);
+				}
+				return (
+					<NavBarButton
+						key={`navbar-${data.id}`}
+						data={data}
+						stage={stage}
+						onClick={getClickCallback(data.id)}
+					/>
+				);
+			})}
+		</NavBar>
+	);
 
   const hotkeyModal = (
     <Modal show={modal.displayModal} onHide={modal.closeModal}>
