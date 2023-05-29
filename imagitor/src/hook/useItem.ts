@@ -49,20 +49,22 @@ const useItem = () => {
 
   const page = useSelector((state: StoreState) => state.page);
 
-  const createItem = (newItem: StageData) => {
+  const createItem = (newItem: StageData, sendToServer = true) => {
     dispatch(stageDataAction.addItem(newItem));
     // send new item to server
-
-    if (page.current !== -1) {
-      fetch(`${SERVER_URL}/api/projects/${page.current}`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${auth.me.accessToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ newItem }),
-      });
+    if (sendToServer) {
+      if (page.current !== -1) {
+        fetch(`${SERVER_URL}/api/projects/${page.current}`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${auth.me.accessToken}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ newItem }),
+        });
+      }
     }
+    
   };
 
   const updatePoints = (id: string)  => {
@@ -75,7 +77,8 @@ const useItem = () => {
 
   const updateItem = (
     id: string,
-    attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"]
+    attrsFunc: (attrs: StageData["attrs"]) => StageData["attrs"],
+    sendToServer = true
   ) => {
     const targetItem = stageData.find(
       (data) => data.id === id || data.attrs.id === id
@@ -91,7 +94,7 @@ const useItem = () => {
     dispatch(stageDataAction.updateItem(updatedObject));
     // send update to server
 
-    if (page.current !== -1) {
+    if (sendToServer && page.current !== -1) {
       fetch(`${SERVER_URL}/api/projects/${page.current}`, {
         method: "PUT",
         headers: {
@@ -105,6 +108,17 @@ const useItem = () => {
 
   const removeItem = (targetItemId: string | string[]) => {
     dispatch(stageDataAction.removeItem(targetItemId));
+    console.log(targetItemId);
+    if (page.current !== -1) {
+      fetch(`${SERVER_URL}/api/projects/${page.current}/item`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${auth.me.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ updatedObjectId: targetItemId[0] }),
+      });
+    }
   };
   const alterItems = (dataList: StageData[]) => {
     dispatch(stageDataAction.clearItems({}));
