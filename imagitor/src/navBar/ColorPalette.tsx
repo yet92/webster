@@ -29,7 +29,20 @@ export default function ColorPalette({selectedItems}: {selectedItems: any}) {
 		(selector: StoreState) => selector.toolSelection
 	);
 
-	const onAddColor = () => {
+	const onAddColor = (e: React.MouseEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.getSelection()?.removeAllRanges();
+		selectedItems.forEach((item: any) => {
+			if (e.shiftKey) {
+				item.attrs.stroke = color.hex;
+			} else {
+				item.attrs.fill = color.hex;
+			}
+			updateItem(item.id(), () => item.attrs);
+		});
+		if (selectedItems[0])
+    selectedItems[0].getStage()?.batchDraw();
 		dispatch(setToolColor(color.hex));
 		dispatch(setCurrentColors(color.hex));
 		setShow(!show);
