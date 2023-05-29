@@ -45,6 +45,7 @@ import { BrowserRouter } from "react-router-dom";
 import useRoutes from "./hook/useRoutes";
 import { loadUser } from "./redux/authSlice";
 import { StoreState } from "./redux/store";
+import useSocket from "./hook/useSocket";
 
 export type FileKind = {
   "file-id": string;
@@ -390,21 +391,21 @@ function App() {
     const projectId = parseInt(window.location.href.split("/").reverse()[0]);
     if (!isNaN(projectId)) {
       getStageFromServer(projectId).then((stageData) => {
-      
+
         if (stageData) {
-          
+
           stageData.forEach((stage) => onCreateTab(undefined, stage as StageDataListItem));
           initializeFileDataList(stageData);
         } else {
           console.log("PROJECT NOT FOUND");
         }
-  
+
         stage.stageRef.current.setPosition({
           x: Math.max(Math.ceil(stage.stageRef.current.width() - 1280) / 2, 0),
           y: Math.max(Math.ceil(stage.stageRef.current.height() - 760) / 2, 0),
         });
         stage.stageRef.current.batchDraw();
-  
+
       });
     }
 
@@ -422,6 +423,27 @@ function App() {
 
   const dispatch = useDispatch();
 
+  const page = useSelector((state: StoreState) => state.page);
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (page.current !== -1) {
+      socket?.emit('join_project', { projectId: page.current });
+    }
+
+    if (socket) {
+      socket.on('joined', ({ projectId }) => {
+        console.log('joined to', projectId, 'project');
+      });
+
+      return () => {
+        socket.off('joined');
+      }
+    }
+
+
+  }, [page.current, socket]);
 
 
   const newLayout = <Layout header={header} navBar={navBar} settingBar={settingBar}>
@@ -437,6 +459,7 @@ function App() {
       />
     </View>
   </Layout>;
+
 
   const routes = useRoutes(
     { header, navBar, settingBar, hotkeyModal, onSelectItem, stage, stageData, transformer, renderObject }
